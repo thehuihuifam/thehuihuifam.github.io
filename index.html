@@ -1,22 +1,20 @@
-<input id="guess" type="number" placeholder="1~100">
-<button onclick="check()">확인</button>
-<p id="msg"></p>
-
-<script>
-let answer = Math.floor(Math.random() * 100) + 1;
-let count = 0;
-
-function check() {
-  let g = Number(document.getElementById('guess').value);
-  let msg = document.getElementById('msg');
-  count++;
-
-  if (g === answer) {
-    msg.textContent = `정답! ${count}번 만에 맞힘`;
-  } else if (g < answer) {
-    msg.textContent = '업';
-  } else {
-    msg.textContent = '다운';
-  }
-}
-</script>
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#05060f" />
+    <meta name="description" content="1부터 100까지, 숨겨진 수를 찾는 업앤다운 게임" />
+    <title>업 &amp; 다운 · Number Guess</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
