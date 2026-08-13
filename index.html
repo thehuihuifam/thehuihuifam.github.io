@@ -3,142 +3,854 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>방치형 클리커</title>
+  <title>코인 제국</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
+    *, *::before, *::after {
+      margin: 0; padding: 0;
       box-sizing: border-box;
       -webkit-user-select: none;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
+    :root {
+      --gold: #f9c74f;
+      --blue: #4dabf7;
+      --dark: #1a1a2e;
+      --card: #16213e;
+      --card2: #0f3460;
+      --green: #51cf66;
+      --red: #e63946;
+      --purple: #be4bdb;
+      --orange: #fd7e14;
+    }
+
     body {
-      background: #1a1a2e;
+      background: var(--dark);
       color: #eee;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+
+    /* ── 상단 헤더 ── */
+    #header {
+      width: 100%;
+      max-width: 480px;
+      padding: 20px 16px 8px;
+      text-align: center;
+      position: relative;
+    }
+
+    #title {
+      font-size: 1rem;
+      color: #aaa;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    #coinDisplay {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(249,199,79,0.4);
+      line-height: 1.1;
+    }
+
+    #cpsDisplay {
+      color: #aaa;
+      font-size: 0.85rem;
+      margin: 2px 0 8px;
+    }
+
+    /* 마일스톤 진행바 */
+    #milestoneBar {
+      width: 100%;
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    #milestoneFill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    #milestoneLabel {
+      font-size: 0.72rem;
+      color: #888;
+      text-align: right;
+    }
+
+    /* ── 클릭 영역 ── */
+    #clickZone {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 12px auto;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    #coinBtn {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: none;
+      background: radial-gradient(circle at 35% 35%, #ffe066, #f9c74f, #e6a800);
+      box-shadow:
+        0 0 0 6px rgba(249,199,79,0.2),
+        0 0 30px rgba(249,199,79,0.3),
+        inset 0 -8px 20px rgba(0,0,0,0.3);
+      font-size: 4rem;
+      cursor: pointer;
+      transition: transform 0.08s, box-shadow 0.08s;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
       touch-action: manipulation;
     }
+    #coinBtn:active {
+      transform: scale(0.93);
+      box-shadow:
+        0 0 0 4px rgba(249,199,79,0.15),
+        0 0 15px rgba(249,199,79,0.2),
+        inset 0 -4px 10px rgba(0,0,0,0.4);
+    }
 
-    #game {
+    #clickPower {
       text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    /* 플로팅 숫자 */
+    .floatNum {
+      position: fixed;
+      font-weight: 700;
+      pointer-events: none;
+      animation: floatUp 0.9s ease-out forwards;
+      z-index: 999;
+      text-shadow: 0 0 8px currentColor;
+    }
+    .floatNum.crit { font-size: 1.6rem; color: var(--orange); }
+    .floatNum.normal { font-size: 1.1rem; color: var(--gold); }
+
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      80%  { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-80px) scale(0.8); }
+    }
+
+    /* ── 탭 ── */
+    #tabs {
+      display: flex;
       width: 100%;
       max-width: 480px;
-      padding: 16px;
+      border-bottom: 2px solid #333;
     }
 
-    #coin {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #f9c74f;
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #888;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
     }
 
-    #auto {
-      color: #aaa;
-      margin: 4px 0 20px;
-    }
-
-    button {
+    /* ── 탭 콘텐츠 ── */
+    .tabContent {
+      display: none;
       width: 100%;
-      max-width: 320px;
-      height: 64px;
-      font-size: 1.4rem;
-      margin: 8px auto;
-      border: 0;
-      border-radius: 16px;
-      background: #4dabf7;
-      color: white;
+      max-width: 480px;
+      padding: 12px;
+    }
+    .tabContent.active { display: block; }
+
+    /* ── 업그레이드 카드 ── */
+    .section-title {
+      font-size: 0.75rem;
+      color: #666;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin: 12px 0 8px;
+    }
+
+    .upgradeCard {
+      background: var(--card);
+      border: 1px solid #2a2a4a;
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+    .upgradeCard:active { transform: scale(0.98); }
+    .upgradeCard.affordable {
+      border-color: var(--blue);
+      background: #1a2a3e;
+    }
+    .upgradeCard.affordable::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      box-shadow: inset 0 0 12px rgba(77,171,247,0.12);
+      pointer-events: none;
+    }
+    .upgradeCard.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .upgradeIcon {
+      font-size: 2rem;
+      width: 44px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .upgradeInfo { flex: 1; }
+    .upgradeName { font-weight: 700; font-size: 0.95rem; }
+    .upgradeDesc { font-size: 0.75rem; color: #888; margin-top: 2px; }
+    .upgradeCost {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+    .upgradeCount {
+      position: absolute;
+      top: 8px; right: 10px;
+      font-size: 0.7rem;
+      color: #555;
+    }
+
+    /* ── 프레스티지 ── */
+    #prestigeCard {
+      background: linear-gradient(135deg, #2d1b4e, #1a1a2e);
+      border: 1px solid var(--purple);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-top: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.1s;
+    }
+    #prestigeCard:active { transform: scale(0.98); }
+    #prestigeCard.disabled { opacity: 0.4; cursor: not-allowed; }
+    #prestigeCard .ptitle { font-weight: 700; color: var(--purple); font-size: 1rem; }
+    #prestigeCard .pdesc { font-size: 0.78rem; color: #aaa; margin-top: 4px; }
+
+    /* ── 업적 ── */
+    .achCard {
+      background: var(--card);
+      border: 1px solid #2a2a4a;
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .achCard.unlocked { border-color: var(--gold); background: #1e1a0e; }
+    .achIcon { font-size: 1.8rem; width: 36px; text-align: center; flex-shrink: 0; }
+    .achName { font-weight: 700; font-size: 0.9rem; }
+    .achDesc { font-size: 0.75rem; color: #888; margin-top: 2px; }
+    .achLock { color: #444; }
+
+    /* ── 통계 ── */
+    .statRow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #2a2a3a;
+      font-size: 0.88rem;
+    }
+    .statRow:last-child { border-bottom: none; }
+    .statLabel { color: #888; }
+    .statVal { color: var(--gold); font-weight: 700; }
+
+    /* ── 업적 알림 팝업 ── */
+    #achNotify {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: linear-gradient(135deg, #1e1a0e, #2d2700);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.88rem;
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      min-width: 260px;
+      box-shadow: 0 4px 24px rgba(249,199,79,0.25);
+      pointer-events: none;
+    }
+    #achNotify.show { transform: translateX(-50%) translateY(0); }
+    #achNotify .nIcon { font-size: 1.6rem; }
+    #achNotify .nTitle { font-size: 0.7rem; color: var(--gold); letter-spacing: 2px; }
+    #achNotify .nName { font-weight: 700; font-size: 0.95rem; }
+
+    /* ── 리셋 ── */
+    #resetBtn {
+      width: calc(100% - 24px);
+      max-width: 456px;
+      height: 44px;
+      background: transparent;
+      border: 1px solid #e6394640;
+      border-radius: 10px;
+      color: var(--red);
+      font-size: 0.85rem;
+      margin: 8px 12px 20px;
+      cursor: pointer;
       display: block;
       touch-action: manipulation;
+      transition: background 0.2s;
+    }
+    #resetBtn:active { background: rgba(230,57,70,0.15); }
+
+    /* 크리티컬 오버레이 */
+    #critOverlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+    }
+    #critOverlay.flash {
+      animation: critFlash 0.4s ease-out forwards;
+    }
+    @keyframes critFlash {
+      0%   { opacity: 0; background: radial-gradient(circle, rgba(253,126,20,0.35), transparent 70%); }
+      30%  { opacity: 1; }
+      100% { opacity: 0; }
     }
 
-    button:active {
-      transform: scale(0.97);
-      background: #3b82c4;
+    /* 오프라인 수익 팝업 */
+    #offlineModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
     }
-
-    button:disabled {
-      background: #555;
+    #offlineModal.show { display: flex; }
+    #offlineBox {
+      background: var(--card);
+      border: 1px solid var(--blue);
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+      max-width: 300px;
     }
-
-    #resetBtn {
-      background: #e63946;
+    #offlineBox h2 { color: var(--blue); margin-bottom: 8px; }
+    #offlineBox p { color: #aaa; font-size: 0.9rem; margin-bottom: 16px; }
+    #offlineBox .earn { font-size: 1.8rem; font-weight: 900; color: var(--gold); margin-bottom: 16px; }
+    #offlineBox button {
+      background: var(--blue);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      padding: 10px 28px;
+      font-size: 1rem;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div id="game">
-    <div id="coin">0</div>
-    <div id="auto">자동 생산: 0/s</div>
-    <button onclick="clickCoin()">+1</button>
-    <button id="autoBtn" onclick="buyAuto()">자동 +1/s (비용 10)</button>
-    <button id="resetBtn" onclick="resetGame()">리셋</button>
+
+<!-- 크리티컬 오버레이 -->
+<div id="critOverlay"></div>
+
+<!-- 업적 알림 -->
+<div id="achNotify">
+  <div class="nIcon" id="nIcon">🏆</div>
+  <div>
+    <div class="nTitle">업적 달성!</div>
+    <div class="nName" id="nName"></div>
+  </div>
+</div>
+
+<!-- 오프라인 수익 모달 -->
+<div id="offlineModal">
+  <div id="offlineBox">
+    <h2>🌙 오프라인 수익</h2>
+    <p id="offlineTimeText">돌아오셨군요!</p>
+    <div class="earn" id="offlineEarn">+0</div>
+    <button onclick="closeOffline()">수령하기</button>
+  </div>
+</div>
+
+<!-- 헤더 -->
+<div id="header">
+  <div id="title">⚙ 코인 제국</div>
+  <div id="coinDisplay">0</div>
+  <div id="cpsDisplay">초당 0 코인 | 총 획득 0</div>
+  <div id="milestoneBar"><div id="milestoneFill" style="width:0%"></div></div>
+  <div id="milestoneLabel">다음 목표: 100</div>
+</div>
+
+<!-- 클릭 버튼 -->
+<div id="clickZone">
+  <button id="coinBtn" onclick="handleClick(event)">🪙</button>
+</div>
+<div id="clickPower">클릭당 <span id="cpvDisplay">1</span> 코인</div>
+
+<!-- 탭 -->
+<div id="tabs">
+  <div class="tab active" onclick="switchTab('upgrade')">⬆ 업그레이드</div>
+  <div class="tab" onclick="switchTab('achieve')">🏆 업적</div>
+  <div class="tab" onclick="switchTab('stats')">📊 통계</div>
+</div>
+
+<!-- 업그레이드 탭 -->
+<div class="tabContent active" id="tab-upgrade">
+  <div class="section-title">클릭 강화</div>
+  <div class="upgradeCard" id="up-click" onclick="buyUpgrade('click')">
+    <div class="upgradeIcon">👆</div>
+    <div class="upgradeInfo">
+      <div class="upgradeName">클릭 강화</div>
+      <div class="upgradeDesc">클릭당 획득량 +1</div>
+    </div>
+    <div class="upgradeCost" id="cost-click">10</div>
+    <div class="upgradeCount" id="cnt-click">×0</div>
   </div>
 
-  <script>
-    let coin = 0;
-    let auto = 0;
-    let cost = 10;
+  <div class="section-title">자동 생산 건물</div>
+  <!-- 건물들은 JS로 렌더링 -->
+  <div id="buildingList"></div>
 
-    const coinEl = document.getElementById('coin');
-    const autoEl = document.getElementById('auto');
-    const autoBtn = document.getElementById('autoBtn');
+  <div class="section-title">프레스티지</div>
+  <div id="prestigeCard" class="disabled" onclick="doPrestige()">
+    <div class="ptitle">✨ 프레스티지</div>
+    <div class="pdesc" id="prestigeDesc">100만 코인 달성 시 모든 진행을 초기화하고<br>영구 생산 ×1.5 배율을 획득합니다.<br>현재 프레스티지: <span id="pCount">0</span>회</div>
+  </div>
+</div>
 
-    function save() {
-      localStorage.setItem('idleSave', JSON.stringify({ coin, auto, cost }));
-    }
+<!-- 업적 탭 -->
+<div class="tabContent" id="tab-achieve">
+  <div id="achieveList"></div>
+</div>
 
-    function load() {
-      const s = JSON.parse(localStorage.getItem('idleSave') || '{}');
-      coin = s.coin || 0;
-      auto = s.auto || 0;
-      cost = s.cost || 10;
-    }
+<!-- 통계 탭 -->
+<div class="tabContent" id="tab-stats">
+  <div class="statRow"><span class="statLabel">현재 코인</span><span class="statVal" id="s-coin">0</span></div>
+  <div class="statRow"><span class="statLabel">총 획득 코인</span><span class="statVal" id="s-total">0</span></div>
+  <div class="statRow"><span class="statLabel">총 클릭 수</span><span class="statVal" id="s-clicks">0</span></div>
+  <div class="statRow"><span class="statLabel">크리티컬 횟수</span><span class="statVal" id="s-crits">0</span></div>
+  <div class="statRow"><span class="statLabel">초당 생산 (CPS)</span><span class="statVal" id="s-cps">0</span></div>
+  <div class="statRow"><span class="statLabel">클릭당 획득</span><span class="statVal" id="s-cpv">1</span></div>
+  <div class="statRow"><span class="statLabel">프레스티지</span><span class="statVal" id="s-prestige">0회</span></div>
+  <div class="statRow"><span class="statLabel">플레이 시간</span><span class="statVal" id="s-time">0분</span></div>
+</div>
 
-    function updateUI() {
-      coinEl.textContent = Math.floor(coin);
-      autoEl.textContent = `자동 생산: ${auto}/s`;
-      autoBtn.textContent = `자동 +1/s (비용 ${cost})`;
-      autoBtn.disabled = coin < cost;
-      save();
-    }
+<button id="resetBtn" onclick="resetGame()">🗑 완전 초기화</button>
 
-    function clickCoin() {
-      coin += 1;
-      updateUI();
-    }
+<script>
+// ════════════════════════════════════════
+//  데이터 정의
+// ════════════════════════════════════════
+const BUILDINGS = [
+  { id:'miner',   icon:'⛏', name:'광부',   base:15,   cps:0.1,  desc:'작은 광부가 땅을 팝니다' },
+  { id:'farm',    icon:'🌾', name:'농장',   base:100,  cps:0.5,  desc:'코인 씨앗을 재배합니다' },
+  { id:'factory', icon:'🏭', name:'공장',   base:1100, cps:4,    desc:'코인을 대량 생산합니다' },
+  { id:'bank',    icon:'🏦', name:'은행',   base:12000,cps:25,   desc:'이자로 코인이 불어납니다' },
+  { id:'temple',  icon:'⛩', name:'신전',   base:130000,cps:200, desc:'코인의 신이 축복을 내립니다' },
+];
 
-    function buyAuto() {
-      if (coin >= cost) {
-        coin -= cost;
-        auto += 1;
-        cost = Math.floor(cost * 1.5);
-        updateUI();
+const ACHIEVEMENTS = [
+  { id:'a1',  icon:'🪙', name:'첫 코인',     desc:'코인을 처음 획득',             check: g => g.totalCoins >= 1 },
+  { id:'a2',  icon:'💰', name:'100코인',      desc:'총 100 코인 획득',             check: g => g.totalCoins >= 100 },
+  { id:'a3',  icon:'💎', name:'1000코인',     desc:'총 1,000 코인 획득',           check: g => g.totalCoins >= 1000 },
+  { id:'a4',  icon:'🌟', name:'만 코인',      desc:'총 10,000 코인 획득',          check: g => g.totalCoins >= 10000 },
+  { id:'a5',  icon:'🔥', name:'십만 코인',    desc:'총 100,000 코인 획득',         check: g => g.totalCoins >= 100000 },
+  { id:'a6',  icon:'⚡', name:'클릭왕',       desc:'100번 클릭',                   check: g => g.totalClicks >= 100 },
+  { id:'a7',  icon:'🎯', name:'크리티컬!',    desc:'크리티컬 클릭 1회',            check: g => g.critCount >= 1 },
+  { id:'a8',  icon:'🏗', name:'첫 건물',      desc:'건물을 처음 구입',             check: g => Object.values(g.bCount).some(v=>v>0) },
+  { id:'a9',  icon:'🏙', name:'도시 건설자',  desc:'건물 총 20개 보유',            check: g => Object.values(g.bCount).reduce((a,b)=>a+b,0)>=20 },
+  { id:'a10', icon:'✨', name:'프레스티지어', desc:'프레스티지 1회 달성',          check: g => g.prestige >= 1 },
+];
+
+const MILESTONES = [100,1000,10000,100000,1000000,10000000];
+
+// ════════════════════════════════════════
+//  게임 상태
+// ════════════════════════════════════════
+let g = {
+  coin: 0,
+  totalCoins: 0,
+  totalClicks: 0,
+  critCount: 0,
+  clickPower: 1,
+  clickCost: 10,
+  clickLevel: 0,
+  bCount: { miner:0, farm:0, factory:0, bank:0, temple:0 },
+  bCost:  { miner:15, farm:100, factory:1100, bank:12000, temple:130000 },
+  prestige: 0,
+  prestigeMult: 1,
+  unlockedAch: [],
+  startTime: Date.now(),
+  lastSave: Date.now(),
+};
+
+// ════════════════════════════════════════
+//  저장 / 불러오기
+// ════════════════════════════════════════
+function save() {
+  g.lastSave = Date.now();
+  localStorage.setItem('coinEmpire', JSON.stringify(g));
+}
+
+function load() {
+  const raw = localStorage.getItem('coinEmpire');
+  if (!raw) return;
+  try {
+    const saved = JSON.parse(raw);
+    Object.assign(g, saved);
+
+    // 오프라인 수익 계산 (최대 1시간)
+    const elapsed = Math.min((Date.now() - g.lastSave) / 1000, 3600);
+    const cps = calcCPS();
+    if (elapsed > 30 && cps > 0) {
+      const earn = Math.floor(cps * elapsed * 0.5);  // 50% 효율
+      if (earn > 0) {
+        g.coin += earn;
+        g.totalCoins += earn;
+        showOfflineModal(earn, elapsed);
       }
     }
+  } catch(e) {}
+}
 
-    function resetGame() {
-      if (confirm('정말 초기화할까요?')) {
-        coin = 0;
-        auto = 0;
-        cost = 10;
-        localStorage.removeItem('idleSave');
-        updateUI();
-      }
-    }
+// ════════════════════════════════════════
+//  계산
+// ════════════════════════════════════════
+function calcCPS() {
+  let cps = 0;
+  BUILDINGS.forEach(b => { cps += b.cps * (g.bCount[b.id] || 0); });
+  return cps * g.prestigeMult;
+}
 
-    setInterval(() => {
-      coin += auto;
-      updateUI();
-    }, 1000);
+function calcClickPower() {
+  return g.clickPower * g.prestigeMult;
+}
 
-    load();
+function getBuildingCost(b) {
+  return Math.floor(b.base * Math.pow(1.15, g.bCount[b.id] || 0));
+}
+
+function getClickCost() {
+  return Math.floor(10 * Math.pow(2.2, g.clickLevel));
+}
+
+function fmt(n) {
+  if (n >= 1e12) return (n/1e12).toFixed(2) + 'T';
+  if (n >= 1e9)  return (n/1e9).toFixed(2)  + 'B';
+  if (n >= 1e6)  return (n/1e6).toFixed(2)  + 'M';
+  if (n >= 1e3)  return (n/1e3).toFixed(1)  + 'K';
+  return Math.floor(n).toString();
+}
+
+// ════════════════════════════════════════
+//  클릭 핸들러
+// ════════════════════════════════════════
+function handleClick(e) {
+  const isCrit = Math.random() < 0.05;
+  const base = calcClickPower();
+  const earned = isCrit ? base * 10 : base;
+
+  g.coin += earned;
+  g.totalCoins += earned;
+  g.totalClicks++;
+  if (isCrit) {
+    g.critCount++;
+    document.getElementById('critOverlay').className = '';
+    void document.getElementById('critOverlay').offsetWidth;
+    document.getElementById('critOverlay').className = 'flash';
+  }
+
+  spawnFloat(e.clientX, e.clientY, earned, isCrit);
+  checkAchievements();
+  updateUI();
+}
+
+function spawnFloat(x, y, amount, crit) {
+  const el = document.createElement('div');
+  el.className = 'floatNum ' + (crit ? 'crit' : 'normal');
+  el.textContent = (crit ? '💥 ×10 ' : '+') + fmt(amount);
+  el.style.left = (x - 30 + (Math.random()-0.5)*30) + 'px';
+  el.style.top  = (y - 10) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+// ════════════════════════════════════════
+//  업그레이드 구매
+// ════════════════════════════════════════
+function buyUpgrade(id) {
+  if (id === 'click') {
+    const cost = getClickCost();
+    if (g.coin < cost) return;
+    g.coin -= cost;
+    g.clickPower += 1;
+    g.clickLevel++;
+    checkAchievements();
     updateUI();
-  </script>
+  }
+}
+
+function buyBuilding(bid) {
+  const b = BUILDINGS.find(x => x.id === bid);
+  const cost = getBuildingCost(b);
+  if (g.coin < cost) return;
+  g.coin -= cost;
+  g.bCount[bid] = (g.bCount[bid] || 0) + 1;
+  checkAchievements();
+  updateUI();
+}
+
+// ════════════════════════════════════════
+//  프레스티지
+// ════════════════════════════════════════
+function doPrestige() {
+  if (g.coin < 1000000) return;
+  if (!confirm('프레스티지! 모든 진행이 초기화되고 영구 ×1.5 배율을 획득합니다. 계속할까요?')) return;
+
+  g.prestige++;
+  g.prestigeMult = Math.pow(1.5, g.prestige);
+
+  // 리셋
+  g.coin = 0;
+  g.clickPower = 1;
+  g.clickLevel = 0;
+  g.bCount = { miner:0, farm:0, factory:0, bank:0, temple:0 };
+  g.bCost  = { miner:15, farm:100, factory:1100, bank:12000, temple:130000 };
+
+  checkAchievements();
+  updateUI();
+}
+
+// ════════════════════════════════════════
+//  업적
+// ════════════════════════════════════════
+function checkAchievements() {
+  ACHIEVEMENTS.forEach(a => {
+    if (g.unlockedAch.includes(a.id)) return;
+    if (a.check(g)) {
+      g.unlockedAch.push(a.id);
+      showAchNotify(a);
+    }
+  });
+}
+
+let notifyQueue = [];
+let notifying = false;
+function showAchNotify(a) {
+  notifyQueue.push(a);
+  if (!notifying) processNotifyQueue();
+}
+function processNotifyQueue() {
+  if (!notifyQueue.length) { notifying = false; return; }
+  notifying = true;
+  const a = notifyQueue.shift();
+  document.getElementById('nIcon').textContent = a.icon;
+  document.getElementById('nName').textContent = a.name;
+  const el = document.getElementById('achNotify');
+  el.classList.add('show');
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(processNotifyQueue, 500);
+  }, 2500);
+}
+
+// ════════════════════════════════════════
+//  오프라인 모달
+// ════════════════════════════════════════
+function showOfflineModal(earn, elapsed) {
+  const min = Math.floor(elapsed / 60);
+  const sec = Math.floor(elapsed % 60);
+  document.getElementById('offlineTimeText').textContent =
+    `${min}분 ${sec}초 동안 자리를 비우셨네요 (효율 50%)`;
+  document.getElementById('offlineEarn').textContent = '+' + fmt(earn);
+  document.getElementById('offlineModal').classList.add('show');
+}
+function closeOffline() {
+  document.getElementById('offlineModal').classList.remove('show');
+}
+
+// ════════════════════════════════════════
+//  탭 전환
+// ════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['upgrade','achieve','stats'][i] === name);
+  });
+  document.querySelectorAll('.tabContent').forEach(t => {
+    t.classList.toggle('active', t.id === 'tab-' + name);
+  });
+  if (name === 'achieve') renderAchievements();
+  if (name === 'stats')   renderStats();
+}
+
+// ════════════════════════════════════════
+//  렌더링
+// ════════════════════════════════════════
+function renderBuildings() {
+  const list = document.getElementById('buildingList');
+  list.innerHTML = '';
+  BUILDINGS.forEach(b => {
+    const cost = getBuildingCost(b);
+    const canBuy = g.coin >= cost;
+    const cnt = g.bCount[b.id] || 0;
+    const div = document.createElement('div');
+    div.className = 'upgradeCard' + (canBuy ? ' affordable' : ' disabled');
+    div.onclick = () => buyBuilding(b.id);
+    div.innerHTML = `
+      <div class="upgradeIcon">${b.icon}</div>
+      <div class="upgradeInfo">
+        <div class="upgradeName">${b.name}</div>
+        <div class="upgradeDesc">${b.desc} (${b.cps}/s 각)</div>
+      </div>
+      <div class="upgradeCost">${fmt(cost)} 🪙</div>
+      <div class="upgradeCount">×${cnt}</div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function renderAchievements() {
+  const list = document.getElementById('achieveList');
+  list.innerHTML = '';
+  ACHIEVEMENTS.forEach(a => {
+    const done = g.unlockedAch.includes(a.id);
+    const div = document.createElement('div');
+    div.className = 'achCard' + (done ? ' unlocked' : '');
+    div.innerHTML = `
+      <div class="achIcon ${done?'':'achLock'}">${done ? a.icon : '🔒'}</div>
+      <div>
+        <div class="achName">${done ? a.name : '???'}</div>
+        <div class="achDesc">${done ? a.desc : '달성 조건을 찾아보세요'}</div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function renderStats() {
+  const cps = calcCPS();
+  const elapsed = Math.floor((Date.now() - g.startTime) / 1000);
+  document.getElementById('s-coin').textContent    = fmt(g.coin);
+  document.getElementById('s-total').textContent   = fmt(g.totalCoins);
+  document.getElementById('s-clicks').textContent  = fmt(g.totalClicks);
+  document.getElementById('s-crits').textContent   = fmt(g.critCount);
+  document.getElementById('s-cps').textContent     = fmt(cps) + '/s';
+  document.getElementById('s-cpv').textContent     = fmt(calcClickPower());
+  document.getElementById('s-prestige').textContent= g.prestige + '회 (×' + g.prestigeMult.toFixed(2) + ')';
+  document.getElementById('s-time').textContent    = Math.floor(elapsed/60) + '분 ' + (elapsed%60) + '초';
+}
+
+function updateMilestone() {
+  const total = g.totalCoins;
+  const prev = MILESTONES.filter(m => m <= total).pop() || 0;
+  const next = MILESTONES.find(m => m > total) || MILESTONES[MILESTONES.length-1];
+  const pct = prev >= next ? 100 : ((total - prev) / (next - prev)) * 100;
+  document.getElementById('milestoneFill').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('milestoneLabel').textContent =
+    total >= next ? '🎉 최고 마일스톤 달성!' : `다음 목표: ${fmt(next)}`;
+}
+
+function updateUI() {
+  const cps = calcCPS();
+  const cpv = calcClickPower();
+  const clickCost = getClickCost();
+
+  document.getElementById('coinDisplay').textContent = fmt(g.coin);
+  document.getElementById('cpsDisplay').textContent  =
+    `초당 ${fmt(cps)} | 총 획득 ${fmt(g.totalCoins)}`;
+  document.getElementById('cpvDisplay').textContent  = fmt(cpv);
+
+  // 클릭 업그레이드
+  const clickCard = document.getElementById('up-click');
+  clickCard.className = 'upgradeCard' + (g.coin >= clickCost ? ' affordable' : ' disabled');
+  document.getElementById('cost-click').textContent = fmt(clickCost) + ' 🪙';
+  document.getElementById('cnt-click').textContent  = '×' + g.clickLevel;
+
+  // 건물
+  renderBuildings();
+
+  // 프레스티지
+  const pc = document.getElementById('prestigeCard');
+  const canP = g.coin >= 1000000;
+  pc.className = canP ? '' : 'disabled';
+  document.getElementById('pCount').textContent = g.prestige;
+
+  updateMilestone();
+  save();
+}
+
+// ════════════════════════════════════════
+//  리셋
+// ════════════════════════════════════════
+function resetGame() {
+  if (!confirm('모든 데이터(프레스티지 포함)를 완전히 초기화할까요?')) return;
+  localStorage.removeItem('coinEmpire');
+  location.reload();
+}
+
+// ════════════════════════════════════════
+//  자동 생산 루프
+// ════════════════════════════════════════
+let lastTick = Date.now();
+function gameTick() {
+  const now = Date.now();
+  const dt = (now - lastTick) / 1000;
+  lastTick = now;
+
+  const earned = calcCPS() * dt;
+  if (earned > 0) {
+    g.coin += earned;
+    g.totalCoins += earned;
+    checkAchievements();
+    updateUI();
+  }
+}
+
+// ════════════════════════════════════════
+//  초기화
+// ════════════════════════════════════════
+load();
+updateUI();
+checkAchievements();
+setInterval(gameTick, 200);      // 0.2초마다 CPS 반영
+setInterval(save, 10000);        // 10초마다 자동 저장
+</script>
 </body>
 </html>
