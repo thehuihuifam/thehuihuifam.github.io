@@ -1,12 +1,144 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>희희팸 (huihuifam)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>방치형 클리커</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #1a1a2e;
+      color: #eee;
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      touch-action: manipulation;
+    }
+
+    #game {
+      text-align: center;
+      width: 100%;
+      max-width: 480px;
+      padding: 16px;
+    }
+
+    #coin {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #f9c74f;
+    }
+
+    #auto {
+      color: #aaa;
+      margin: 4px 0 20px;
+    }
+
+    button {
+      width: 100%;
+      max-width: 320px;
+      height: 64px;
+      font-size: 1.4rem;
+      margin: 8px auto;
+      border: 0;
+      border-radius: 16px;
+      background: #4dabf7;
+      color: white;
+      display: block;
+      touch-action: manipulation;
+    }
+
+    button:active {
+      transform: scale(0.97);
+      background: #3b82c4;
+    }
+
+    button:disabled {
+      background: #555;
+    }
+
+    #resetBtn {
+      background: #e63946;
+    }
+  </style>
 </head>
 <body>
-  <h1>🌟 희희팸에 오신 것을 환영합니다!</h1>
-  <p>우리 가족의 이야기를 AI와 함께 만들어갑니다.</p>
-  <p>곧 멋진 콘텐츠로 찾아뵐게요!</p>
+  <div id="game">
+    <div id="coin">0</div>
+    <div id="auto">자동 생산: 0/s</div>
+    <button onclick="clickCoin()">+1</button>
+    <button id="autoBtn" onclick="buyAuto()">자동 +1/s (비용 10)</button>
+    <button id="resetBtn" onclick="resetGame()">리셋</button>
+  </div>
+
+  <script>
+    let coin = 0;
+    let auto = 0;
+    let cost = 10;
+
+    const coinEl = document.getElementById('coin');
+    const autoEl = document.getElementById('auto');
+    const autoBtn = document.getElementById('autoBtn');
+
+    function save() {
+      localStorage.setItem('idleSave', JSON.stringify({ coin, auto, cost }));
+    }
+
+    function load() {
+      const s = JSON.parse(localStorage.getItem('idleSave') || '{}');
+      coin = s.coin || 0;
+      auto = s.auto || 0;
+      cost = s.cost || 10;
+    }
+
+    function updateUI() {
+      coinEl.textContent = Math.floor(coin);
+      autoEl.textContent = `자동 생산: ${auto}/s`;
+      autoBtn.textContent = `자동 +1/s (비용 ${cost})`;
+      autoBtn.disabled = coin < cost;
+      save();
+    }
+
+    function clickCoin() {
+      coin += 1;
+      updateUI();
+    }
+
+    function buyAuto() {
+      if (coin >= cost) {
+        coin -= cost;
+        auto += 1;
+        cost = Math.floor(cost * 1.5);
+        updateUI();
+      }
+    }
+
+    function resetGame() {
+      if (confirm('정말 초기화할까요?')) {
+        coin = 0;
+        auto = 0;
+        cost = 10;
+        localStorage.removeItem('idleSave');
+        updateUI();
+      }
+    }
+
+    setInterval(() => {
+      coin += auto;
+      updateUI();
+    }, 1000);
+
+    load();
+    updateUI();
+  </script>
 </body>
 </html>
