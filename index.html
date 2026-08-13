@@ -2,855 +2,2434 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>코인 제국</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+  <title>야생 예측소</title>
+
   <style>
-    *, *::before, *::after {
-      margin: 0; padding: 0;
+    :root {
+      --bg: #0d1321;
+      --panel: #151e30;
+      --panel-2: #1b2940;
+      --line: rgba(255, 255, 255, 0.09);
+      --text: #f4f7fb;
+      --muted: #9cabc2;
+      --green: #65d68e;
+      --yellow: #f9c74f;
+      --blue: #4dabf7;
+      --red: #ff6b6b;
+      --purple: #b197fc;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    * {
       box-sizing: border-box;
-      -webkit-user-select: none;
-      user-select: none;
+      margin: 0;
+      padding: 0;
       -webkit-tap-highlight-color: transparent;
     }
 
-    :root {
-      --gold: #f9c74f;
-      --blue: #4dabf7;
-      --dark: #1a1a2e;
-      --card: #16213e;
-      --card2: #0f3460;
-      --green: #51cf66;
-      --red: #e63946;
-      --purple: #be4bdb;
-      --orange: #fd7e14;
+    html {
+      color-scheme: dark;
     }
 
     body {
-      background: var(--dark);
-      color: #eee;
-      font-family: 'Segoe UI', sans-serif;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      min-height: 100dvh;
+      background:
+        radial-gradient(circle at 50% -10%, #263b5f 0, transparent 40%),
+        var(--bg);
+      color: var(--text);
+      font-family:
+        Pretendard, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    button {
+      border: 0;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
       touch-action: manipulation;
-      overflow-x: hidden;
     }
 
-    /* ── 상단 헤더 ── */
-    #header {
-      width: 100%;
-      max-width: 480px;
-      padding: 20px 16px 8px;
-      text-align: center;
-      position: relative;
+    button:disabled {
+      cursor: not-allowed;
+      filter: grayscale(0.6);
+      opacity: 0.45;
     }
 
-    #title {
-      font-size: 1rem;
-      color: #aaa;
-      letter-spacing: 4px;
-      text-transform: uppercase;
+    #game {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding:
+        max(18px, env(safe-area-inset-top))
+        14px
+        max(40px, env(safe-area-inset-bottom));
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .eyebrow {
       margin-bottom: 4px;
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    #coinDisplay {
-      font-size: 2.8rem;
-      font-weight: 900;
-      color: var(--gold);
-      text-shadow: 0 0 20px rgba(249,199,79,0.4);
+    h1 {
+      font-size: clamp(1.65rem, 6vw, 2.4rem);
       line-height: 1.1;
     }
 
-    #cpsDisplay {
-      color: #aaa;
-      font-size: 0.85rem;
-      margin: 2px 0 8px;
+    .hero-description {
+      max-width: 530px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
 
-    /* 마일스톤 진행바 */
-    #milestoneBar {
-      width: 100%;
-      height: 6px;
-      background: #333;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 4px;
-    }
-    #milestoneFill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--blue), var(--purple));
-      border-radius: 3px;
-      transition: width 0.5s ease;
-    }
-    #milestoneLabel {
+    .safe-badge {
+      flex: 0 0 auto;
+      padding: 7px 9px;
+      border: 1px solid rgba(101, 214, 142, 0.35);
+      border-radius: 999px;
+      background: rgba(101, 214, 142, 0.1);
+      color: var(--green);
       font-size: 0.72rem;
-      color: #888;
+      font-weight: 800;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(21, 30, 48, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title h2 {
+      font-size: 1.05rem;
+    }
+
+    .subtext {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 12px 9px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      text-align: center;
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.7rem;
+    }
+
+    .stat-value {
+      display: block;
+      overflow: hidden;
+      color: var(--yellow);
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-weight: 900;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .gather-area {
+      position: relative;
+      min-height: 205px;
+      display: grid;
+      place-items: center;
+    }
+
+    #gatherBtn {
+      width: 158px;
+      height: 158px;
+      border: 6px solid rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          circle at 35% 28%,
+          #a5f3c0 0,
+          #44bd79 36%,
+          #20804a 100%
+        );
+      box-shadow:
+        0 14px 40px rgba(49, 199, 112, 0.25),
+        inset 0 -12px 25px rgba(0, 0, 0, 0.22);
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    #gatherBtn:active {
+      transform: scale(0.95);
+    }
+
+    #gatherBtn .gather-icon {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 3rem;
+    }
+
+    .boost-text {
+      min-height: 22px;
+      margin-top: 4px;
+      color: var(--yellow);
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    #bonusOrb {
+      position: absolute;
+      z-index: 5;
+      display: none;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff9a8, #f9c74f 55%, #f8961e);
+      box-shadow: 0 0 32px rgba(249, 199, 79, 0.85);
+      font-size: 1.8rem;
+      animation: bonusPulse 0.8s ease-in-out infinite alternate;
+    }
+
+    #bonusOrb.show {
+      display: grid;
+      place-items: center;
+    }
+
+    .floating-number {
+      position: absolute;
+      z-index: 10;
+      color: #d8ffe5;
+      font-size: 1.05rem;
+      font-weight: 900;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+      from {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(0.9);
+      }
+
+      to {
+        opacity: 0;
+        transform: translate(-50%, -70px) scale(1.2);
+      }
+    }
+
+    @keyframes bonusPulse {
+      to {
+        transform: scale(1.12) rotate(8deg);
+      }
+    }
+
+    .upgrade-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .upgrade-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 11px;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel-2);
+      text-align: left;
+    }
+
+    .upgrade-card:not(:disabled):active {
+      transform: scale(0.985);
+    }
+
+    .upgrade-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.07);
+      font-size: 1.5rem;
+    }
+
+    .upgrade-name {
+      font-size: 0.94rem;
+      font-weight: 850;
+    }
+
+    .upgrade-desc {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.73rem;
+    }
+
+    .upgrade-cost {
+      color: var(--yellow);
+      font-size: 0.78rem;
+      font-weight: 900;
       text-align: right;
     }
 
-    /* ── 클릭 영역 ── */
-    #clickZone {
-      position: relative;
-      width: 150px;
-      height: 150px;
-      margin: 12px auto;
-      cursor: pointer;
-      touch-action: manipulation;
+    .food-chain {
+      margin-bottom: 14px;
+      padding: 12px 8px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.13);
+      font-size: clamp(1.1rem, 5vw, 1.45rem);
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: 0.05em;
     }
 
-    #coinBtn {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      border: none;
-      background: radial-gradient(circle at 35% 35%, #ffe066, #f9c74f, #e6a800);
-      box-shadow:
-        0 0 0 6px rgba(249,199,79,0.2),
-        0 0 30px rgba(249,199,79,0.3),
-        inset 0 -8px 20px rgba(0,0,0,0.3);
-      font-size: 4rem;
-      cursor: pointer;
-      transition: transform 0.08s, box-shadow 0.08s;
+    .round-meta {
       display: flex;
       align-items: center;
-      justify-content: center;
-      touch-action: manipulation;
-    }
-    #coinBtn:active {
-      transform: scale(0.93);
-      box-shadow:
-        0 0 0 4px rgba(249,199,79,0.15),
-        0 0 15px rgba(249,199,79,0.2),
-        inset 0 -4px 10px rgba(0,0,0,0.4);
-    }
-
-    #clickPower {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #888;
-      margin-bottom: 4px;
-    }
-
-    /* 플로팅 숫자 */
-    .floatNum {
-      position: fixed;
-      font-weight: 700;
-      pointer-events: none;
-      animation: floatUp 0.9s ease-out forwards;
-      z-index: 999;
-      text-shadow: 0 0 8px currentColor;
-    }
-    .floatNum.crit { font-size: 1.6rem; color: var(--orange); }
-    .floatNum.normal { font-size: 1.1rem; color: var(--gold); }
-
-    @keyframes floatUp {
-      0%   { opacity: 1; transform: translateY(0) scale(1); }
-      80%  { opacity: 0.6; }
-      100% { opacity: 0; transform: translateY(-80px) scale(0.8); }
-    }
-
-    /* ── 탭 ── */
-    #tabs {
-      display: flex;
-      width: 100%;
-      max-width: 480px;
-      border-bottom: 2px solid #333;
-    }
-
-    .tab {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #888;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .tab.active {
-      color: var(--gold);
-      border-bottom-color: var(--gold);
-    }
-
-    /* ── 탭 콘텐츠 ── */
-    .tabContent {
-      display: none;
-      width: 100%;
-      max-width: 480px;
-      padding: 12px;
-    }
-    .tabContent.active { display: block; }
-
-    /* ── 업그레이드 카드 ── */
-    .section-title {
-      font-size: 0.75rem;
-      color: #666;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin: 12px 0 8px;
-    }
-
-    .upgradeCard {
-      background: var(--card);
-      border: 1px solid #2a2a4a;
-      border-radius: 14px;
-      padding: 12px 16px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s, transform 0.1s;
-      position: relative;
-      overflow: hidden;
-    }
-    .upgradeCard:active { transform: scale(0.98); }
-    .upgradeCard.affordable {
-      border-color: var(--blue);
-      background: #1a2a3e;
-    }
-    .upgradeCard.affordable::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 14px;
-      box-shadow: inset 0 0 12px rgba(77,171,247,0.12);
-      pointer-events: none;
-    }
-    .upgradeCard.disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .upgradeIcon {
-      font-size: 2rem;
-      width: 44px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-    .upgradeInfo { flex: 1; }
-    .upgradeName { font-weight: 700; font-size: 0.95rem; }
-    .upgradeDesc { font-size: 0.75rem; color: #888; margin-top: 2px; }
-    .upgradeCost {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--gold);
-      white-space: nowrap;
-    }
-    .upgradeCount {
-      position: absolute;
-      top: 8px; right: 10px;
-      font-size: 0.7rem;
-      color: #555;
-    }
-
-    /* ── 프레스티지 ── */
-    #prestigeCard {
-      background: linear-gradient(135deg, #2d1b4e, #1a1a2e);
-      border: 1px solid var(--purple);
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-top: 8px;
-      cursor: pointer;
-      text-align: center;
-      transition: transform 0.1s;
-    }
-    #prestigeCard:active { transform: scale(0.98); }
-    #prestigeCard.disabled { opacity: 0.4; cursor: not-allowed; }
-    #prestigeCard .ptitle { font-weight: 700; color: var(--purple); font-size: 1rem; }
-    #prestigeCard .pdesc { font-size: 0.78rem; color: #aaa; margin-top: 4px; }
-
-    /* ── 업적 ── */
-    .achCard {
-      background: var(--card);
-      border: 1px solid #2a2a4a;
-      border-radius: 14px;
-      padding: 12px 16px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .achCard.unlocked { border-color: var(--gold); background: #1e1a0e; }
-    .achIcon { font-size: 1.8rem; width: 36px; text-align: center; flex-shrink: 0; }
-    .achName { font-weight: 700; font-size: 0.9rem; }
-    .achDesc { font-size: 0.75rem; color: #888; margin-top: 2px; }
-    .achLock { color: #444; }
-
-    /* ── 통계 ── */
-    .statRow {
-      display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #2a2a3a;
-      font-size: 0.88rem;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 0.8rem;
     }
-    .statRow:last-child { border-bottom: none; }
-    .statLabel { color: #888; }
-    .statVal { color: var(--gold); font-weight: 700; }
 
-    /* ── 업적 알림 팝업 ── */
-    #achNotify {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: linear-gradient(135deg, #1e1a0e, #2d2700);
-      border: 1px solid var(--gold);
-      border-radius: 14px;
-      padding: 12px 20px;
+    .event-track {
       display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 2px 1px 10px;
+      scrollbar-width: none;
+    }
+
+    .event-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .event-chip {
+      flex: 0 0 auto;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.045);
+      font-size: 0.75rem;
+      font-weight: 750;
+    }
+
+    .event-chip.visible {
+      border-color: rgba(101, 214, 142, 0.4);
+      background: rgba(101, 214, 142, 0.1);
+    }
+
+    .event-chip.hidden {
+      color: #718098;
+    }
+
+    .species-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 4px 0 12px;
+    }
+
+    .species-card {
+      position: relative;
+      min-width: 0;
+      padding: 12px 8px;
+      border: 2px solid transparent;
+      border-radius: 17px;
+      background: var(--panel-2);
+      text-align: center;
+    }
+
+    .species-card.selectable:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .species-card.selected {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.12);
+    }
+
+    .species-card.winner {
+      border-color: var(--yellow);
+      box-shadow: 0 0 20px rgba(249, 199, 79, 0.16);
+    }
+
+    .species-emoji {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 2.2rem;
+    }
+
+    .species-name {
+      font-size: 0.85rem;
+      font-weight: 900;
+    }
+
+    .species-rule {
+      min-height: 30px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.64rem;
+      line-height: 1.3;
+    }
+
+    .vitality {
+      height: 7px;
+      overflow: hidden;
+      margin: 9px 0 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .vitality > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      transition: width 0.45s ease;
+    }
+
+    .species-odds {
+      color: #dfe7f5;
+      font-size: 0.68rem;
+      line-height: 1.4;
+    }
+
+    .species-odds strong {
+      color: var(--yellow);
+    }
+
+    .control-box {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .control-message {
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .action-btn {
+      min-height: 46px;
+      padding: 8px;
+      border-radius: 13px;
+      background: var(--blue);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .action-btn:active {
+      transform: scale(0.97);
+    }
+
+    .action-btn.yellow {
+      background: #d59f1b;
+    }
+
+    .action-btn.green {
+      background: #29975a;
+    }
+
+    .action-btn.red {
+      background: #b9424c;
+    }
+
+    .action-btn.gray {
+      background: #445168;
+    }
+
+    .result-box {
+      display: none;
+      margin-top: 10px;
+      padding: 13px;
+      border-radius: 16px;
+      background: rgba(77, 171, 247, 0.09);
+      text-align: center;
+    }
+
+    .result-box.show {
+      display: block;
+    }
+
+    .result-title {
+      font-size: 1.08rem;
+      font-weight: 950;
+    }
+
+    .result-detail {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .round-log {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .round-log li {
+      margin: 5px 0;
+      color: var(--muted);
+      font-size: 0.73rem;
+      list-style: none;
+    }
+
+    .prestige-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
       align-items: center;
       gap: 12px;
-      font-size: 0.88rem;
-      z-index: 1000;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      min-width: 260px;
-      box-shadow: 0 4px 24px rgba(249,199,79,0.25);
-      pointer-events: none;
-    }
-    #achNotify.show { transform: translateX(-50%) translateY(0); }
-    #achNotify .nIcon { font-size: 1.6rem; }
-    #achNotify .nTitle { font-size: 0.7rem; color: var(--gold); letter-spacing: 2px; }
-    #achNotify .nName { font-weight: 700; font-size: 0.95rem; }
-
-    /* ── 리셋 ── */
-    #resetBtn {
-      width: calc(100% - 24px);
-      max-width: 456px;
-      height: 44px;
-      background: transparent;
-      border: 1px solid #e6394640;
-      border-radius: 10px;
-      color: var(--red);
-      font-size: 0.85rem;
-      margin: 8px 12px 20px;
-      cursor: pointer;
-      display: block;
-      touch-action: manipulation;
-      transition: background 0.2s;
-    }
-    #resetBtn:active { background: rgba(230,57,70,0.15); }
-
-    /* 크리티컬 오버레이 */
-    #critOverlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 500;
-      opacity: 0;
-    }
-    #critOverlay.flash {
-      animation: critFlash 0.4s ease-out forwards;
-    }
-    @keyframes critFlash {
-      0%   { opacity: 0; background: radial-gradient(circle, rgba(253,126,20,0.35), transparent 70%); }
-      30%  { opacity: 1; }
-      100% { opacity: 0; }
     }
 
-    /* 오프라인 수익 팝업 */
-    #offlineModal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 2000;
+    .prestige-title {
+      font-weight: 900;
+    }
+
+    .prestige-desc {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      line-height: 1.45;
+    }
+
+    .prestige-btn {
+      min-width: 106px;
+      min-height: 48px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      background: var(--purple);
+      color: #171126;
+      font-size: 0.78rem;
+      font-weight: 950;
+    }
+
+    .achievement-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .achievement {
+      min-height: 68px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .achievement.locked {
+      filter: grayscale(1);
+      opacity: 0.38;
+    }
+
+    .achievement-name {
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .achievement-desc {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.67rem;
+      line-height: 1.35;
+    }
+
+    .footer-actions {
+      display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 3px;
     }
-    #offlineModal.show { display: flex; }
-    #offlineBox {
-      background: var(--card);
-      border: 1px solid var(--blue);
-      border-radius: 20px;
-      padding: 28px 24px;
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.68rem;
+      line-height: 1.45;
+    }
+
+    #resetBtn {
+      flex: 0 0 auto;
+      padding: 9px 12px;
+      border-radius: 11px;
+      background: rgba(255, 107, 107, 0.13);
+      color: #ff8e8e;
+      font-size: 0.73rem;
+      font-weight: 850;
+    }
+
+    #toast {
+      position: fixed;
+      z-index: 100;
+      left: 50%;
+      bottom: max(24px, env(safe-area-inset-bottom));
+      width: min(420px, calc(100% - 28px));
+      padding: 12px 15px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(14, 21, 35, 0.96);
+      box-shadow: var(--shadow);
+      font-size: 0.82rem;
+      font-weight: 800;
       text-align: center;
-      max-width: 300px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 18px);
+      transition: 0.22s ease;
     }
-    #offlineBox h2 { color: var(--blue); margin-bottom: 8px; }
-    #offlineBox p { color: #aaa; font-size: 0.9rem; margin-bottom: 16px; }
-    #offlineBox .earn { font-size: 1.8rem; font-weight: 900; color: var(--gold); margin-bottom: 16px; }
-    #offlineBox button {
-      background: var(--blue);
-      border: none;
-      border-radius: 10px;
-      color: white;
-      padding: 10px 28px;
-      font-size: 1rem;
-      cursor: pointer;
+
+    #toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 480px) {
+      .hero {
+        display: block;
+      }
+
+      .safe-badge {
+        display: inline-block;
+        margin-top: 10px;
+      }
+
+      .panel {
+        padding: 14px;
+        border-radius: 18px;
+      }
+
+      .species-card {
+        padding: 10px 5px;
+      }
+
+      .species-emoji {
+        font-size: 1.85rem;
+      }
+
+      .prestige-box {
+        grid-template-columns: 1fr;
+      }
+
+      .prestige-btn {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
     }
   </style>
 </head>
+
 <body>
+  <main id="game">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Idle ecosystem prediction</p>
+        <h1>🌿 야생 예측소</h1>
 
-<!-- 크리티컬 오버레이 -->
-<div id="critOverlay"></div>
+        <p class="hero-description">
+          생명력을 생산하고, 무작위 생태계에서 가장 번성할 동물을
+          예측하세요. 불리하면 작게 철수하고 확신하면 위험을 키우세요.
+        </p>
+      </div>
 
-<!-- 업적 알림 -->
-<div id="achNotify">
-  <div class="nIcon" id="nIcon">🏆</div>
-  <div>
-    <div class="nTitle">업적 달성!</div>
-    <div class="nName" id="nName"></div>
-  </div>
-</div>
+      <span class="safe-badge">현금성 없음</span>
+    </header>
 
-<!-- 오프라인 수익 모달 -->
-<div id="offlineModal">
-  <div id="offlineBox">
-    <h2>🌙 오프라인 수익</h2>
-    <p id="offlineTimeText">돌아오셨군요!</p>
-    <div class="earn" id="offlineEarn">+0</div>
-    <button onclick="closeOffline()">수령하기</button>
-  </div>
-</div>
+    <section class="stats" aria-label="게임 통계">
+      <div class="stat">
+        <span class="stat-label">생명력</span>
+        <strong id="energyEl" class="stat-value">0</strong>
+      </div>
 
-<!-- 헤더 -->
-<div id="header">
-  <div id="title">⚙ 코인 제국</div>
-  <div id="coinDisplay">0</div>
-  <div id="cpsDisplay">초당 0 코인 | 총 획득 0</div>
-  <div id="milestoneBar"><div id="milestoneFill" style="width:0%"></div></div>
-  <div id="milestoneLabel">다음 목표: 100</div>
-</div>
+      <div class="stat">
+        <span class="stat-label">자동 생산</span>
+        <strong id="cpsEl" class="stat-value">0/s</strong>
+      </div>
 
-<!-- 클릭 버튼 -->
-<div id="clickZone">
-  <button id="coinBtn" onclick="handleClick(event)">🪙</button>
-</div>
-<div id="clickPower">클릭당 <span id="cpvDisplay">1</span> 코인</div>
+      <div class="stat">
+        <span class="stat-label">유전자 보너스</span>
+        <strong id="geneEl" class="stat-value">×1</strong>
+      </div>
+    </section>
 
-<!-- 탭 -->
-<div id="tabs">
-  <div class="tab active" onclick="switchTab('upgrade')">⬆ 업그레이드</div>
-  <div class="tab" onclick="switchTab('achieve')">🏆 업적</div>
-  <div class="tab" onclick="switchTab('stats')">📊 통계</div>
-</div>
+    <section class="panel">
+      <div class="panel-title">
+        <h2>🌱 생명력 채집</h2>
+        <span id="clickInfo" class="subtext">클릭당 +1</span>
+      </div>
 
-<!-- 업그레이드 탭 -->
-<div class="tabContent active" id="tab-upgrade">
-  <div class="section-title">클릭 강화</div>
-  <div class="upgradeCard" id="up-click" onclick="buyUpgrade('click')">
-    <div class="upgradeIcon">👆</div>
-    <div class="upgradeInfo">
-      <div class="upgradeName">클릭 강화</div>
-      <div class="upgradeDesc">클릭당 획득량 +1</div>
-    </div>
-    <div class="upgradeCost" id="cost-click">10</div>
-    <div class="upgradeCount" id="cnt-click">×0</div>
-  </div>
+      <div class="gather-area" id="gatherArea">
+        <button
+          id="gatherBtn"
+          type="button"
+          onclick="gatherEnergy(event)"
+          aria-label="생명력 채집"
+        >
+          <span class="gather-icon">🌱</span>
+          채집
+        </button>
 
-  <div class="section-title">자동 생산 건물</div>
-  <!-- 건물들은 JS로 렌더링 -->
-  <div id="buildingList"></div>
+        <button
+          id="bonusOrb"
+          type="button"
+          onclick="claimBonus()"
+          aria-label="희귀 생명력 보너스"
+        >
+          ✨
+        </button>
+      </div>
 
-  <div class="section-title">프레스티지</div>
-  <div id="prestigeCard" class="disabled" onclick="doPrestige()">
-    <div class="ptitle">✨ 프레스티지</div>
-    <div class="pdesc" id="prestigeDesc">100만 코인 달성 시 모든 진행을 초기화하고<br>영구 생산 ×1.5 배율을 획득합니다.<br>현재 프레스티지: <span id="pCount">0</span>회</div>
-  </div>
-</div>
+      <div id="boostEl" class="boost-text"></div>
+    </section>
 
-<!-- 업적 탭 -->
-<div class="tabContent" id="tab-achieve">
-  <div id="achieveList"></div>
-</div>
+    <section class="panel">
+      <div class="panel-title">
+        <h2>🏗️ 생태 시설</h2>
+        <span class="subtext">생산을 자동화합니다</span>
+      </div>
 
-<!-- 통계 탭 -->
-<div class="tabContent" id="tab-stats">
-  <div class="statRow"><span class="statLabel">현재 코인</span><span class="statVal" id="s-coin">0</span></div>
-  <div class="statRow"><span class="statLabel">총 획득 코인</span><span class="statVal" id="s-total">0</span></div>
-  <div class="statRow"><span class="statLabel">총 클릭 수</span><span class="statVal" id="s-clicks">0</span></div>
-  <div class="statRow"><span class="statLabel">크리티컬 횟수</span><span class="statVal" id="s-crits">0</span></div>
-  <div class="statRow"><span class="statLabel">초당 생산 (CPS)</span><span class="statVal" id="s-cps">0</span></div>
-  <div class="statRow"><span class="statLabel">클릭당 획득</span><span class="statVal" id="s-cpv">1</span></div>
-  <div class="statRow"><span class="statLabel">프레스티지</span><span class="statVal" id="s-prestige">0회</span></div>
-  <div class="statRow"><span class="statLabel">플레이 시간</span><span class="statVal" id="s-time">0분</span></div>
-</div>
+      <div id="upgradeList" class="upgrade-list"></div>
+    </section>
 
-<button id="resetBtn" onclick="resetGame()">🗑 완전 초기화</button>
+    <section class="panel">
+      <div class="panel-title">
+        <h2>🔮 생태계 예측</h2>
+        <span id="recordEl" class="subtext">전적 0승 0패</span>
+      </div>
 
-<script>
-// ════════════════════════════════════════
-//  데이터 정의
-// ════════════════════════════════════════
-const BUILDINGS = [
-  { id:'miner',   icon:'⛏', name:'광부',   base:15,   cps:0.1,  desc:'작은 광부가 땅을 팝니다' },
-  { id:'farm',    icon:'🌾', name:'농장',   base:100,  cps:0.5,  desc:'코인 씨앗을 재배합니다' },
-  { id:'factory', icon:'🏭', name:'공장',   base:1100, cps:4,    desc:'코인을 대량 생산합니다' },
-  { id:'bank',    icon:'🏦', name:'은행',   base:12000,cps:25,   desc:'이자로 코인이 불어납니다' },
-  { id:'temple',  icon:'⛩', name:'신전',   base:130000,cps:200, desc:'코인의 신이 축복을 내립니다' },
-];
+      <div class="food-chain" aria-label="먹이사슬">
+        🌾 → 🐭 → 🐍 → 🦅
+      </div>
 
-const ACHIEVEMENTS = [
-  { id:'a1',  icon:'🪙', name:'첫 코인',     desc:'코인을 처음 획득',             check: g => g.totalCoins >= 1 },
-  { id:'a2',  icon:'💰', name:'100코인',      desc:'총 100 코인 획득',             check: g => g.totalCoins >= 100 },
-  { id:'a3',  icon:'💎', name:'1000코인',     desc:'총 1,000 코인 획득',           check: g => g.totalCoins >= 1000 },
-  { id:'a4',  icon:'🌟', name:'만 코인',      desc:'총 10,000 코인 획득',          check: g => g.totalCoins >= 10000 },
-  { id:'a5',  icon:'🔥', name:'십만 코인',    desc:'총 100,000 코인 획득',         check: g => g.totalCoins >= 100000 },
-  { id:'a6',  icon:'⚡', name:'클릭왕',       desc:'100번 클릭',                   check: g => g.totalClicks >= 100 },
-  { id:'a7',  icon:'🎯', name:'크리티컬!',    desc:'크리티컬 클릭 1회',            check: g => g.critCount >= 1 },
-  { id:'a8',  icon:'🏗', name:'첫 건물',      desc:'건물을 처음 구입',             check: g => Object.values(g.bCount).some(v=>v>0) },
-  { id:'a9',  icon:'🏙', name:'도시 건설자',  desc:'건물 총 20개 보유',            check: g => Object.values(g.bCount).reduce((a,b)=>a+b,0)>=20 },
-  { id:'a10', icon:'✨', name:'프레스티지어', desc:'프레스티지 1회 달성',          check: g => g.prestige >= 1 },
-];
+      <div class="round-meta">
+        <span id="roundNumber">라운드 #1</span>
+        <span id="roundState">동물을 선택하세요</span>
+      </div>
 
-const MILESTONES = [100,1000,10000,100000,1000000,10000000];
+      <div id="eventTrack" class="event-track"></div>
+      <div id="speciesList" class="species-list"></div>
 
-// ════════════════════════════════════════
-//  게임 상태
-// ════════════════════════════════════════
-let g = {
-  coin: 0,
-  totalCoins: 0,
-  totalClicks: 0,
-  critCount: 0,
-  clickPower: 1,
-  clickCost: 10,
-  clickLevel: 0,
-  bCount: { miner:0, farm:0, factory:0, bank:0, temple:0 },
-  bCost:  { miner:15, farm:100, factory:1100, bank:12000, temple:130000 },
-  prestige: 0,
-  prestigeMult: 1,
-  unlockedAch: [],
-  startTime: Date.now(),
-  lastSave: Date.now(),
-};
+      <div id="betControls" class="control-box"></div>
+      <div id="decisionControls" class="control-box" hidden></div>
 
-// ════════════════════════════════════════
-//  저장 / 불러오기
-// ════════════════════════════════════════
-function save() {
-  g.lastSave = Date.now();
-  localStorage.setItem('coinEmpire', JSON.stringify(g));
-}
+      <div
+        id="resultBox"
+        class="result-box"
+        aria-live="polite"
+      ></div>
 
-function load() {
-  const raw = localStorage.getItem('coinEmpire');
-  if (!raw) return;
-  try {
-    const saved = JSON.parse(raw);
-    Object.assign(g, saved);
+      <ul id="roundLog" class="round-log"></ul>
+    </section>
 
-    // 오프라인 수익 계산 (최대 1시간)
-    const elapsed = Math.min((Date.now() - g.lastSave) / 1000, 3600);
-    const cps = calcCPS();
-    if (elapsed > 30 && cps > 0) {
-      const earn = Math.floor(cps * elapsed * 0.5);  // 50% 효율
-      if (earn > 0) {
-        g.coin += earn;
-        g.totalCoins += earn;
-        showOfflineModal(earn, elapsed);
+    <section class="panel">
+      <div class="panel-title">
+        <h2>🧬 생태 재구성</h2>
+        <span class="subtext">영구 성장</span>
+      </div>
+
+      <div class="prestige-box">
+        <div>
+          <div class="prestige-title">
+            현재 유전자: <span id="geneCountEl">0</span>
+          </div>
+
+          <p id="prestigeDesc" class="prestige-desc">
+            이번 생태계에서 생명력을 더 모으면 유전자를 얻을 수 있습니다.
+          </p>
+        </div>
+
+        <button
+          id="prestigeBtn"
+          class="prestige-btn"
+          type="button"
+          onclick="prestige()"
+        >
+          재구성
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title">
+        <h2>🏅 관측 기록</h2>
+        <span id="achievementCount" class="subtext">0/4</span>
+      </div>
+
+      <div id="achievementList" class="achievement-list"></div>
+    </section>
+
+    <footer class="footer-actions">
+      <p class="footer-note">
+        이 프로토타입에는 실제 돈, 환전, 유료 판돈 구매 기능이 없습니다.
+        표시되는 승률은 같은 사건 풀을 모의실험한 추정치입니다.
+      </p>
+
+      <button id="resetBtn" type="button" onclick="resetGame()">
+        전체 초기화
+      </button>
+    </footer>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    "use strict";
+
+    const SAVE_KEY = "wildPredictionSave_v1";
+    const OLD_SAVE_KEY = "idleSave";
+
+    const SPECIES = [
+      {
+        name: "들쥐",
+        emoji: "🐭",
+        color: "#f6bd60",
+        rule: "곡식과 은신처가 많으면 번성"
+      },
+      {
+        name: "뱀",
+        emoji: "🐍",
+        color: "#65d68e",
+        rule: "들쥐가 늘면 함께 강해짐"
+      },
+      {
+        name: "독수리",
+        emoji: "🦅",
+        color: "#4dabf7",
+        rule: "뱀이 늘면 상위 포식자 우세"
+      }
+    ];
+
+    const EVENTS = [
+      {
+        icon: "🌾",
+        name: "곡식 풍년",
+        mods: [12, 4, 1],
+        text: "먹이가 넘쳐난다"
+      },
+      {
+        icon: "🌧️",
+        name: "장마",
+        mods: [5, -6, -2],
+        text: "지상은 풍요롭고 사냥은 어려워진다"
+      },
+      {
+        icon: "☀️",
+        name: "가뭄",
+        mods: [-9, 2, 3],
+        text: "곡식은 줄고 상공은 맑아진다"
+      },
+      {
+        icon: "❄️",
+        name: "한파",
+        mods: [-3, -12, -4],
+        text: "변온동물이 크게 위축된다"
+      },
+      {
+        icon: "🐭",
+        name: "쥐 대번식",
+        mods: [14, 7, 2],
+        text: "먹잇감과 경쟁이 함께 증가한다"
+      },
+      {
+        icon: "🐍",
+        name: "뱀 번식기",
+        mods: [-7, 13, 6],
+        text: "들쥐가 압박받고 독수리도 모인다"
+      },
+      {
+        icon: "🦅",
+        name: "독수리 이동",
+        mods: [2, -9, 14],
+        text: "상위 포식자가 몰려온다"
+      },
+      {
+        icon: "🧪",
+        name: "방역 작업",
+        mods: [-13, -5, -2],
+        text: "설치류 개체 수가 급감한다"
+      },
+      {
+        icon: "🌲",
+        name: "숲 확장",
+        mods: [6, 5, 3],
+        text: "은신처와 둥지가 늘어난다"
+      },
+      {
+        icon: "🔥",
+        name: "산불",
+        mods: [-10, -8, 5],
+        text: "지상 생물은 불리하고 날개는 유리하다"
+      },
+      {
+        icon: "🌙",
+        name: "긴 밤",
+        mods: [7, 5, -4],
+        text: "야행성 생물이 활발해진다"
+      },
+      {
+        icon: "🏗️",
+        name: "개발 공사",
+        mods: [-5, 4, 2],
+        text: "서식지가 조각난다"
+      }
+    ];
+
+    const GENERATORS = [
+      {
+        name: "풀밭",
+        icon: "🌾",
+        description: "초당 생명력 +1",
+        baseCost: 15,
+        cps: 1
+      },
+      {
+        name: "관측소",
+        icon: "🔭",
+        description: "초당 생명력 +8",
+        baseCost: 120,
+        cps: 8
+      },
+      {
+        name: "보호구역",
+        icon: "🏞️",
+        description: "초당 생명력 +60",
+        baseCost: 1000,
+        cps: 60
+      }
+    ];
+
+    const ACHIEVEMENTS = [
+      {
+        id: "collector",
+        name: "🌱 첫 생태계",
+        description: "누적 생명력 100 획득",
+        reward: 25
+      },
+      {
+        id: "firstWin",
+        name: "🔮 첫 적중",
+        description: "생태계 예측에 처음 성공",
+        reward: 50
+      },
+      {
+        id: "bigWin",
+        name: "⚡ 확신의 관측자",
+        description: "위험도 4배 상태로 승리",
+        reward: 200
+      },
+      {
+        id: "firstGene",
+        name: "🧬 진화 시작",
+        description: "유전자 1개 이상 보유",
+        reward: 300
+      }
+    ];
+
+    const DEFAULT_STATE = {
+      version: 1,
+      energy: 50,
+      totalEarned: 50,
+      runEarned: 50,
+      clickLevel: 1,
+      generators: [0, 0, 0],
+      genes: 0,
+      wins: 0,
+      losses: 0,
+      retreats: 0,
+      streak: 0,
+      bestStreak: 0,
+      roundsPlayed: 0,
+      roundSerial: 0,
+      achievements: {},
+      boostUntil: 0,
+      lastSeen: Date.now()
+    };
+
+    let state = structuredCloneSafe(DEFAULT_STATE);
+    let round = null;
+
+    let lastTick = Date.now();
+    let lastRender = 0;
+    let lastSave = 0;
+
+    let nextBonusAt = Date.now() + randomBetween(20000, 40000);
+    let bonusExpiresAt = 0;
+    let bonusVisible = false;
+
+    let toastTimer = null;
+    let storageFailureShown = false;
+    let offlineGain = 0;
+
+    const compactFormatter = new Intl.NumberFormat("ko-KR", {
+      notation: "compact",
+      maximumFractionDigits: 1
+    });
+
+    const energyEl = document.getElementById("energyEl");
+    const cpsEl = document.getElementById("cpsEl");
+    const geneEl = document.getElementById("geneEl");
+    const clickInfo = document.getElementById("clickInfo");
+    const boostEl = document.getElementById("boostEl");
+    const upgradeList = document.getElementById("upgradeList");
+    const recordEl = document.getElementById("recordEl");
+
+    const roundNumber = document.getElementById("roundNumber");
+    const roundState = document.getElementById("roundState");
+    const eventTrack = document.getElementById("eventTrack");
+    const speciesList = document.getElementById("speciesList");
+    const betControls = document.getElementById("betControls");
+    const decisionControls = document.getElementById("decisionControls");
+    const resultBox = document.getElementById("resultBox");
+    const roundLog = document.getElementById("roundLog");
+
+    const geneCountEl = document.getElementById("geneCountEl");
+    const prestigeDesc = document.getElementById("prestigeDesc");
+    const prestigeBtn = document.getElementById("prestigeBtn");
+
+    const achievementCount = document.getElementById("achievementCount");
+    const achievementList = document.getElementById("achievementList");
+
+    const gatherArea = document.getElementById("gatherArea");
+    const bonusOrb = document.getElementById("bonusOrb");
+    const toastEl = document.getElementById("toast");
+
+    function structuredCloneSafe(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function formatNumber(value) {
+      if (!Number.isFinite(value)) return "0";
+
+      if (Math.abs(value) < 1000) {
+        return Math.floor(value).toLocaleString("ko-KR");
+      }
+
+      return compactFormatter.format(value);
+    }
+
+    function formatMultiplier(value) {
+      return Number(value).toFixed(value >= 3 ? 1 : 2).replace(/\.?0+$/, "");
+    }
+
+    function randomBetween(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function getSecureSeed() {
+      try {
+        const array = new Uint32Array(1);
+        crypto.getRandomValues(array);
+        return array[0];
+      } catch {
+        return (
+          Date.now() ^
+          Math.floor(Math.random() * 0xffffffff)
+        ) >>> 0;
       }
     }
-  } catch(e) {}
-}
 
-// ════════════════════════════════════════
-//  계산
-// ════════════════════════════════════════
-function calcCPS() {
-  let cps = 0;
-  BUILDINGS.forEach(b => { cps += b.cps * (g.bCount[b.id] || 0); });
-  return cps * g.prestigeMult;
-}
+    function mulberry32(seed) {
+      return function () {
+        let t = seed += 0x6d2b79f5;
 
-function calcClickPower() {
-  return g.clickPower * g.prestigeMult;
-}
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
 
-function getBuildingCost(b) {
-  return Math.floor(b.base * Math.pow(1.15, g.bCount[b.id] || 0));
-}
-
-function getClickCost() {
-  return Math.floor(10 * Math.pow(2.2, g.clickLevel));
-}
-
-function fmt(n) {
-  if (n >= 1e12) return (n/1e12).toFixed(2) + 'T';
-  if (n >= 1e9)  return (n/1e9).toFixed(2)  + 'B';
-  if (n >= 1e6)  return (n/1e6).toFixed(2)  + 'M';
-  if (n >= 1e3)  return (n/1e3).toFixed(1)  + 'K';
-  return Math.floor(n).toString();
-}
-
-// ════════════════════════════════════════
-//  클릭 핸들러
-// ════════════════════════════════════════
-function handleClick(e) {
-  const isCrit = Math.random() < 0.05;
-  const base = calcClickPower();
-  const earned = isCrit ? base * 10 : base;
-
-  g.coin += earned;
-  g.totalCoins += earned;
-  g.totalClicks++;
-  if (isCrit) {
-    g.critCount++;
-    document.getElementById('critOverlay').className = '';
-    void document.getElementById('critOverlay').offsetWidth;
-    document.getElementById('critOverlay').className = 'flash';
-  }
-
-  spawnFloat(e.clientX, e.clientY, earned, isCrit);
-  checkAchievements();
-  updateUI();
-}
-
-function spawnFloat(x, y, amount, crit) {
-  const el = document.createElement('div');
-  el.className = 'floatNum ' + (crit ? 'crit' : 'normal');
-  el.textContent = (crit ? '💥 ×10 ' : '+') + fmt(amount);
-  el.style.left = (x - 30 + (Math.random()-0.5)*30) + 'px';
-  el.style.top  = (y - 10) + 'px';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-// ════════════════════════════════════════
-//  업그레이드 구매
-// ════════════════════════════════════════
-function buyUpgrade(id) {
-  if (id === 'click') {
-    const cost = getClickCost();
-    if (g.coin < cost) return;
-    g.coin -= cost;
-    g.clickPower += 1;
-    g.clickLevel++;
-    checkAchievements();
-    updateUI();
-  }
-}
-
-function buyBuilding(bid) {
-  const b = BUILDINGS.find(x => x.id === bid);
-  const cost = getBuildingCost(b);
-  if (g.coin < cost) return;
-  g.coin -= cost;
-  g.bCount[bid] = (g.bCount[bid] || 0) + 1;
-  checkAchievements();
-  updateUI();
-}
-
-// ════════════════════════════════════════
-//  프레스티지
-// ════════════════════════════════════════
-function doPrestige() {
-  if (g.coin < 1000000) return;
-  if (!confirm('프레스티지! 모든 진행이 초기화되고 영구 ×1.5 배율을 획득합니다. 계속할까요?')) return;
-
-  g.prestige++;
-  g.prestigeMult = Math.pow(1.5, g.prestige);
-
-  // 리셋
-  g.coin = 0;
-  g.clickPower = 1;
-  g.clickLevel = 0;
-  g.bCount = { miner:0, farm:0, factory:0, bank:0, temple:0 };
-  g.bCost  = { miner:15, farm:100, factory:1100, bank:12000, temple:130000 };
-
-  checkAchievements();
-  updateUI();
-}
-
-// ════════════════════════════════════════
-//  업적
-// ════════════════════════════════════════
-function checkAchievements() {
-  ACHIEVEMENTS.forEach(a => {
-    if (g.unlockedAch.includes(a.id)) return;
-    if (a.check(g)) {
-      g.unlockedAch.push(a.id);
-      showAchNotify(a);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
     }
-  });
-}
 
-let notifyQueue = [];
-let notifying = false;
-function showAchNotify(a) {
-  notifyQueue.push(a);
-  if (!notifying) processNotifyQueue();
-}
-function processNotifyQueue() {
-  if (!notifyQueue.length) { notifying = false; return; }
-  notifying = true;
-  const a = notifyQueue.shift();
-  document.getElementById('nIcon').textContent = a.icon;
-  document.getElementById('nName').textContent = a.name;
-  const el = document.getElementById('achNotify');
-  el.classList.add('show');
-  setTimeout(() => {
-    el.classList.remove('show');
-    setTimeout(processNotifyQueue, 500);
-  }, 2500);
-}
+    function shuffle(array, rng) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
 
-// ════════════════════════════════════════
-//  오프라인 모달
-// ════════════════════════════════════════
-function showOfflineModal(earn, elapsed) {
-  const min = Math.floor(elapsed / 60);
-  const sec = Math.floor(elapsed % 60);
-  document.getElementById('offlineTimeText').textContent =
-    `${min}분 ${sec}초 동안 자리를 비우셨네요 (효율 50%)`;
-  document.getElementById('offlineEarn').textContent = '+' + fmt(earn);
-  document.getElementById('offlineModal').classList.add('show');
-}
-function closeOffline() {
-  document.getElementById('offlineModal').classList.remove('show');
-}
+      return array;
+    }
 
-// ════════════════════════════════════════
-//  탭 전환
-// ════════════════════════════════════════
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    t.classList.toggle('active', ['upgrade','achieve','stats'][i] === name);
-  });
-  document.querySelectorAll('.tabContent').forEach(t => {
-    t.classList.toggle('active', t.id === 'tab-' + name);
-  });
-  if (name === 'achieve') renderAchievements();
-  if (name === 'stats')   renderStats();
-}
+    function maxIndex(values) {
+      let bestIndex = 0;
 
-// ════════════════════════════════════════
-//  렌더링
-// ════════════════════════════════════════
-function renderBuildings() {
-  const list = document.getElementById('buildingList');
-  list.innerHTML = '';
-  BUILDINGS.forEach(b => {
-    const cost = getBuildingCost(b);
-    const canBuy = g.coin >= cost;
-    const cnt = g.bCount[b.id] || 0;
-    const div = document.createElement('div');
-    div.className = 'upgradeCard' + (canBuy ? ' affordable' : ' disabled');
-    div.onclick = () => buyBuilding(b.id);
-    div.innerHTML = `
-      <div class="upgradeIcon">${b.icon}</div>
-      <div class="upgradeInfo">
-        <div class="upgradeName">${b.name}</div>
-        <div class="upgradeDesc">${b.desc} (${b.cps}/s 각)</div>
-      </div>
-      <div class="upgradeCost">${fmt(cost)} 🪙</div>
-      <div class="upgradeCount">×${cnt}</div>
-    `;
-    list.appendChild(div);
-  });
-}
+      for (let i = 1; i < values.length; i++) {
+        if (values[i] > values[bestIndex]) {
+          bestIndex = i;
+        }
+      }
 
-function renderAchievements() {
-  const list = document.getElementById('achieveList');
-  list.innerHTML = '';
-  ACHIEVEMENTS.forEach(a => {
-    const done = g.unlockedAch.includes(a.id);
-    const div = document.createElement('div');
-    div.className = 'achCard' + (done ? ' unlocked' : '');
-    div.innerHTML = `
-      <div class="achIcon ${done?'':'achLock'}">${done ? a.icon : '🔒'}</div>
-      <div>
-        <div class="achName">${done ? a.name : '???'}</div>
-        <div class="achDesc">${done ? a.desc : '달성 조건을 찾아보세요'}</div>
-      </div>
-    `;
-    list.appendChild(div);
-  });
-}
+      return bestIndex;
+    }
 
-function renderStats() {
-  const cps = calcCPS();
-  const elapsed = Math.floor((Date.now() - g.startTime) / 1000);
-  document.getElementById('s-coin').textContent    = fmt(g.coin);
-  document.getElementById('s-total').textContent   = fmt(g.totalCoins);
-  document.getElementById('s-clicks').textContent  = fmt(g.totalClicks);
-  document.getElementById('s-crits').textContent   = fmt(g.critCount);
-  document.getElementById('s-cps').textContent     = fmt(cps) + '/s';
-  document.getElementById('s-cpv').textContent     = fmt(calcClickPower());
-  document.getElementById('s-prestige').textContent= g.prestige + '회 (×' + g.prestigeMult.toFixed(2) + ')';
-  document.getElementById('s-time').textContent    = Math.floor(elapsed/60) + '분 ' + (elapsed%60) + '초';
-}
+    function geneMultiplier() {
+      return 1 + state.genes * 0.15;
+    }
 
-function updateMilestone() {
-  const total = g.totalCoins;
-  const prev = MILESTONES.filter(m => m <= total).pop() || 0;
-  const next = MILESTONES.find(m => m > total) || MILESTONES[MILESTONES.length-1];
-  const pct = prev >= next ? 100 : ((total - prev) / (next - prev)) * 100;
-  document.getElementById('milestoneFill').style.width = Math.min(pct, 100) + '%';
-  document.getElementById('milestoneLabel').textContent =
-    total >= next ? '🎉 최고 마일스톤 달성!' : `다음 목표: ${fmt(next)}`;
-}
+    function clickPower() {
+      return Math.pow(2, state.clickLevel - 1) * geneMultiplier();
+    }
 
-function updateUI() {
-  const cps = calcCPS();
-  const cpv = calcClickPower();
-  const clickCost = getClickCost();
+    function clickUpgradeCost() {
+      return Math.floor(30 * Math.pow(2.6, state.clickLevel - 1));
+    }
 
-  document.getElementById('coinDisplay').textContent = fmt(g.coin);
-  document.getElementById('cpsDisplay').textContent  =
-    `초당 ${fmt(cps)} | 총 획득 ${fmt(g.totalCoins)}`;
-  document.getElementById('cpvDisplay').textContent  = fmt(cpv);
+    function generatorCost(index) {
+      const definition = GENERATORS[index];
+      const owned = state.generators[index];
 
-  // 클릭 업그레이드
-  const clickCard = document.getElementById('up-click');
-  clickCard.className = 'upgradeCard' + (g.coin >= clickCost ? ' affordable' : ' disabled');
-  document.getElementById('cost-click').textContent = fmt(clickCost) + ' 🪙';
-  document.getElementById('cnt-click').textContent  = '×' + g.clickLevel;
+      return Math.floor(
+        definition.baseCost * Math.pow(1.17, owned)
+      );
+    }
 
-  // 건물
-  renderBuildings();
+    function productionPerSecond(includeBoost = true) {
+      let base = 0;
 
-  // 프레스티지
-  const pc = document.getElementById('prestigeCard');
-  const canP = g.coin >= 1000000;
-  pc.className = canP ? '' : 'disabled';
-  document.getElementById('pCount').textContent = g.prestige;
+      GENERATORS.forEach((generator, index) => {
+        base += generator.cps * state.generators[index];
+      });
 
-  updateMilestone();
-  save();
-}
+      let multiplier = geneMultiplier();
 
-// ════════════════════════════════════════
-//  리셋
-// ════════════════════════════════════════
-function resetGame() {
-  if (!confirm('모든 데이터(프레스티지 포함)를 완전히 초기화할까요?')) return;
-  localStorage.removeItem('coinEmpire');
-  location.reload();
-}
+      if (includeBoost && Date.now() < state.boostUntil) {
+        multiplier *= 3;
+      }
 
-// ════════════════════════════════════════
-//  자동 생산 루프
-// ════════════════════════════════════════
-let lastTick = Date.now();
-function gameTick() {
-  const now = Date.now();
-  const dt = (now - lastTick) / 1000;
-  lastTick = now;
+      return base * multiplier;
+    }
 
-  const earned = calcCPS() * dt;
-  if (earned > 0) {
-    g.coin += earned;
-    g.totalCoins += earned;
-    checkAchievements();
+    function addEnergy(amount, countForProgress = true) {
+      if (!Number.isFinite(amount) || amount <= 0) return;
+
+      state.energy += amount;
+
+      if (countForProgress) {
+        state.totalEarned += amount;
+        state.runEarned += amount;
+      }
+    }
+
+    function spendEnergy(amount) {
+      if (state.energy + 1e-9 < amount) return false;
+
+      state.energy -= amount;
+      return true;
+    }
+
+    /*
+      먹이사슬 효과:
+      - 뱀이 강하면 들쥐는 압박받음
+      - 들쥐가 강하면 뱀이 도움을 받음
+      - 독수리가 강하면 뱀은 압박받음
+      - 뱀이 강하면 독수리가 도움을 받음
+    */
+    function applyEvent(scores, eventIndex) {
+      const event = EVENTS[eventIndex];
+
+      const adjusted = scores.map((score, index) => {
+        return clamp(score + event.mods[index], 3, 97);
+      });
+
+      const mouse = adjusted[0];
+      const snake = adjusted[1];
+      const eagle = adjusted[2];
+
+      return [
+        clamp(mouse + (50 - snake) * 0.06, 3, 97),
+
+        clamp(
+          snake +
+          (mouse - 50) * 0.055 -
+          (eagle - 50) * 0.05,
+          3,
+          97
+        ),
+
+        clamp(
+          eagle + (snake - 50) * 0.055,
+          3,
+          97
+        )
+      ];
+    }
+
+    function estimateProbabilities(
+      startingScores,
+      visibleEventIndex,
+      seed
+    ) {
+      const simulationCount = 700;
+      const wins = [0, 0, 0];
+      const rng = mulberry32((seed ^ 0x9e3779b9) >>> 0);
+
+      for (let simulation = 0; simulation < simulationCount; simulation++) {
+        let scores = [...startingScores];
+
+        const pool = EVENTS
+          .map((_, index) => index)
+          .filter(index => index !== visibleEventIndex);
+
+        shuffle(pool, rng);
+
+        for (const eventIndex of pool.slice(0, 3)) {
+          scores = applyEvent(scores, eventIndex);
+        }
+
+        wins[maxIndex(scores)] += 1;
+      }
+
+      return wins.map(winCount => winCount / simulationCount);
+    }
+
+    function calculateOdds(probabilities) {
+      return probabilities.map(probability => {
+        const safeProbability = Math.max(0.08, probability);
+
+        /*
+          예상 회수율을 약 94%로 두어
+          예측 게임이 무한 자원 생성기가 되지 않도록 한다.
+        */
+        const odds = 0.94 / safeProbability;
+
+        return Number(clamp(odds, 1.25, 8).toFixed(2));
+      });
+    }
+
+    function createRound() {
+      state.roundSerial += 1;
+
+      const seed = getSecureSeed();
+      const rng = mulberry32(seed);
+
+      const baseScores = SPECIES.map(() => {
+        return 43 + rng() * 14;
+      });
+
+      const eventPool = EVENTS.map((_, index) => index);
+      shuffle(eventPool, rng);
+
+      const visibleEventIndex = eventPool[0];
+      const hiddenEventIndices = eventPool.slice(1, 4);
+
+      const startingScores = applyEvent(
+        baseScores,
+        visibleEventIndex
+      );
+
+      const probabilities = estimateProbabilities(
+        startingScores,
+        visibleEventIndex,
+        seed
+      );
+
+      round = {
+        id: state.roundSerial,
+        seed,
+        baseScores,
+        visibleEventIndex,
+        hiddenEventIndices,
+        revealedEventIndices: [],
+        scores: startingScores,
+        probabilities,
+        odds: calculateOdds(probabilities),
+
+        selected: null,
+        phase: "betting",
+
+        initialStake: 0,
+        stake: 0,
+        risk: 1,
+
+        eventCursor: 0,
+        lastSnapCursor: -1,
+        nextRevealAt: 0,
+        decisionDeadline: 0,
+
+        result: null,
+        log: [
+          `공개 조건: ${EVENTS[visibleEventIndex].icon} ${EVENTS[visibleEventIndex].name}`
+        ]
+      };
+
+      saveGame();
+      updateUI();
+    }
+
+    function selectSpecies(index) {
+      if (!round || round.phase !== "betting") return;
+
+      round.selected = index;
+      updateUI();
+    }
+
+    function getStake(mode) {
+      const available = Math.floor(state.energy);
+
+      if (available < 5) return 0;
+
+      if (mode === "small") {
+        return Math.min(10, available);
+      }
+
+      if (mode === "quarter") {
+        return Math.max(5, Math.floor(available * 0.25));
+      }
+
+      if (mode === "half") {
+        return Math.max(5, Math.floor(available * 0.5));
+      }
+
+      return 0;
+    }
+
+    function startPrediction(mode) {
+      if (!round || round.phase !== "betting") return;
+
+      if (round.selected === null) {
+        showToast("먼저 동물을 선택하세요.");
+        return;
+      }
+
+      const stake = getStake(mode);
+
+      if (stake < 5 || !spendEnergy(stake)) {
+        showToast("최소 5 생명력이 필요합니다.");
+        return;
+      }
+
+      round.initialStake = stake;
+      round.stake = stake;
+      round.risk = 1;
+      round.phase = "running";
+      round.nextRevealAt = Date.now() + 850;
+
+      const selectedSpecies = SPECIES[round.selected];
+
+      round.log.unshift(
+        `${selectedSpecies.emoji} ${selectedSpecies.name}에 ${formatNumber(stake)} 예측`
+      );
+
+      saveGame();
+      updateUI();
+    }
+
+    function revealNextEvent() {
+      if (!round || round.phase !== "running") return;
+
+      const eventIndex =
+        round.hiddenEventIndices[round.eventCursor];
+
+      if (eventIndex === undefined) {
+        resolveRound();
+        return;
+      }
+
+      round.scores = applyEvent(
+        round.scores,
+        eventIndex
+      );
+
+      round.revealedEventIndices.push(eventIndex);
+      round.eventCursor += 1;
+
+      const event = EVENTS[eventIndex];
+
+      round.log.unshift(
+        `${event.icon} ${event.name}: ${event.text}`
+      );
+
+      if (round.eventCursor >= round.hiddenEventIndices.length) {
+        resolveRound();
+        return;
+      }
+
+      round.phase = "decision";
+      round.decisionDeadline = Date.now() + 4500;
+
+      if (navigator.vibrate) {
+        navigator.vibrate(20);
+      }
+
+      saveGame();
+      updateUI();
+    }
+
+    function continueRound() {
+      if (!round || round.phase !== "decision") return;
+
+      round.phase = "running";
+      round.nextRevealAt = Date.now() + 700;
+      round.decisionDeadline = 0;
+
+      saveGame();
+      updateUI();
+    }
+
+    function raiseStake() {
+      if (!round || round.phase !== "decision") return;
+
+      if (round.risk >= 4) {
+        showToast("최대 위험도는 4배입니다.");
+        return;
+      }
+
+      if (round.lastSnapCursor === round.eventCursor) {
+        return;
+      }
+
+      const extraStake = round.stake;
+
+      if (!spendEnergy(extraStake)) {
+        showToast(
+          `위험 증액에 ${formatNumber(extraStake)} 생명력이 더 필요합니다.`
+        );
+        return;
+      }
+
+      round.stake += extraStake;
+      round.risk *= 2;
+      round.lastSnapCursor = round.eventCursor;
+
+      round.log.unshift(
+        `⚡ 위험 증액! 판돈 ${formatNumber(round.stake)} · 위험도 ×${round.risk}`
+      );
+
+      if (navigator.vibrate) {
+        navigator.vibrate([30, 30, 45]);
+      }
+
+      continueRound();
+    }
+
+    function retreatRound() {
+      if (!round || round.phase !== "decision") return;
+
+      const refund = Math.floor(round.stake * 0.8);
+      const loss = round.stake - refund;
+
+      state.energy += refund;
+      state.retreats += 1;
+      state.roundsPlayed += 1;
+      state.streak = 0;
+
+      round.phase = "resolved";
+      round.result = {
+        type: "retreat",
+        title: "🏃 작은 손실로 철수",
+        detail:
+          `${formatNumber(refund)}을 회수하고 ` +
+          `${formatNumber(loss)}만 잃었습니다.`,
+        shareLine:
+          `철수 · -${formatNumber(loss)} 생명력 · 위험도 ×${round.risk}`
+      };
+
+      round.log.unshift(
+        `🏃 철수: ${formatNumber(refund)} 회수`
+      );
+
+      saveGame();
+      updateUI();
+    }
+
+    function resolveRound() {
+      if (!round) return;
+
+      const winnerIndex = maxIndex(round.scores);
+      const winner = SPECIES[winnerIndex];
+      const selected = SPECIES[round.selected];
+
+      const won = winnerIndex === round.selected;
+
+      state.roundsPlayed += 1;
+
+      if (won) {
+        const payout = Math.floor(
+          round.stake * round.odds[round.selected]
+        );
+
+        const netProfit = payout - round.stake;
+
+        addEnergy(payout);
+
+        state.wins += 1;
+        state.streak += 1;
+        state.bestStreak = Math.max(
+          state.bestStreak,
+          state.streak
+        );
+
+        round.result = {
+          type: "win",
+          title: `🎉 ${selected.emoji} 예측 성공`,
+          detail:
+            `보상 ×${formatMultiplier(round.odds[round.selected])} · ` +
+            `순이익 +${formatNumber(netProfit)} 생명력`,
+          shareLine:
+            `${selected.emoji} 적중 · 위험도 ×${round.risk} · ` +
+            `+${formatNumber(netProfit)} 생명력`
+        };
+
+        round.log.unshift(
+          `🏆 ${winner.emoji} ${winner.name} 승리 · ` +
+          `+${formatNumber(netProfit)}`
+        );
+
+        unlockAchievement("firstWin");
+
+        if (round.risk >= 4) {
+          unlockAchievement("bigWin");
+        }
+
+        if (navigator.vibrate) {
+          navigator.vibrate([50, 40, 80]);
+        }
+      } else {
+        state.losses += 1;
+        state.streak = 0;
+
+        round.result = {
+          type: "loss",
+          title: `${winner.emoji} ${winner.name} 번성`,
+          detail:
+            `${selected.emoji} 예측 실패 · ` +
+            `${formatNumber(round.stake)} 생명력을 잃었습니다.`,
+          shareLine:
+            `${selected.emoji} 실패 · 실제 승자 ${winner.emoji} · ` +
+            `위험도 ×${round.risk}`
+        };
+
+        round.log.unshift(
+          `📉 실제 승자: ${winner.emoji} ${winner.name}`
+        );
+
+        if (navigator.vibrate) {
+          navigator.vibrate(60);
+        }
+      }
+
+      round.winnerIndex = winnerIndex;
+      round.phase = "resolved";
+
+      saveGame();
+      updateUI();
+    }
+
+    function nextRound() {
+      if (!round || round.phase !== "resolved") return;
+      createRound();
+    }
+
+    async function shareResult() {
+      if (!round || !round.result) return;
+
+      let text =
+        `🌿 야생 예측소 #${round.id}\n` +
+        `${round.result.shareLine}\n` +
+        `🌾 → 🐭 → 🐍 → 🦅`;
+
+      if (location.protocol.startsWith("http")) {
+        text += `\n${location.href.split("?")[0]}`;
+      }
+
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: "야생 예측소 결과",
+            text
+          });
+
+          return;
+        }
+
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(text);
+          showToast("결과를 클립보드에 복사했습니다.");
+          return;
+        }
+
+        window.prompt("결과를 복사하세요.", text);
+      } catch (error) {
+        if (error?.name !== "AbortError") {
+          window.prompt("결과를 복사하세요.", text);
+        }
+      }
+    }
+
+    function gatherEnergy(event) {
+      const amount = clickPower();
+
+      addEnergy(amount);
+      createFloatingNumber(event, amount);
+      updateUI();
+    }
+
+    function createFloatingNumber(event, amount) {
+      const element = document.createElement("span");
+      const rect = gatherArea.getBoundingClientRect();
+
+      let x = rect.width / 2;
+      let y = rect.height / 2;
+
+      if (event && event.clientX) {
+        x = event.clientX - rect.left;
+        y = event.clientY - rect.top;
+      }
+
+      element.className = "floating-number";
+      element.textContent = `+${formatNumber(amount)}`;
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+
+      gatherArea.appendChild(element);
+
+      window.setTimeout(() => {
+        element.remove();
+      }, 850);
+    }
+
+    function buyClickUpgrade() {
+      const cost = clickUpgradeCost();
+
+      if (!spendEnergy(cost)) return;
+
+      state.clickLevel += 1;
+
+      saveGame();
+      updateUI();
+    }
+
+    function buyGenerator(index) {
+      const cost = generatorCost(index);
+
+      if (!spendEnergy(cost)) return;
+
+      state.generators[index] += 1;
+
+      saveGame();
+      updateUI();
+    }
+
+    function prestigeGain() {
+      return Math.floor(
+        Math.sqrt(state.runEarned / 5000)
+      );
+    }
+
+    function prestige() {
+      const gain = prestigeGain();
+
+      if (gain < 1) return;
+
+      const confirmed = confirm(
+        `현재 시설과 생명력을 초기화하고 유전자 ${gain}개를 얻을까요?\n\n` +
+        `유전자 하나마다 생산과 클릭이 영구적으로 15% 증가합니다.`
+      );
+
+      if (!confirmed) return;
+
+      state.genes += gain;
+      state.energy = 50;
+      state.runEarned = 50;
+      state.clickLevel = 1;
+      state.generators = [0, 0, 0];
+      state.boostUntil = 0;
+
+      unlockAchievement("firstGene");
+
+      round = null;
+      createRound();
+
+      showToast(
+        `🧬 재구성 완료! 영구 배율 ×${formatMultiplier(geneMultiplier())}`
+      );
+    }
+
+    function showBonus() {
+      bonusVisible = true;
+      bonusExpiresAt = Date.now() + 8000;
+
+      const maxX = Math.max(0, gatherArea.clientWidth - 65);
+      const maxY = Math.max(0, gatherArea.clientHeight - 65);
+
+      bonusOrb.style.left = `${randomBetween(0, maxX)}px`;
+      bonusOrb.style.top = `${randomBetween(0, maxY)}px`;
+      bonusOrb.classList.add("show");
+    }
+
+    function hideBonus() {
+      bonusVisible = false;
+      bonusExpiresAt = 0;
+      bonusOrb.classList.remove("show");
+
+      nextBonusAt =
+        Date.now() + randomBetween(22000, 45000);
+    }
+
+    function claimBonus() {
+      if (!bonusVisible) return;
+
+      const baseProduction = productionPerSecond(false);
+
+      const reward = Math.max(
+        30,
+        baseProduction * 15 + clickPower() * 20
+      );
+
+      addEnergy(reward);
+      state.boostUntil = Date.now() + 10000;
+
+      hideBonus();
+
+      if (navigator.vibrate) {
+        navigator.vibrate([30, 25, 70]);
+      }
+
+      showToast(
+        `✨ +${formatNumber(reward)} · 10초 동안 생산 3배`
+      );
+
+      updateUI();
+    }
+
+    function unlockAchievement(id) {
+      if (state.achievements[id]) return;
+
+      const definition = ACHIEVEMENTS.find(
+        achievement => achievement.id === id
+      );
+
+      if (!definition) return;
+
+      state.achievements[id] = true;
+      addEnergy(definition.reward);
+
+      showToast(
+        `업적 달성: ${definition.name} · +${definition.reward}`
+      );
+    }
+
+    function checkAutomaticAchievements() {
+      if (state.totalEarned >= 100) {
+        unlockAchievement("collector");
+      }
+
+      if (state.wins >= 1) {
+        unlockAchievement("firstWin");
+      }
+
+      if (state.genes >= 1) {
+        unlockAchievement("firstGene");
+      }
+    }
+
+    function renderUpgrades() {
+      const clickCost = clickUpgradeCost();
+
+      let html = `
+        <button
+          class="upgrade-card"
+          type="button"
+          onclick="buyClickUpgrade()"
+          ${state.energy < clickCost ? "disabled" : ""}
+        >
+          <span class="upgrade-icon">🧤</span>
+
+          <span>
+            <span class="upgrade-name">
+              채집 도구 Lv.${state.clickLevel}
+            </span>
+
+            <span class="upgrade-desc">
+              클릭 위력 ×2 · 현재 +${formatNumber(clickPower())}
+            </span>
+          </span>
+
+          <span class="upgrade-cost">
+            ${formatNumber(clickCost)}
+          </span>
+        </button>
+      `;
+
+      GENERATORS.forEach((generator, index) => {
+        const cost = generatorCost(index);
+        const owned = state.generators[index];
+
+        html += `
+          <button
+            class="upgrade-card"
+            type="button"
+            onclick="buyGenerator(${index})"
+            ${state.energy < cost ? "disabled" : ""}
+          >
+            <span class="upgrade-icon">${generator.icon}</span>
+
+            <span>
+              <span class="upgrade-name">
+                ${generator.name} ×${owned}
+              </span>
+
+              <span class="upgrade-desc">
+                ${generator.description} ·
+                현재 +${formatNumber(generator.cps * owned)}/s
+              </span>
+            </span>
+
+            <span class="upgrade-cost">
+              ${formatNumber(cost)}
+            </span>
+          </button>
+        `;
+      });
+
+      upgradeList.innerHTML = html;
+    }
+
+    function renderRound() {
+      if (!round) return;
+
+      const stateLabels = {
+        betting: "동물을 선택하세요",
+        running: "사건을 관측하는 중…",
+        decision: "계속할지 결정하세요",
+        resolved: "관측 종료"
+      };
+
+      roundNumber.textContent = `라운드 #${round.id}`;
+      roundState.textContent = stateLabels[round.phase];
+
+      const visibleEvent = EVENTS[round.visibleEventIndex];
+
+      let eventHtml = `
+        <span class="event-chip visible">
+          ${visibleEvent.icon} ${visibleEvent.name}
+        </span>
+      `;
+
+      round.revealedEventIndices.forEach(eventIndex => {
+        const event = EVENTS[eventIndex];
+
+        eventHtml += `
+          <span class="event-chip visible">
+            ${event.icon} ${event.name}
+          </span>
+        `;
+      });
+
+      const hiddenCount =
+        round.hiddenEventIndices.length -
+        round.revealedEventIndices.length;
+
+      for (let i = 0; i < hiddenCount; i++) {
+        eventHtml += `
+          <span class="event-chip hidden">
+            ❔ 미공개
+          </span>
+        `;
+      }
+
+      eventTrack.innerHTML = eventHtml;
+
+      speciesList.innerHTML = SPECIES.map((species, index) => {
+        const selected = round.selected === index;
+        const winner =
+          round.phase === "resolved" &&
+          round.winnerIndex === index;
+
+        const score = clamp(round.scores[index], 0, 100);
+        const probability = Math.round(
+          round.probabilities[index] * 100
+        );
+
+        return `
+          <button
+            type="button"
+            class="
+              species-card
+              ${round.phase === "betting" ? "selectable" : ""}
+              ${selected ? "selected" : ""}
+              ${winner ? "winner" : ""}
+            "
+            onclick="selectSpecies(${index})"
+            aria-pressed="${selected}"
+          >
+            <span class="species-emoji">
+              ${species.emoji}
+            </span>
+
+            <span class="species-name">
+              ${species.name}
+            </span>
+
+            <span class="species-rule">
+              ${species.rule}
+            </span>
+
+            <span class="vitality">
+              <span
+                style="
+                  width: ${score}%;
+                  background: ${species.color};
+                "
+              ></span>
+            </span>
+
+            <span class="species-odds">
+              번성도 ${Math.round(score)}<br>
+              승산 ${probability}% ·
+              <strong>
+                ×${formatMultiplier(round.odds[index])}
+              </strong>
+            </span>
+          </button>
+        `;
+      }).join("");
+
+      if (round.phase === "betting") {
+        const selectedText =
+          round.selected === null
+            ? "예측할 동물을 선택하세요."
+            : `${SPECIES[round.selected].emoji} ` +
+              `${SPECIES[round.selected].name} 선택 · ` +
+              `보상 ×${formatMultiplier(round.odds[round.selected])}`;
+
+        betControls.hidden = false;
+        decisionControls.hidden = true;
+
+        betControls.innerHTML = `
+          <p class="control-message">
+            ${selectedText}
+          </p>
+
+          <div class="button-row">
+            <button
+              class="action-btn green"
+              type="button"
+              onclick="startPrediction('small')"
+              ${state.energy < 5 || round.selected === null ? "disabled" : ""}
+            >
+              소액<br>
+              ${formatNumber(getStake("small"))}
+            </button>
+
+            <button
+              class="action-btn"
+              type="button"
+              onclick="startPrediction('quarter')"
+              ${state.energy < 5 || round.selected === null ? "disabled" : ""}
+            >
+              25%<br>
+              ${formatNumber(getStake("quarter"))}
+            </button>
+
+            <button
+              class="action-btn yellow"
+              type="button"
+              onclick="startPrediction('half')"
+              ${state.energy < 5 || round.selected === null ? "disabled" : ""}
+            >
+              50%<br>
+              ${formatNumber(getStake("half"))}
+            </button>
+          </div>
+        `;
+      } else {
+        betControls.hidden = true;
+
+        if (round.phase === "decision") {
+          const seconds = Math.max(
+            0,
+            Math.ceil(
+              (round.decisionDeadline - Date.now()) / 1000
+            )
+          );
+
+          const canRaise =
+            round.risk < 4 &&
+            round.lastSnapCursor !== round.eventCursor &&
+            state.energy >= round.stake;
+
+          decisionControls.hidden = false;
+
+          decisionControls.innerHTML = `
+            <p class="control-message">
+              판돈 ${formatNumber(round.stake)} ·
+              위험도 ×${round.risk} ·
+              ${seconds}초 후 자동 관측
+            </p>
+
+            <div class="button-row">
+              <button
+                class="action-btn yellow"
+                type="button"
+                onclick="raiseStake()"
+                ${canRaise ? "" : "disabled"}
+              >
+                ⚡ 위험 2배
+              </button>
+
+              <button
+                class="action-btn gray"
+                type="button"
+                onclick="continueRound()"
+              >
+                👁️ 유지
+              </button>
+
+              <button
+                class="action-btn red"
+                type="button"
+                onclick="retreatRound()"
+              >
+                🏃 80% 회수
+              </button>
+            </div>
+          `;
+        } else if (round.phase === "running") {
+          decisionControls.hidden = false;
+
+          decisionControls.innerHTML = `
+            <p class="control-message">
+              다음 생태 사건을 관측하고 있습니다…
+            </p>
+          `;
+        } else {
+          decisionControls.hidden = false;
+
+          decisionControls.innerHTML = `
+            <div class="button-row" style="grid-template-columns: 1fr 1fr">
+              <button
+                class="action-btn"
+                type="button"
+                onclick="shareResult()"
+              >
+                📤 결과 공유
+              </button>
+
+              <button
+                class="action-btn green"
+                type="button"
+                onclick="nextRound()"
+              >
+                다음 생태계
+              </button>
+            </div>
+          `;
+        }
+      }
+
+      if (round.result) {
+        resultBox.classList.add("show");
+
+        resultBox.innerHTML = `
+          <div class="result-title">
+            ${round.result.title}
+          </div>
+
+          <div class="result-detail">
+            ${round.result.detail}<br>
+            라운드 시드: ${round.seed}
+          </div>
+        `;
+      } else {
+        resultBox.classList.remove("show");
+        resultBox.innerHTML = "";
+      }
+
+      roundLog.innerHTML = round.log
+        .slice(0, 5)
+        .map(message => `<li>${message}</li>`)
+        .join("");
+    }
+
+    function renderPrestige() {
+      const gain = prestigeGain();
+
+      geneCountEl.textContent = formatNumber(state.genes);
+
+      if (gain > 0) {
+        prestigeDesc.textContent =
+          `지금 재구성하면 유전자 ${gain}개 획득 · ` +
+          `영구 생산 배율 ×${formatMultiplier(
+            1 + (state.genes + gain) * 0.15
+          )}`;
+      } else {
+        const remaining = Math.max(
+          0,
+          5000 - state.runEarned
+        );
+
+        prestigeDesc.textContent =
+          `첫 유전자까지 생명력 ${formatNumber(remaining)} 필요 · ` +
+          `유전자 하나마다 생산과 클릭 +15%`;
+      }
+
+      prestigeBtn.disabled = gain < 1;
+      prestigeBtn.textContent =
+        gain > 0 ? `유전자 +${gain}` : "재구성";
+    }
+
+    function renderAchievements() {
+      const unlockedCount = ACHIEVEMENTS.filter(
+        achievement => state.achievements[achievement.id]
+      ).length;
+
+      achievementCount.textContent =
+        `${unlockedCount}/${ACHIEVEMENTS.length}`;
+
+      achievementList.innerHTML = ACHIEVEMENTS.map(
+        achievement => {
+          const unlocked =
+            Boolean(state.achievements[achievement.id]);
+
+          return `
+            <div class="achievement ${unlocked ? "" : "locked"}">
+              <div class="achievement-name">
+                ${achievement.name}
+              </div>
+
+              <div class="achievement-desc">
+                ${achievement.description}<br>
+                보상 +${achievement.reward}
+              </div>
+            </div>
+          `;
+        }
+      ).join("");
+    }
+
+    function updateUI() {
+      checkAutomaticAchievements();
+
+      const cps = productionPerSecond();
+      const boostRemaining = Math.max(
+        0,
+        state.boostUntil - Date.now()
+      );
+
+      energyEl.textContent = formatNumber(state.energy);
+      cpsEl.textContent = `${formatNumber(cps)}/s`;
+      geneEl.textContent =
+        `×${formatMultiplier(geneMultiplier())}`;
+
+      clickInfo.textContent =
+        `클릭당 +${formatNumber(clickPower())}`;
+
+      if (boostRemaining > 0) {
+        boostEl.textContent =
+          `✨ 생산 폭주 ×3 · ${(boostRemaining / 1000).toFixed(1)}초`;
+      } else {
+        boostEl.textContent = "";
+      }
+
+      recordEl.textContent =
+        `전적 ${state.wins}승 ${state.losses}패 · ` +
+        `최고 연승 ${state.bestStreak}`;
+
+      renderUpgrades();
+      renderRound();
+      renderPrestige();
+      renderAchievements();
+    }
+
+    function processElapsedTime() {
+      const now = Date.now();
+
+      const elapsedSeconds = clamp(
+        (now - lastTick) / 1000,
+        0,
+        8 * 60 * 60
+      );
+
+      lastTick = now;
+
+      const generated =
+        productionPerSecond() * elapsedSeconds;
+
+      if (generated > 0) {
+        addEnergy(generated);
+      }
+    }
+
+    function tickRound(now) {
+      if (!round) return;
+
+      if (
+        round.phase === "running" &&
+        now >= round.nextRevealAt
+      ) {
+        revealNextEvent();
+      }
+
+      if (
+        round.phase === "decision" &&
+        now >= round.decisionDeadline
+      ) {
+        continueRound();
+      }
+    }
+
+    function tickBonus(now) {
+      if (!bonusVisible && now >= nextBonusAt) {
+        showBonus();
+      }
+
+      if (bonusVisible && now >= bonusExpiresAt) {
+        hideBonus();
+      }
+    }
+
+    function saveGame() {
+      try {
+        state.lastSeen = Date.now();
+
+        localStorage.setItem(
+          SAVE_KEY,
+          JSON.stringify({
+            state,
+            round
+          })
+        );
+      } catch (error) {
+        if (!storageFailureShown) {
+          storageFailureShown = true;
+          showToast("저장을 사용할 수 없는 브라우저 환경입니다.");
+        }
+      }
+    }
+
+    function loadGame() {
+      let loadedPayload = null;
+
+      try {
+        const saved = localStorage.getItem(SAVE_KEY);
+
+        if (saved) {
+          loadedPayload = JSON.parse(saved);
+        }
+      } catch {
+        loadedPayload = null;
+      }
+
+      if (loadedPayload) {
+        const loadedState =
+          loadedPayload.state || loadedPayload;
+
+        state = {
+          ...structuredCloneSafe(DEFAULT_STATE),
+          ...loadedState
+        };
+
+        state.generators = [
+          ...(loadedState.generators || [0, 0, 0])
+        ].slice(0, GENERATORS.length);
+
+        while (state.generators.length < GENERATORS.length) {
+          state.generators.push(0);
+        }
+
+        state.achievements = {
+          ...(loadedState.achievements || {})
+        };
+
+        round = loadedPayload.round || null;
+      } else {
+        /*
+          사용자가 제공한 기존 idleSave 데이터가 있으면
+          생명력과 첫 생산 시설로 자동 이전한다.
+        */
+        try {
+          const oldSave = JSON.parse(
+            localStorage.getItem(OLD_SAVE_KEY) || "null"
+          );
+
+          if (oldSave) {
+            state.energy = Number(oldSave.coin) || 50;
+            state.totalEarned = Math.max(50, state.energy);
+            state.runEarned = Math.max(50, state.energy);
+            state.generators[0] = Number(oldSave.auto) || 0;
+          }
+        } catch {
+          // 이전 저장 데이터가 손상되었으면 기본 상태 사용
+        }
+      }
+
+      const now = Date.now();
+
+      const elapsedSeconds = clamp(
+        (now - (state.lastSeen || now)) / 1000,
+        0,
+        8 * 60 * 60
+      );
+
+      offlineGain =
+        productionPerSecond(false) * elapsedSeconds;
+
+      if (offlineGain > 0) {
+        addEnergy(offlineGain);
+      }
+
+      state.lastSeen = now;
+      lastTick = now;
+
+      if (!round) {
+        createRound();
+      } else {
+        state.roundSerial = Math.max(
+          state.roundSerial,
+          round.id || 0
+        );
+
+        if (round.phase === "running") {
+          round.nextRevealAt = now + 700;
+        }
+
+        if (round.phase === "decision") {
+          round.decisionDeadline = Math.max(
+            now + 1000,
+            round.decisionDeadline || 0
+          );
+        }
+      }
+    }
+
+    function resetGame() {
+      const confirmed = confirm(
+        "생명력, 시설, 예측 기록과 유전자를 모두 초기화할까요?"
+      );
+
+      if (!confirmed) return;
+
+      localStorage.removeItem(SAVE_KEY);
+      localStorage.removeItem(OLD_SAVE_KEY);
+
+      location.reload();
+    }
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+
+      toastTimer = setTimeout(() => {
+        toastEl.classList.remove("show");
+      }, 2600);
+    }
+
+    function gameLoop() {
+      const now = Date.now();
+
+      processElapsedTime();
+      tickRound(now);
+      tickBonus(now);
+
+      if (now - lastRender >= 200) {
+        lastRender = now;
+        updateUI();
+      }
+
+      if (now - lastSave >= 5000) {
+        lastSave = now;
+        saveGame();
+      }
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        processElapsedTime();
+        saveGame();
+      } else {
+        processElapsedTime();
+        updateUI();
+      }
+    });
+
+    window.addEventListener("pagehide", () => {
+      processElapsedTime();
+      saveGame();
+    });
+
+    loadGame();
     updateUI();
-  }
-}
 
-// ════════════════════════════════════════
-//  초기화
-// ════════════════════════════════════════
-load();
-updateUI();
-checkAchievements();
-setInterval(gameTick, 200);      // 0.2초마다 CPS 반영
-setInterval(save, 10000);        // 10초마다 자동 저장
-</script>
+    if (offlineGain >= 1) {
+      setTimeout(() => {
+        showToast(
+          `돌아온 동안 생명력 +${formatNumber(offlineGain)}`
+        );
+      }, 350);
+    }
+
+    setInterval(gameLoop, 100);
+  </script>
 </body>
 </html>
