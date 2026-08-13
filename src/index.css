@@ -1,0 +1,365 @@
+@import "tailwindcss";
+
+/* =====================================================================
+   폰트 정책 — 어떤 모바일 환경에서도 깨지지 않는 시스템 폰트 스택
+   · 외부 웹폰트(CDN)를 전혀 사용하지 않습니다.
+   · 기기 OS에 내장된 폰트만 순서대로 폴백 → 로딩 실패/FOUT 자체가 없음
+   · iOS  → SF Pro / Apple SD Gothic Neo
+   · Android → Roboto / Noto CJK (system-ui 폴백)
+   · Windows → Segoe UI / Malgun Gothic
+   ===================================================================== */
+:root {
+  color-scheme: dark;
+  --font-stack:
+    -apple-system, BlinkMacSystemFont, system-ui, "SF Pro Text", "Segoe UI", Roboto,
+    "Helvetica Neue", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "NanumGothic",
+    sans-serif;
+}
+
+html {
+  font-family: var(--font-stack);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  background: #08081a;
+  color: #e2e8f0;
+  font-family: var(--font-stack);
+  overflow-x: hidden;
+  overscroll-behavior: none; /* 탭 연타 중 당겨서 새로고침 방지 */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none; /* 길게 눌러도 컨텍스트 메뉴 방지 */
+}
+
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button {
+  touch-action: manipulation; /* 300ms 딜레이 & 더블탭 줌 제거 */
+  cursor: pointer;
+}
+
+::selection {
+  background: rgba(249, 199, 79, 0.35);
+  color: #fff;
+}
+
+/* 숫자는 고정폭 자리 정렬 (흔들림 방지) */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ===== 배경 그리드 ===== */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 50% 38%, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 38%, black 20%, transparent 75%);
+}
+
+/* ===== 키프레임 ===== */
+
+/* 오로라 오브 표류 */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(46px, -34px) scale(1.08);
+  }
+  66% {
+    transform: translate(-36px, 26px) scale(0.94);
+  }
+}
+.animate-drift {
+  animation: drift 26s ease-in-out infinite;
+}
+
+/* 떠오르는 입자 */
+@keyframes rise {
+  0% {
+    transform: translateY(12vh);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--p-opacity, 0.7);
+  }
+  90% {
+    opacity: var(--p-opacity, 0.7);
+  }
+  100% {
+    transform: translateY(-108vh);
+    opacity: 0;
+  }
+}
+.animate-rise {
+  animation: rise linear infinite;
+}
+
+/* 둥실둥실 */
+@keyframes floatBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+.animate-float {
+  animation: floatBob 5s ease-in-out infinite;
+}
+
+/* 팝 인 */
+@keyframes popIn {
+  0% {
+    transform: scale(0.55);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-pop {
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* 카드 등장 */
+@keyframes fadeUp {
+  0% {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-fade-up {
+  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 흐르는 골드 텍스트 */
+@keyframes gradFlow {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+.text-shimmer {
+  background: linear-gradient(90deg, #f9c74f, #fff8dc, #ffd166, #f9c74f, #fff8dc);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradFlow 5s linear infinite;
+}
+
+/* 카운터 살짝 튕김 */
+@keyframes counterPop {
+  0% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-counter {
+  animation: counterPop 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 코인 아우라 */
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.06);
+  }
+}
+.animate-glow {
+  animation: glowPulse 2.6s ease-in-out infinite;
+}
+
+/* 코인 표면 광택 회전 */
+@keyframes spinSlow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+/* 탭 링 (터진 물결) */
+@keyframes tapRing {
+  0% {
+    transform: translate(-50%, -50%) scale(0.35);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.2);
+    opacity: 0;
+  }
+}
+.tap-ring {
+  animation: tapRing 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* 스파클 비산 */
+@keyframes sparkleFly {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0.15)
+      rotate(160deg);
+    opacity: 0;
+  }
+}
+.sparkle {
+  animation: sparkleFly 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* +1 플로터 */
+@keyframes floatPlus {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--tx)), calc(-50% - 76px)) scale(1.25);
+    opacity: 0;
+  }
+}
+.float-plus {
+  animation: floatPlus 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* 구매 버튼 광택 스윕 */
+@keyframes shimmerSweep {
+  0% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 250% 0;
+  }
+}
+.btn-shimmer {
+  background: linear-gradient(
+    110deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 62%
+  );
+  background-size: 250% 100%;
+  animation: shimmerSweep 2.6s linear infinite;
+}
+
+/* 구매 가능 펄스 */
+@keyframes buyPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 199, 79, 0);
+  }
+  50% {
+    box-shadow: 0 0 34px -6px rgba(249, 199, 79, 0.55);
+  }
+}
+.animate-buy-pulse {
+  animation: buyPulse 2s ease-in-out infinite;
+}
+
+/* 구매 불가 흔들림 */
+@keyframes shakeX {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+.animate-shake {
+  animation: shakeX 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* 자동 생산 이퀄라이저 바 */
+@keyframes eq {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.eq-bar {
+  transform-origin: center bottom;
+  animation: eq 0.9s ease-in-out infinite;
+}
+
+/* ===== 코인 외형 ===== */
+.coin-face {
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 44%),
+    radial-gradient(circle at 50% 46%, #ffe9a8 0%, #f9c74f 46%, #e0a52a 76%, #b8860b 100%);
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 255, 255, 0.28),
+    inset 0 -16px 26px rgba(122, 70, 0, 0.4),
+    inset 0 12px 22px rgba(255, 255, 255, 0.3),
+    0 22px 46px -14px rgba(249, 199, 79, 0.45);
+}
+
+.coin-sheen {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.55) 40deg,
+    transparent 95deg,
+    transparent 200deg,
+    rgba(255, 255, 255, 0.4) 255deg,
+    transparent 310deg
+  );
+  filter: blur(6px);
+  opacity: 0.75;
+}
