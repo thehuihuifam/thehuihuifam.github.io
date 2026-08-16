@@ -85,8 +85,7 @@ body{
 
 ::selection{background:rgba(192,57,43,.14)}
 
-/* ---------- 진행 바 (선택 사항) ----------
-   사용하지 않으려면 JS의 ENABLE_PROGRESS_BAR 를 false 로 바꾸세요. */
+/* ---------- 진행 바 ---------- */
 #progress{
   position:fixed;top:0;left:0;
   height:2px;width:0%;
@@ -122,56 +121,6 @@ body{
   max-width:660px;
   margin:0 auto;
   padding:0 clamp(24px,5vw,48px);
-}
-
-/* ---------- 읽음 수 · 좋아요 ---------- */
-.readers-row{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:1.2em;
-  flex-wrap:wrap;
-  margin-bottom:2.6em;
-  font-family:"Noto Sans KR",system-ui,sans-serif;
-  font-weight:300;
-  font-size:0.78rem;
-  letter-spacing:0.04em;
-  color:var(--muted);
-}
-.readers-row .readers{
-  display:inline-flex;
-  align-items:center;
-  gap:0.35em;
-  white-space:nowrap;
-}
-#likeBtn{
-  display:inline-flex;
-  align-items:center;
-  gap:0.4em;
-  white-space:nowrap;
-  border:1px solid var(--rule);
-  border-radius:999px;
-  background:transparent;
-  padding:0.4em 1em;
-  color:var(--muted);
-  font-family:inherit;
-  font-size:inherit;
-  font-weight:300;
-  letter-spacing:0.04em;
-  cursor:pointer;
-  transition:color .3s ease,border-color .3s ease,background-color .3s ease;
-}
-#likeBtn:hover{
-  color:var(--fg);
-  border-color:var(--muted);
-}
-#likeBtn:focus-visible{
-  outline:2px solid var(--accent);
-  outline-offset:3px;
-}
-#likeBtn.liked{
-  color:var(--accent);
-  border-color:var(--accent);
 }
 
 /* ---------- 헤더 ---------- */
@@ -223,11 +172,11 @@ h1.title{
 /* ---------- 본문 ---------- */
 article p{
   margin:0 0 1.8em;
-  text-indent:2em;          /* 문단 첫머리 2칸 들여쓰기 */
+  text-indent:1em;          /* 문단 첫머리 1칸 들여쓰기 */
 }
 article p:last-child{margin-bottom:0}
 
-/* 대사: 들여쓰기 없이, 따옴표 유지, 앞뒤 여백 */
+/* 대사: 들여쓰기 없이 */
 p.dialogue{
   margin:.8em 0;
   text-indent:0;
@@ -239,7 +188,7 @@ p.solo{
   text-indent:0;
 }
 
-/* 마지막 문장: 본문과 같은 크기, 여백이 무게를 만든다 */
+/* 마지막 문장 */
 p.closing{
   margin-top:2.5em;
   margin-bottom:0;
@@ -256,10 +205,9 @@ p.closing{
   font-size:11px;
   letter-spacing:.5em;
   text-indent:.5em;
-  text-indent:0;
 }
 
-/* 장면 전환: <hr> 을 ○ 로 대체 */
+/* 장면 전환 */
 hr.scene{
   border:0;
   height:0;
@@ -288,14 +236,53 @@ hr.scene::before{
   color:var(--meter);
   transition:color .4s ease;
 }
-/* 04891, 04891, 04891 — 서서히 옅어짐 */
 .rep-1{opacity:1}
 .rep-2{opacity:.65}
 .rep-3{opacity:.35}
 
+/* ---------- 좋아요 ---------- */
+.like-row{
+  display:flex;
+  justify-content:center;
+  margin:4.5em 0 0;
+}
+
+#likeBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:0.5em;
+  border:0;
+  background:transparent;
+  padding:0;
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-weight:300;
+  font-size:0.8rem;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  cursor:pointer;
+  transition:color .25s ease;
+}
+#likeBtn:hover{
+  color:var(--fg);
+}
+#likeBtn:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:6px;
+}
+#likeBtn .heart{
+  font-style:normal;
+  transition:color .25s ease;
+}
+#likeBtn.liked{
+  color:var(--accent);
+}
+#likeBtn.liked .heart{
+  color:var(--accent);
+}
+
 /* ---------- 푸터 ---------- */
 footer.colophon{
-  margin-top:4.5em;
+  margin-top:3.5em;
   padding:2.6em 0 calc(3em + env(safe-area-inset-bottom));
   border-top:1px solid var(--rule);
   font-family:"Noto Sans KR",system-ui,sans-serif;
@@ -326,8 +313,7 @@ footer .row + .row{margin-top:.5em}
   h1.title{animation:none}
 }
 @media print{
-  /* 진행 바 · 토글이 숨김, 흑백 최적화 */
-  #progress,#themeToggle,.readers-row{display:none !important}
+  #progress,#themeToggle,.like-row{display:none !important}
   :root,:root[data-theme="dark"]{
     --bg:#ffffff;--fg:#000000;--muted:#444444;
     --rule:rgba(0,0,0,.3);--meter:#000000;--accent:#000000;
@@ -342,7 +328,6 @@ footer .row + .row{margin-top:.5em}
 </head>
 <body>
 
-<!-- 진행 바: JS의 ENABLE_PROGRESS_BAR 를 false 로 바꾸면 비활성화됩니다 -->
 <div id="progress" role="progressbar" aria-label="읽기 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
 
 <button id="themeToggle" type="button" aria-label="다크 모드 전환" title="다크 모드 전환">
@@ -353,22 +338,11 @@ footer .row + .row{margin-top:.5em}
 
   <!-- ───────────── 헤더 ───────────── -->
   <header class="masthead">
-
-    <!-- 읽음 수 · 좋아요 (실제 카운트) -->
-    <div class="readers-row">
-      <span class="readers">
-        <span aria-hidden="true">👁️</span>
-        <span id="viewerCount">—</span> 명이 읽음
-      </span>
-      <button id="likeBtn" type="button" aria-pressed="false">
-        <span aria-hidden="true">♡</span>
-        <span id="likeCount">—</span> 좋아요
-      </button>
-    </div>
-
     <p class="kicker">단편소설</p>
     <h1 class="title">계량</h1>
-    <p class="byline">민정희<span class="sep">·</span>2026. 8.</p>
+    <p class="byline">
+      민정희<span class="sep">·</span>2026. 8.<span class="sep">·</span><span id="viewerCount">—</span> 명 읽음
+    </p>
   </header>
 
   <hr class="hairline">
@@ -471,6 +445,14 @@ footer .row + .row{margin-top:.5em}
     <p class="closing">5는 작은 숫자였지만, <span class="meter">0</span>은 아니었다.</p>
 
     <p class="endmark" aria-hidden="true">○</p>
+
+    <!-- 좋아요 -->
+    <div class="like-row">
+      <button id="likeBtn" type="button" aria-pressed="false">
+        <span class="heart" aria-hidden="true">♡</span>
+        <span id="likeCount">—</span> 좋아요
+      </button>
+    </div>
   </article>
 
   <!-- ───────────── 푸터 ───────────── -->
@@ -494,15 +476,13 @@ footer .row + .row{margin-top:.5em}
   /* ============================================================
      카운터 설정
      - CountAPI(무료)를 사용해 실제 읽음 수와 좋아요 수를 집계합니다.
-     - 원하는 키가 있다면 아래 값을 바꾸세요.
-     예) "gyeryang-minjeonghee-2026"
      ============================================================ */
   var COUNTER_NAMESPACE = 'gyeryang-minjeonghee-20260816';
   var COUNTER_READ_KEY = 'reads';
   var COUNTER_LIKE_KEY = 'likes';
   var COUNTER_BASE = 'https://api.countapi.xyz';
 
-  /* ---------- 다크 모드: 시스템 설정 따름 + 토글 ---------- */
+  /* ---------- 다크 모드 ---------- */
   var root = document.documentElement;
   var toggle = document.getElementById('themeToggle');
   var icon = document.getElementById('themeIcon');
@@ -532,7 +512,6 @@ footer .row + .row{margin-top:.5em}
     });
   }
 
-  // 사용자가 직접 선택하지 않은 경우, 시스템 설정 변화를 따라간다.
   if (window.matchMedia) {
     var mq = window.matchMedia('(prefers-color-scheme: dark)');
     var onChange = function (e) {
@@ -559,13 +538,11 @@ footer .row + .row{margin-top:.5em}
       .then(function (data) { return data.value; });
   }
 
-  // 페이지 로드 시 읽음 수 1 증가
   hitCount(COUNTER_READ_KEY)
     .then(function (value) {
       if (viewerCountEl) viewerCountEl.textContent = value;
     })
     .catch(function () {
-      // 카운터 서비스 실패 시 기본값 표시
       fetchCount(COUNTER_READ_KEY)
         .then(function (value) {
           if (viewerCountEl) viewerCountEl.textContent = value;
@@ -580,7 +557,6 @@ footer .row + .row{margin-top:.5em}
   var likeCountEl = document.getElementById('likeCount');
   var LIKE_STORAGE_KEY = 'gyeryang-liked';
 
-  // 현재 좋아요 수 표시
   fetchCount(COUNTER_LIKE_KEY)
     .then(function (value) {
       if (likeCountEl) likeCountEl.textContent = value;
@@ -589,14 +565,13 @@ footer .row + .row{margin-top:.5em}
       if (likeCountEl) likeCountEl.textContent = '—';
     });
 
-  // 이미 좋아요를 눌렀는지 확인
   var alreadyLiked = false;
   try { alreadyLiked = localStorage.getItem(LIKE_STORAGE_KEY) === 'true'; } catch (e) {}
 
   if (alreadyLiked && likeBtn) {
     likeBtn.classList.add('liked');
     likeBtn.setAttribute('aria-pressed', 'true');
-    likeBtn.querySelector('span[aria-hidden]').textContent = '♥';
+    likeBtn.querySelector('.heart').textContent = '♥';
   }
 
   if (likeBtn) {
@@ -609,14 +584,13 @@ footer .row + .row{margin-top:.5em}
           if (likeCountEl) likeCountEl.textContent = value;
           likeBtn.classList.add('liked');
           likeBtn.setAttribute('aria-pressed', 'true');
-          likeBtn.querySelector('span[aria-hidden]').textContent = '♥';
+          likeBtn.querySelector('.heart').textContent = '♥';
           try { localStorage.setItem(LIKE_STORAGE_KEY, 'true'); } catch (e) {}
         })
         .catch(function () {
-          // 실패해도 UI는 유지 (서버 반영 실패일 뿐)
           likeBtn.classList.add('liked');
           likeBtn.setAttribute('aria-pressed', 'true');
-          likeBtn.querySelector('span[aria-hidden]').textContent = '♥';
+          likeBtn.querySelector('.heart').textContent = '♥';
           try { localStorage.setItem(LIKE_STORAGE_KEY, 'true'); } catch (e) {}
         });
     });
