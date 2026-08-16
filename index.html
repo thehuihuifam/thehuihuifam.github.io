@@ -6,8 +6,8 @@
 <title>계량 — 단편소설</title>
 <meta name="description" content="매달 이십일, 검침원 최은숙의 수첩에 남는 숫자들에 관한 단편소설. 5는 작은 숫자였지만, 0은 아니었다.">
 <meta name="author" content="작가 미상">
-<meta name="theme-color" content="#f5f0eb" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2ede6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171614" media="(prefers-color-scheme: dark)">
 <meta name="color-scheme" content="light dark">
 <meta name="generator" content="GitHub Pages">
 
@@ -38,62 +38,112 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Noto+Sans+KR:wght@300&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=JetBrains+Mono:wght@400&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-/* ============================================================
-   계량 — 절제된 문학지 레이아웃
-   ============================================================ */
+/* Hallmark · genre: editorial · macrostructure: Long Document · theme: Almanac · tone: literary · anchor hue: 75 · enrichment: none (typography only) · nav: N9 edge-aligned minimal · footer: Ft4 dense colophon
+   Hallmark · pre-emit critique: P5 H4 E5 S4 R5 V5 */
+
+/* ---------- 토큰 ---------- */
 :root{
-  --bg:#f5f0eb;
-  --fg:#2c2c2c;
-  --muted:#6b635a;          /* 라이트: 본문 대비 5.2:1 (AA) */
-  --rule:rgba(44,44,44,.18);
-  --meter:#1a1a1a;          /* 계량기 숫자 */
-  --accent:#c0392b;         /* 계량기 바늘 색 */
-  --toggle-bg:rgba(245,240,235,.6);
-}
-:root[data-theme="dark"]{
-  --bg:#1a1a1a;
-  --fg:#e0dcd7;
-  --muted:#a59c92;          /* 다크: 본문 대비 6.4:1 (AA) */
-  --rule:rgba(224,220,215,.18);
-  --meter:#6ba3d6;          /* 다크: 배경 대비 6.5:1 (AA) */
-  --accent:#c0392b;
-  --toggle-bg:rgba(26,26,26,.45);
+  color-scheme: light;
+
+  --color-paper: oklch(96.8% 0.012 75);
+  --color-paper-2: oklch(93.5% 0.014 75);
+  --color-rule: oklch(82% 0.010 75);
+  --color-neutral: oklch(56% 0.008 70);
+  --color-muted: oklch(40% 0.008 65);
+  --color-ink: oklch(20% 0.010 55);
+  --color-accent: oklch(52% 0.17 28);
+  --color-focus: oklch(55% 0.19 45);
+  --color-meter: var(--color-ink);
+  --toggle-bg: oklch(96.8% 0.012 75 / 0.6);
+
+  --font-display: "Gowun Batang", "Noto Serif KR", serif;
+  --font-body: "Noto Serif KR", "Gowun Batang", serif;
+  --font-outlier: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+
+  --text-micro: 0.72rem;
+  --text-small: 0.8rem;
+  --text-base: clamp(1rem, 0.9rem + 0.4vw, 1.15rem);
+  --text-title: clamp(2.4rem, 8vw, 4.2rem);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-short: 120ms;
+  --dur-med: 300ms;
 }
 
-*,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+/* 시스템 다크 모드 — 사용자가 명시적으로 라이트를 고르지 않았다면 */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+
+    --color-paper: oklch(16% 0.008 75);
+    --color-paper-2: oklch(20% 0.010 75);
+    --color-rule: oklch(32% 0.008 75);
+    --color-neutral: oklch(58% 0.006 75);
+    --color-muted: oklch(72% 0.006 70);
+    --color-ink: oklch(94% 0.005 70);
+    --color-accent: oklch(62% 0.15 28);
+    --color-focus: oklch(70% 0.19 45);
+    --color-meter: oklch(72% 0.09 240);
+    --toggle-bg: oklch(16% 0.008 75 / 0.6);
+  }
+}
+
+/* 사용자 다크 토글 */
+:root[data-theme="dark"]{
+  color-scheme: dark;
+
+  --color-paper: oklch(16% 0.008 75);
+  --color-paper-2: oklch(20% 0.010 75);
+  --color-rule: oklch(32% 0.008 75);
+  --color-neutral: oklch(58% 0.006 75);
+  --color-muted: oklch(72% 0.006 70);
+  --color-ink: oklch(94% 0.005 70);
+  --color-accent: oklch(62% 0.15 28);
+  --color-focus: oklch(70% 0.19 45);
+  --color-meter: oklch(72% 0.09 240);
+  --toggle-bg: oklch(16% 0.008 75 / 0.6);
+}
+
+/* ---------- 베이스 ---------- */
+*,*::before,*::after{ box-sizing:border-box }
+
+html{
+  overflow-x: clip;
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+}
 
 body{
   margin:0;
-  background:var(--bg);
-  color:var(--fg);
-  font-family:"Noto Serif KR","KoPub Batang",Georgia,"Times New Roman",serif;
+  overflow-x: clip;
+  background:var(--color-paper);
+  color:var(--color-ink);
+  font-family:var(--font-body);
   font-weight:400;
-  font-size:clamp(16px,4vw,19px);
-  line-height:2.0;
+  font-size:var(--text-base);
+  line-height:1.85;
   word-break:keep-all;
   overflow-wrap:break-word;
-  font-feature-settings:"palt" 1;
   text-rendering:optimizeLegibility;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
-  transition:background-color .4s ease,color .4s ease;
+  transition: background-color var(--dur-med) var(--ease-out), color var(--dur-med) var(--ease-out);
 }
 
-::selection{background:rgba(192,57,43,.14)}
-
-/* ---------- 진행 바 (선택 사항) ----------
-   사용하지 않으려면 JS의 ENABLE_PROGRESS_BAR 를 false 로 바꾸세요. */
-#progress{
-  position:fixed;top:0;left:0;
-  height:2px;width:0%;
-  background:var(--accent);
-  z-index:100;
-  will-change:width;
-}
+::selection{ background: oklch(52% 0.17 28 / 0.16); }
 
 /* ---------- 다크모드 토글 ---------- */
 #themeToggle{
@@ -101,191 +151,308 @@ body{
   top:calc(16px + env(safe-area-inset-top));
   right:calc(16px + env(safe-area-inset-right));
   z-index:110;
-  width:40px;height:40px;
-  display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--rule);
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--color-rule);
   border-radius:50%;
   background:var(--toggle-bg);
   backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
-  color:var(--muted);
-  font-family:"Noto Sans KR",system-ui,sans-serif;
-  font-size:14px;line-height:1;
+  color:var(--color-muted);
+  font-family:var(--font-body);
+  font-size:14px;
+  line-height:1;
   cursor:pointer;
-  transition:color .3s ease,border-color .3s ease,background-color .3s ease;
+  transition:
+    color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    background-color var(--dur-short) var(--ease-out),
+    transform var(--dur-short) var(--ease-out);
 }
-#themeToggle:hover{color:var(--fg);border-color:var(--muted)}
-#themeToggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+#themeToggle:hover{
+  color:var(--color-ink);
+  border-color:var(--color-neutral);
+}
+
+#themeToggle:focus-visible{
+  outline:2px solid var(--color-focus);
+  outline-offset:3px;
+}
+
+#themeToggle:active{
+  transform:scale(0.96);
+}
 
 /* ---------- 레이아웃 ---------- */
 .wrap{
-  max-width:660px;
+  max-width:42rem;
   margin:0 auto;
-  padding:0 clamp(24px,5vw,48px);
+  padding:0 clamp(1.5rem, 5vw, 3rem);
 }
 
 /* ---------- 헤더 ---------- */
 header.masthead{
-  padding-top:clamp(72px,14vh,140px);
-  text-align:center;
+  padding-top:clamp(4rem, 12vh, 6rem);
+  text-align:left;
 }
+
 .kicker{
-  font-family:"Noto Sans KR",system-ui,sans-serif;
-  font-weight:300;
-  font-size:11px;
-  letter-spacing:.4em;
-  text-indent:.4em;
-  color:var(--muted);
-  margin:0 0 2.6em;
+  font-family:var(--font-body);
+  font-weight:400;
+  font-size:var(--text-micro);
+  letter-spacing:0.16em;
+  color:var(--color-muted);
+  margin:0 0 var(--space-sm);
 }
+
 h1.title{
-  font-family:"Noto Sans KR",system-ui,sans-serif;
-  font-weight:300;
-  font-size:clamp(2.4rem,12vw,3.6rem);
-  letter-spacing:.32em;
-  text-indent:.32em;
-  line-height:1.3;
-  margin:0 0 .6em;
-  color:var(--fg);
-  animation:titleIn .8s ease both;   /* 유일한 로드 효과 */
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:var(--text-title);
+  letter-spacing:-0.01em;
+  line-height:1.15;
+  margin:0 0 0.2em;
+  color:var(--color-ink);
+  animation:titleIn 700ms var(--ease-out) both; /* 유일한 로드 효과 */
 }
+
 @keyframes titleIn{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:none}
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:none; }
 }
+
 .byline{
-  font-family:"Noto Sans KR",system-ui,sans-serif;
-  font-weight:300;
-  font-size:13px;
-  letter-spacing:.18em;
-  text-indent:.18em;
-  color:var(--muted);
+  font-family:var(--font-body);
+  font-weight:400;
+  font-size:0.85rem;
+  letter-spacing:0.06em;
+  color:var(--color-muted);
   margin:0;
 }
-.byline .sep{opacity:.5;padding:0 .5em}
+
+.byline .sep{
+  opacity:0.6;
+  padding:0 var(--space-xs);
+}
+
 .hairline{
   border:0;
-  height:1px;
-  background:var(--rule);
-  margin:3.4em 0 3.6em;
+  border-top:1px solid var(--color-rule);
+  margin:var(--space-2xl) 0;
 }
 
 /* ---------- 본문 ---------- */
 article p{
-  margin:0 0 1.8em;
+  margin:0 0 1.7em;
   text-indent:0;
 }
-article p:last-child{margin-bottom:0}
 
-/* 대사: 들여쓰기 없이, 따옴표 유지, 앞뒤 여백 */
-p.dialogue{margin:.8em 0}
+article p:last-child{
+  margin-bottom:0;
+}
 
-/* 홀로 놓인 낱말 */
-p.solo{margin:2em 0}
+p.dialogue{
+  margin:0.7em 0;
+}
 
-/* 마지막 문장: 본문과 같은 크기, 여백이 무게를 만든다 */
-p.closing{margin-top:2.5em;margin-bottom:0}
+p.solo{
+  margin:1.6em 0;
+}
 
-/* 장면 전환: <hr> 을 ○ 로 대체 */
+p.closing{
+  margin-top:2.2em;
+  margin-bottom:0;
+}
+
+/* 장면 전환 */
 hr.scene{
   border:0;
   height:0;
-  margin:2.5em 0;
+  margin:2.2em 0;
   text-align:center;
-  color:var(--muted);
-  opacity:.7;
+  color:var(--color-muted);
+  opacity:0.7;
   overflow:visible;
 }
+
 hr.scene::before{
   content:"○";
   display:inline-block;
-  font-size:.8em;
-  letter-spacing:.6em;
-  text-indent:.6em;
+  font-size:0.8em;
+  letter-spacing:0.6em;
+  text-indent:0.6em;
   line-height:1;
 }
 
 /* 계량기 숫자 */
 .meter{
-  font-family:"JetBrains Mono","Source Code Pro",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-family:var(--font-outlier);
   font-variant-numeric:tabular-nums;
   font-feature-settings:"tnum" 1;
-  font-size:.92em;
-  letter-spacing:.02em;
-  color:var(--meter);
-  transition:color .4s ease;
+  font-size:0.92em;
+  letter-spacing:0.02em;
+  color:var(--color-meter);
+  transition: color var(--dur-med) var(--ease-out);
 }
-/* 04891, 04891, 04891 — 서서히 옅어짐 */
-.rep-1{opacity:1}
-.rep-2{opacity:.65}
-.rep-3{opacity:.35}
+
+.rep-1{ opacity:1 }
+.rep-2{ opacity:0.65 }
+.rep-3{ opacity:0.35 }
 
 /* 끝 표시 */
 .endmark{
   text-align:center;
-  margin:4em 0 0;
-  color:var(--muted);
-  opacity:.6;
-  font-family:"Noto Sans KR",system-ui,sans-serif;
-  font-size:11px;
-  letter-spacing:.5em;
-  text-indent:.5em;
+  margin:3.5em 0 0;
+  color:var(--color-muted);
+  opacity:0.6;
+  font-family:var(--font-body);
+  font-size:0.8rem;
+  letter-spacing:0.5em;
+  text-indent:0.5em;
 }
 
 /* ---------- 푸터 ---------- */
 footer.colophon{
-  margin-top:4.5em;
-  padding:2.6em 0 calc(3em + env(safe-area-inset-bottom));
-  border-top:1px solid var(--rule);
-  font-family:"Noto Sans KR",system-ui,sans-serif;
-  font-weight:300;
-  font-size:12px;
-  letter-spacing:.06em;
+  margin-top:var(--space-2xl);
+  padding:var(--space-xl) 0 calc(3rem + env(safe-area-inset-bottom));
+  border-top:1px solid var(--color-rule);
+  font-family:var(--font-body);
+  font-weight:400;
+  font-size:0.8rem;
+  letter-spacing:0.04em;
   line-height:2.2;
-  color:var(--muted);
-  text-align:center;
+  color:var(--color-muted);
+  text-align:left;
 }
+
+footer.colophon .row{
+  display:flex;
+  align-items:baseline;
+  gap:var(--space-sm);
+  flex-wrap:wrap;
+}
+
+footer.colophon .row + .row{
+  margin-top:0.4em;
+}
+
 footer.colophon a{
-  color:var(--muted);
+  color:var(--color-muted);
   text-decoration:none;
-  border-bottom:1px solid var(--rule);
+  border-bottom:1px solid var(--color-rule);
   padding-bottom:1px;
-  display:inline-flex;align-items:center;gap:.45em;
-  transition:color .25s ease,border-color .25s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:0.45em;
+  white-space:nowrap;
+  transition:
+    color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out);
 }
-footer.colophon a:hover{color:var(--fg);border-color:var(--fg)}
-footer.colophon svg{width:14px;height:14px;fill:currentColor;display:block}
-footer .row + .row{margin-top:.5em}
+
+footer.colophon a:hover{
+  color:var(--color-ink);
+  border-color:var(--color-ink);
+}
+
+footer.colophon a:focus-visible{
+  outline:2px solid var(--color-focus);
+  outline-offset:2px;
+}
+
+footer.colophon svg{
+  width:14px;
+  height:14px;
+  fill:currentColor;
+  display:block;
+}
 
 /* ---------- 접근성 / 인쇄 ---------- */
 .visually-hidden{
-  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  white-space:nowrap;
+  border:0;
 }
-@media (prefers-reduced-motion:reduce){
-  h1.title{animation:none}
-}
-@media print{
-  /* 진행 바 · 토글이 숨김, 흑백 최적화 */
-  #progress,#themeToggle{display:none !important}
-  :root,:root[data-theme="dark"]{
-    --bg:#ffffff;--fg:#000000;--muted:#444444;
-    --rule:rgba(0,0,0,.3);--meter:#000000;--accent:#000000;
-    --toggle-bg:transparent;
+
+@media (prefers-reduced-motion: reduce){
+  h1.title{ animation:none; }
+
+  *,
+  *::before,
+  *::after{
+    transition-duration:0.01ms !important;
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
   }
-  body{background:#fff;color:#000;font-size:11pt;line-height:1.9}
-  header.masthead{padding-top:0}
-  .hairline{border-color:#000}
-  a{color:#000 !important;border:0 !important}
+}
+
+@media (max-width: 48rem){
+  header.masthead{
+    padding-top:clamp(3rem, 10vh, 4.5rem);
+  }
+
+  h1.title{
+    letter-spacing:-0.02em;
+  }
+}
+
+@media print{
+  #themeToggle{ display:none !important; }
+
+  :root,
+  :root[data-theme="dark"]{
+    --color-paper: oklch(98% 0 0);
+    --color-paper-2: oklch(93% 0 0);
+    --color-rule: oklch(70% 0 0);
+    --color-neutral: oklch(45% 0 0);
+    --color-muted: oklch(35% 0 0);
+    --color-ink: oklch(18% 0 0);
+    --color-accent: oklch(18% 0 0);
+    --color-focus: oklch(18% 0 0);
+    --color-meter: oklch(18% 0 0);
+    --toggle-bg: transparent;
+  }
+
+  body{
+    background:var(--color-paper);
+    color:var(--color-ink);
+    font-size:11pt;
+    line-height:1.9;
+  }
+
+  header.masthead{
+    padding-top:0;
+  }
+
+  .hairline,
+  footer.colophon{
+    border-color:var(--color-ink);
+  }
+
+  footer.colophon a{
+    color:var(--color-ink) !important;
+    border:0 !important;
+  }
 }
 </style>
 </head>
 <body>
 
-<!-- 진행 바: JS의 ENABLE_PROGRESS_BAR 를 false 로 바꾸면 비활성화됩니다 -->
-<div id="progress" role="progressbar" aria-label="읽기 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+<div class="visually-hidden">
+  <a href="#story">본문으로 바로가기</a>
+</div>
 
-<button id="themeToggle" type="button" aria-label="다크 모드 전환" title="다크 모드 전환">
+<button id="themeToggle" type="button" aria-label="다크 모드 전환" title="다크 모드 전환" aria-pressed="false">
   <span id="themeIcon" aria-hidden="true">◑</span>
 </button>
 
@@ -293,7 +460,6 @@ footer .row + .row{margin-top:.5em}
 
   <!-- ───────────── 헤더 ───────────── -->
   <header class="masthead">
-    <!-- 작가명은 아래 줄에서 수정하세요 -->
     <p class="kicker">단편소설</p>
     <h1 class="title">계량</h1>
     <p class="byline">작가 미상<span class="sep">·</span>2025</p>
@@ -302,7 +468,7 @@ footer .row + .row{margin-top:.5em}
   <hr class="hairline">
 
   <!-- ───────────── 본문 ───────────── -->
-  <article>
+  <article id="story">
 
     <p>매달 이십일이 가까워지면 최은숙은 무릎에 파스를 붙이고 운동화 끈을 다시 묶었다. 가방에는 단말기와 새 수첩이 들어 있었다. 이십일부터 닷새는 이 연립단지의 검침 차례였다.</p>
 
@@ -419,13 +585,7 @@ footer .row + .row{margin-top:.5em}
 (function () {
   'use strict';
 
-  /* ============================================================
-     읽기 진행 바 (Reading progress bar)
-     선택 사항: 사용하지 않으려면 아래 값을 false 로 바꾸세요.
-     ============================================================ */
-  var ENABLE_PROGRESS_BAR = true;
-
-  /* ---------- 다크 모드: 시스템 설정 따름 + 토글 ---------- */
+  /* ---------- 다크 모드 ---------- */
   var root = document.documentElement;
   var toggle = document.getElementById('themeToggle');
   var icon = document.getElementById('themeIcon');
@@ -444,6 +604,7 @@ footer .row + .row{margin-top:.5em}
 
   var stored = null;
   try { stored = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+
   var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   applyTheme(stored || (prefersDark ? 'dark' : 'light'));
 
@@ -465,31 +626,6 @@ footer .row + .row{margin-top:.5em}
     };
     if (mq.addEventListener) mq.addEventListener('change', onChange);
     else if (mq.addListener) mq.addListener(onChange);
-  }
-
-  /* ---------- 진행 바 ---------- */
-  if (ENABLE_PROGRESS_BAR) {
-    var bar = document.getElementById('progress');
-    var ticking = false;
-
-    function updateProgress() {
-      var doc = document.documentElement;
-      var scrollTop = window.pageYOffset || doc.scrollTop || 0;
-      var height = (doc.scrollHeight || document.body.scrollHeight) - window.innerHeight;
-      var pct = height > 0 ? Math.min(100, Math.max(0, (scrollTop / height) * 100)) : 0;
-      bar.style.width = pct.toFixed(2) + '%';
-      bar.setAttribute('aria-valuenow', Math.round(pct));
-      ticking = false;
-    }
-    function requestUpdate() {
-      if (!ticking) { ticking = true; window.requestAnimationFrame(updateProgress); }
-    }
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
-    updateProgress();
-  } else {
-    var el = document.getElementById('progress');
-    if (el) el.style.display = 'none';
   }
 })();
 </script>
