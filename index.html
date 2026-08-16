@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>계량 — 단편소설</title>
 <meta name="description" content="매달 이십일, 검침원 최은숙의 수첩에 남는 숫자들에 관한 단편소설. 5는 작은 숫자였지만, 0은 아니었다.">
-<meta name="author" content="작가 미상">
+<meta name="author" content="민정희">
 <meta name="theme-color" content="#f5f0eb" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
 <meta name="color-scheme" content="light dark">
@@ -27,11 +27,11 @@
   "alternateName": "Gyerang",
   "inLanguage": "ko",
   "genre": "문학 · 단편소설",
-  "author": { "@type": "Person", "name": "작가 미상" },
-  "copyrightYear": 2025,
-  "copyrightHolder": { "@type": "Person", "name": "작가 미상" },
+  "author": { "@type": "Person", "name": "민정희" },
+  "copyrightYear": 2026,
+  "copyrightHolder": { "@type": "Person", "name": "민정희" },
   "publisher": { "@type": "Organization", "name": "GitHub Pages" },
-  "datePublished": "2025-01-01",
+  "datePublished": "2026-08-01",
   "description": "매달 이십일, 검침원 최은숙의 수첩에 남는 숫자들에 관한 이야기."
 }
 </script>
@@ -124,9 +124,59 @@ body{
   padding:0 clamp(24px,5vw,48px);
 }
 
+/* ---------- 읽음 수 · 좋아요 ---------- */
+.readers-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:1.2em;
+  flex-wrap:wrap;
+  margin-bottom:2.6em;
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-weight:300;
+  font-size:0.78rem;
+  letter-spacing:0.04em;
+  color:var(--muted);
+}
+.readers-row .readers{
+  display:inline-flex;
+  align-items:center;
+  gap:0.35em;
+  white-space:nowrap;
+}
+#likeBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:0.4em;
+  white-space:nowrap;
+  border:1px solid var(--rule);
+  border-radius:999px;
+  background:transparent;
+  padding:0.4em 1em;
+  color:var(--muted);
+  font-family:inherit;
+  font-size:inherit;
+  font-weight:300;
+  letter-spacing:0.04em;
+  cursor:pointer;
+  transition:color .3s ease,border-color .3s ease,background-color .3s ease;
+}
+#likeBtn:hover{
+  color:var(--fg);
+  border-color:var(--muted);
+}
+#likeBtn:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
+#likeBtn.liked{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+
 /* ---------- 헤더 ---------- */
 header.masthead{
-  padding-top:clamp(72px,14vh,140px);
+  padding-top:clamp(56px,10vh,100px);
   text-align:center;
 }
 .kicker{
@@ -173,18 +223,41 @@ h1.title{
 /* ---------- 본문 ---------- */
 article p{
   margin:0 0 1.8em;
-  text-indent:0;
+  text-indent:2em;          /* 문단 첫머리 2칸 들여쓰기 */
 }
 article p:last-child{margin-bottom:0}
 
 /* 대사: 들여쓰기 없이, 따옴표 유지, 앞뒤 여백 */
-p.dialogue{margin:.8em 0}
+p.dialogue{
+  margin:.8em 0;
+  text-indent:0;
+}
 
 /* 홀로 놓인 낱말 */
-p.solo{margin:2em 0}
+p.solo{
+  margin:2em 0;
+  text-indent:0;
+}
 
 /* 마지막 문장: 본문과 같은 크기, 여백이 무게를 만든다 */
-p.closing{margin-top:2.5em;margin-bottom:0}
+p.closing{
+  margin-top:2.5em;
+  margin-bottom:0;
+  text-indent:0;
+}
+
+/* 끝 표시 */
+.endmark{
+  text-align:center;
+  margin:4em 0 0;
+  color:var(--muted);
+  opacity:.6;
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-size:11px;
+  letter-spacing:.5em;
+  text-indent:.5em;
+  text-indent:0;
+}
 
 /* 장면 전환: <hr> 을 ○ 로 대체 */
 hr.scene{
@@ -220,18 +293,6 @@ hr.scene::before{
 .rep-2{opacity:.65}
 .rep-3{opacity:.35}
 
-/* 끝 표시 */
-.endmark{
-  text-align:center;
-  margin:4em 0 0;
-  color:var(--muted);
-  opacity:.6;
-  font-family:"Noto Sans KR",system-ui,sans-serif;
-  font-size:11px;
-  letter-spacing:.5em;
-  text-indent:.5em;
-}
-
 /* ---------- 푸터 ---------- */
 footer.colophon{
   margin-top:4.5em;
@@ -254,7 +315,6 @@ footer.colophon a{
   transition:color .25s ease,border-color .25s ease;
 }
 footer.colophon a:hover{color:var(--fg);border-color:var(--fg)}
-footer.colophon svg{width:14px;height:14px;fill:currentColor;display:block}
 footer .row + .row{margin-top:.5em}
 
 /* ---------- 접근성 / 인쇄 ---------- */
@@ -267,7 +327,7 @@ footer .row + .row{margin-top:.5em}
 }
 @media print{
   /* 진행 바 · 토글이 숨김, 흑백 최적화 */
-  #progress,#themeToggle{display:none !important}
+  #progress,#themeToggle,.readers-row{display:none !important}
   :root,:root[data-theme="dark"]{
     --bg:#ffffff;--fg:#000000;--muted:#444444;
     --rule:rgba(0,0,0,.3);--meter:#000000;--accent:#000000;
@@ -293,10 +353,22 @@ footer .row + .row{margin-top:.5em}
 
   <!-- ───────────── 헤더 ───────────── -->
   <header class="masthead">
-    <!-- 작가명은 아래 줄에서 수정하세요 -->
+
+    <!-- 읽음 수 · 좋아요 (실제 카운트) -->
+    <div class="readers-row">
+      <span class="readers">
+        <span aria-hidden="true">👁️</span>
+        <span id="viewerCount">—</span> 명이 읽음
+      </span>
+      <button id="likeBtn" type="button" aria-pressed="false">
+        <span aria-hidden="true">♡</span>
+        <span id="likeCount">—</span> 좋아요
+      </button>
+    </div>
+
     <p class="kicker">단편소설</p>
     <h1 class="title">계량</h1>
-    <p class="byline">작가 미상<span class="sep">·</span>2025</p>
+    <p class="byline">민정희<span class="sep">·</span>2026. 8.</p>
   </header>
 
   <hr class="hairline">
@@ -404,13 +476,7 @@ footer .row + .row{margin-top:.5em}
   <!-- ───────────── 푸터 ───────────── -->
   <footer class="colophon">
     <p class="row">「계량」 · 단편소설</p>
-    <p class="row">© 2025 작가 미상. All rights reserved.</p>
-    <p class="row">
-      <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-        GitHub
-      </a>
-    </p>
+    <p class="row">© 2026 민정희. All rights reserved.</p>
   </footer>
 
 </div>
@@ -424,6 +490,17 @@ footer .row + .row{margin-top:.5em}
      선택 사항: 사용하지 않으려면 아래 값을 false 로 바꾸세요.
      ============================================================ */
   var ENABLE_PROGRESS_BAR = true;
+
+  /* ============================================================
+     카운터 설정
+     - CountAPI(무료)를 사용해 실제 읽음 수와 좋아요 수를 집계합니다.
+     - 원하는 키가 있다면 아래 값을 바꾸세요.
+     예) "gyeryang-minjeonghee-2026"
+     ============================================================ */
+  var COUNTER_NAMESPACE = 'gyeryang-shortstory';
+  var COUNTER_READ_KEY = 'reads';
+  var COUNTER_LIKE_KEY = 'likes';
+  var COUNTER_BASE = 'https://api.countapi.xyz';
 
   /* ---------- 다크 모드: 시스템 설정 따름 + 토글 ---------- */
   var root = document.documentElement;
@@ -465,6 +542,84 @@ footer .row + .row{margin-top:.5em}
     };
     if (mq.addEventListener) mq.addEventListener('change', onChange);
     else if (mq.addListener) mq.addListener(onChange);
+  }
+
+  /* ---------- 읽음 수 카운터 ---------- */
+  var viewerCountEl = document.getElementById('viewerCount');
+
+  function fetchCount(key) {
+    return fetch(COUNTER_BASE + '/get/' + COUNTER_NAMESPACE + '/' + key)
+      .then(function (res) { return res.json(); })
+      .then(function (data) { return data.value; });
+  }
+
+  function hitCount(key) {
+    return fetch(COUNTER_BASE + '/hit/' + COUNTER_NAMESPACE + '/' + key)
+      .then(function (res) { return res.json(); })
+      .then(function (data) { return data.value; });
+  }
+
+  // 페이지 로드 시 읽음 수 1 증가
+  hitCount(COUNTER_READ_KEY)
+    .then(function (value) {
+      if (viewerCountEl) viewerCountEl.textContent = value;
+    })
+    .catch(function () {
+      // 카운터 서비스 실패 시 기본값 표시
+      fetchCount(COUNTER_READ_KEY)
+        .then(function (value) {
+          if (viewerCountEl) viewerCountEl.textContent = value;
+        })
+        .catch(function () {
+          if (viewerCountEl) viewerCountEl.textContent = '—';
+        });
+    });
+
+  /* ---------- 좋아요 카운터 ---------- */
+  var likeBtn = document.getElementById('likeBtn');
+  var likeCountEl = document.getElementById('likeCount');
+  var LIKE_STORAGE_KEY = 'gyeryang-liked';
+
+  // 현재 좋아요 수 표시
+  fetchCount(COUNTER_LIKE_KEY)
+    .then(function (value) {
+      if (likeCountEl) likeCountEl.textContent = value;
+    })
+    .catch(function () {
+      if (likeCountEl) likeCountEl.textContent = '—';
+    });
+
+  // 이미 좋아요를 눌렀는지 확인
+  var alreadyLiked = false;
+  try { alreadyLiked = localStorage.getItem(LIKE_STORAGE_KEY) === 'true'; } catch (e) {}
+
+  if (alreadyLiked && likeBtn) {
+    likeBtn.classList.add('liked');
+    likeBtn.setAttribute('aria-pressed', 'true');
+    likeBtn.querySelector('span[aria-hidden]').textContent = '♥';
+  }
+
+  if (likeBtn) {
+    likeBtn.addEventListener('click', function () {
+      var liked = likeBtn.getAttribute('aria-pressed') === 'true';
+      if (liked) return;
+
+      hitCount(COUNTER_LIKE_KEY)
+        .then(function (value) {
+          if (likeCountEl) likeCountEl.textContent = value;
+          likeBtn.classList.add('liked');
+          likeBtn.setAttribute('aria-pressed', 'true');
+          likeBtn.querySelector('span[aria-hidden]').textContent = '♥';
+          try { localStorage.setItem(LIKE_STORAGE_KEY, 'true'); } catch (e) {}
+        })
+        .catch(function () {
+          // 실패해도 UI는 유지 (서버 반영 실패일 뿐)
+          likeBtn.classList.add('liked');
+          likeBtn.setAttribute('aria-pressed', 'true');
+          likeBtn.querySelector('span[aria-hidden]').textContent = '♥';
+          try { localStorage.setItem(LIKE_STORAGE_KEY, 'true'); } catch (e) {}
+        });
+    });
   }
 
   /* ---------- 진행 바 ---------- */
