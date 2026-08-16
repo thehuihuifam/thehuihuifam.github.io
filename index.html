@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>계량 — 단편소설</title>
+<meta name="description" content="매달 이십일, 검침원 최은숙의 수첩에 남는 숫자들에 관한 단편소설. 5는 작은 숫자였지만, 0은 아니었다.">
+<meta name="author" content="작가 미상">
+<meta name="theme-color" content="#f5f0eb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta name="generator" content="GitHub Pages">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="계량">
+<meta property="og:description" content="5는 작은 숫자였지만, 0은 아니었다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:article:section" content="단편소설">
+
+<!-- Schema.org: ShortStory -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ShortStory",
+  "name": "계량",
+  "alternateName": "Gyerang",
+  "inLanguage": "ko",
+  "genre": "문학 · 단편소설",
+  "author": { "@type": "Person", "name": "작가 미상" },
+  "copyrightYear": 2025,
+  "copyrightHolder": { "@type": "Person", "name": "작가 미상" },
+  "publisher": { "@type": "Organization", "name": "GitHub Pages" },
+  "datePublished": "2025-01-01",
+  "description": "매달 이십일, 검침원 최은숙의 수첩에 남는 숫자들에 관한 이야기."
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Noto+Sans+KR:wght@300&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   계량 — 절제된 문학지 레이아웃
+   ============================================================ */
+:root{
+  --bg:#f5f0eb;
+  --fg:#2c2c2c;
+  --muted:#6b635a;          /* 라이트: 본문 대비 5.2:1 (AA) */
+  --rule:rgba(44,44,44,.18);
+  --meter:#1a1a1a;          /* 계량기 숫자 */
+  --accent:#c0392b;         /* 계량기 바늘 색 */
+  --toggle-bg:rgba(245,240,235,.6);
+}
+:root[data-theme="dark"]{
+  --bg:#1a1a1a;
+  --fg:#e0dcd7;
+  --muted:#a59c92;          /* 다크: 본문 대비 6.4:1 (AA) */
+  --rule:rgba(224,220,215,.18);
+  --meter:#6ba3d6;          /* 다크: 배경 대비 6.5:1 (AA) */
+  --accent:#c0392b;
+  --toggle-bg:rgba(26,26,26,.45);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:"Noto Serif KR","KoPub Batang",Georgia,"Times New Roman",serif;
+  font-weight:400;
+  font-size:clamp(16px,4vw,19px);
+  line-height:2.0;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+  font-feature-settings:"palt" 1;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  transition:background-color .4s ease,color .4s ease;
+}
+
+::selection{background:rgba(192,57,43,.14)}
+
+/* ---------- 진행 바 (선택 사항) ----------
+   사용하지 않으려면 JS의 ENABLE_PROGRESS_BAR 를 false 로 바꾸세요. */
+#progress{
+  position:fixed;top:0;left:0;
+  height:2px;width:0%;
+  background:var(--accent);
+  z-index:100;
+  will-change:width;
+}
+
+/* ---------- 다크모드 토글 ---------- */
+#themeToggle{
+  position:fixed;
+  top:calc(16px + env(safe-area-inset-top));
+  right:calc(16px + env(safe-area-inset-right));
+  z-index:110;
+  width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--rule);
+  border-radius:50%;
+  background:var(--toggle-bg);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  color:var(--muted);
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-size:14px;line-height:1;
+  cursor:pointer;
+  transition:color .3s ease,border-color .3s ease,background-color .3s ease;
+}
+#themeToggle:hover{color:var(--fg);border-color:var(--muted)}
+#themeToggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ---------- 레이아웃 ---------- */
+.wrap{
+  max-width:660px;
+  margin:0 auto;
+  padding:0 clamp(24px,5vw,48px);
+}
+
+/* ---------- 헤더 ---------- */
+header.masthead{
+  padding-top:clamp(72px,14vh,140px);
+  text-align:center;
+}
+.kicker{
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-weight:300;
+  font-size:11px;
+  letter-spacing:.4em;
+  text-indent:.4em;
+  color:var(--muted);
+  margin:0 0 2.6em;
+}
+h1.title{
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-weight:300;
+  font-size:clamp(2.4rem,12vw,3.6rem);
+  letter-spacing:.32em;
+  text-indent:.32em;
+  line-height:1.3;
+  margin:0 0 .6em;
+  color:var(--fg);
+  animation:titleIn .8s ease both;   /* 유일한 로드 효과 */
+}
+@keyframes titleIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:none}
+}
+.byline{
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-weight:300;
+  font-size:13px;
+  letter-spacing:.18em;
+  text-indent:.18em;
+  color:var(--muted);
+  margin:0;
+}
+.byline .sep{opacity:.5;padding:0 .5em}
+.hairline{
+  border:0;
+  height:1px;
+  background:var(--rule);
+  margin:3.4em 0 3.6em;
+}
+
+/* ---------- 본문 ---------- */
+article p{
+  margin:0 0 1.8em;
+  text-indent:0;
+}
+article p:last-child{margin-bottom:0}
+
+/* 대사: 들여쓰기 없이, 따옴표 유지, 앞뒤 여백 */
+p.dialogue{margin:.8em 0}
+
+/* 홀로 놓인 낱말 */
+p.solo{margin:2em 0}
+
+/* 마지막 문장: 본문과 같은 크기, 여백이 무게를 만든다 */
+p.closing{margin-top:2.5em;margin-bottom:0}
+
+/* 장면 전환: <hr> 을 ○ 로 대체 */
+hr.scene{
+  border:0;
+  height:0;
+  margin:2.5em 0;
+  text-align:center;
+  color:var(--muted);
+  opacity:.7;
+  overflow:visible;
+}
+hr.scene::before{
+  content:"○";
+  display:inline-block;
+  font-size:.8em;
+  letter-spacing:.6em;
+  text-indent:.6em;
+  line-height:1;
+}
+
+/* 계량기 숫자 */
+.meter{
+  font-family:"JetBrains Mono","Source Code Pro",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  font-size:.92em;
+  letter-spacing:.02em;
+  color:var(--meter);
+  transition:color .4s ease;
+}
+/* 04891, 04891, 04891 — 서서히 옅어짐 */
+.rep-1{opacity:1}
+.rep-2{opacity:.65}
+.rep-3{opacity:.35}
+
+/* 끝 표시 */
+.endmark{
+  text-align:center;
+  margin:4em 0 0;
+  color:var(--muted);
+  opacity:.6;
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-size:11px;
+  letter-spacing:.5em;
+  text-indent:.5em;
+}
+
+/* ---------- 푸터 ---------- */
+footer.colophon{
+  margin-top:4.5em;
+  padding:2.6em 0 calc(3em + env(safe-area-inset-bottom));
+  border-top:1px solid var(--rule);
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  font-weight:300;
+  font-size:12px;
+  letter-spacing:.06em;
+  line-height:2.2;
+  color:var(--muted);
+  text-align:center;
+}
+footer.colophon a{
+  color:var(--muted);
+  text-decoration:none;
+  border-bottom:1px solid var(--rule);
+  padding-bottom:1px;
+  display:inline-flex;align-items:center;gap:.45em;
+  transition:color .25s ease,border-color .25s ease;
+}
+footer.colophon a:hover{color:var(--fg);border-color:var(--fg)}
+footer.colophon svg{width:14px;height:14px;fill:currentColor;display:block}
+footer .row + .row{margin-top:.5em}
+
+/* ---------- 접근성 / 인쇄 ---------- */
+.visually-hidden{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+@media (prefers-reduced-motion:reduce){
+  h1.title{animation:none}
+}
+@media print{
+  /* 진행 바 · 토글이 숨김, 흑백 최적화 */
+  #progress,#themeToggle{display:none !important}
+  :root,:root[data-theme="dark"]{
+    --bg:#ffffff;--fg:#000000;--muted:#444444;
+    --rule:rgba(0,0,0,.3);--meter:#000000;--accent:#000000;
+    --toggle-bg:transparent;
+  }
+  body{background:#fff;color:#000;font-size:11pt;line-height:1.9}
+  header.masthead{padding-top:0}
+  .hairline{border-color:#000}
+  a{color:#000 !important;border:0 !important}
+}
+</style>
+</head>
+<body>
+
+<!-- 진행 바: JS의 ENABLE_PROGRESS_BAR 를 false 로 바꾸면 비활성화됩니다 -->
+<div id="progress" role="progressbar" aria-label="읽기 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+
+<button id="themeToggle" type="button" aria-label="다크 모드 전환" title="다크 모드 전환">
+  <span id="themeIcon" aria-hidden="true">◑</span>
+</button>
+
+<div class="wrap">
+
+  <!-- ───────────── 헤더 ───────────── -->
+  <header class="masthead">
+    <!-- 작가명은 아래 줄에서 수정하세요 -->
+    <p class="kicker">단편소설</p>
+    <h1 class="title">계량</h1>
+    <p class="byline">작가 미상<span class="sep">·</span>2025</p>
+  </header>
+
+  <hr class="hairline">
+
+  <!-- ───────────── 본문 ───────────── -->
+  <article>
+
+    <p>매달 이십일이 가까워지면 최은숙은 무릎에 파스를 붙이고 운동화 끈을 다시 묶었다. 가방에는 단말기와 새 수첩이 들어 있었다. 이십일부터 닷새는 이 연립단지의 검침 차례였다.</p>
+
+    <p>은숙이 맡은 구역은 도시 서쪽에 흩어져 있었다. 검침과 고지서 송달, 반기마다 도는 안전점검까지 합치면 한 달에 삼천 가구가 넘었다. 그 가운데 이 단지의 네 동 육십사 가구는 십이 년째 은숙이 맡아 온 자리였다.</p>
+
+    <p>계량기는 현관 옆 외벽에 박혀 있거나 복도 계량기함에 나란히 놓여 있었다. 뚜껑을 열면 검은 바탕 위 흰 숫자 다섯 자리와 ㎥ 표시, 소수점을 가리키는 붉은 바늘이 나타났다. 은숙은 지침을 읽고 단말기에 입력했다. 공동현관이 잠긴 동, 개를 풀어놓은 집에서는 시간이 길어졌다. 사람이 없는 집이 오히려 편했다. 이 단지에서는 하루 마흔 가구쯤을 읽었다. 고지서를 문에 끼우고 계단을 오르내리다 보면 점심은 어느 벤치에서 삼각김밥으로 때워졌다.</p>
+
+    <p>수첩은 한 달에 한 권이었다. 표지에 연도와 월을 적고, 앞장부터 가구 번호와 누적 지침, 월 사용량을 적었다. 맨 뒷장에는 자기 집 번호를 두었다. 오 년마다 계량기가 새것으로 바뀌어 다섯 자리가 <span class="meter">0</span>으로 돌아갈 때에도, 은숙은 이전 숫자 옆에 새 숫자를 나란히 적었다.</p>
+
+    <p>숫자 옆에는 은숙만의 작은 기호가 붙었다. 화살표 위는 늘었다는 뜻, 아래는 줄었다는 뜻, 점은 변화 없음, 물결은 들쭉날쭉함, 동그라미는 끊김. 혼자 만들어 혼자만 쓰는 표기법이었다. 103호에는 겨울마다 화살표 위가 빽빽했고, 205호는 해마다 삼월이면 아래로 꺾였다가 사월에 올라왔다. 왜 그런 곡선이 그려지는지 묻는 사람은 없었다. 은숙도 묻지 않았다. 계량기 앞에서 하는 일은 읽고 계산한 뒤 다음 집으로 가는 것뿐이었다.</p>
+
+    <hr class="scene" role="separator" aria-hidden="true">
+
+    <p>1동에서 시작해 4동에서 끝나는 동선은 자연스러웠다. 4동은 단지 안쪽 끝에 있었고 엘리베이터가 없었다. 401호는 그 꼭대기 층이었다. 은숙은 그 집을 하루의 끝에 남겨 두었다.</p>
+
+    <p>처음 이 구역을 맡던 겨울, 계량기함 앞에 화분이 놓여 있었다. 문이 열리고 김옥자 노부인이 나와 말없이 화분을 안아 옮겼다. 그러고는 함 뚜껑을 손바닥으로 한 번 눌러 보이고 들어갔다. 은숙은 그 손바닥을 오래 기억했다. 그 뒤로 눈이 마주치면 목례를 나누었다. 안전점검 차례에도 옥자는 문 앞에 서 있었고, 은숙은 밸브와 연소기 주변만 확인하고 돌아섰다.</p>
+
+    <p>노부부의 겨울 사용량은 <span class="meter">100</span> 안팎, 여름은 <span class="meter">15</span> 안팎이었다. 은숙은 그 집 옆에 자주 점을 찍었다.</p>
+
+    <p>오 년 전 겨울이 시작되던 달, 401호가 <span class="meter">47</span>로 떨어졌다. 전월의 절반이었다. 지침을 두 번 확인하고 계산을 다시 했다. 고장은 아니었다. 숫자는 여전히 올라가고 있었고, 속도만 느려졌다. 은숙은 화살표 아래를 그리고 물음표를 붙였다. 물음표는 정해진 기호가 아니었다. 숫자가 설명되지 않을 때만 드물게 쓰는 표시였다.</p>
+
+    <p>그 겨울 401호 문고리에는 병원 봉투가 걸린 날이 있었다. 겨울이 끝나갈 무렵, 4동 현관에 부고가 붙었다. 401호 김옥자 남편상. 그날 수첩의 물음표에 조용히 줄을 그었다. 답을 알아서가 아니라, 더 묻지 않기로 해서였다.</p>
+
+    <p>그 후 401호는 <span class="meter">40</span>에서 <span class="meter">32</span>로, 다시 <span class="meter">28</span>까지 천천히 내려갔다. 혼자 남은 사람의 겨울은 그 정도의 숫자로 지나갔을 것이다. 숫자가 작을수록 조용한 하루이겠거니, 은숙은 매달 계량기 앞에서 짐작만 했다.</p>
+
+    <hr class="scene" role="separator" aria-hidden="true">
+
+    <p>이 년 전 여름 끝, 401호가 <span class="meter">85</span>로 뛰었다. 전월은 <span class="meter">25</span>였다. 다시 읽고 다시 계산해도 틀림없었다. 화살표 위와 물음표.</p>
+
+    <p>다음 달 <span class="meter">90</span>, 그다음 달 <span class="meter">95</span>, 겨울에는 <span class="meter">130</span>. 노부부가 살던 때보다 많았다. 계단을 오르다 보니 현관에 신발이 늘어 있었다. 분홍색 벨크로 운동화 한 켤레. 아이 신발이었다. 문 가까이 서자 텔레비전 소리와 아이 울음이 새어 나왔고, 그 사이로 옥자의 목소리가 끊겨 들렸다. 먹어야지, 하는 말 같았다. 그달 은숙은 볼펜을 잠깐 멈추었다가 동그라미를 그렸다. 끊김의 기호였지만, 그날의 동그라미에는 뜻을 붙이지 않은 채로 두었다. 물음표에는 줄을 그었다.</p>
+
+    <p>그해 겨울, 오랜만에 은숙의 집도 <span class="meter">42</span>를 넘겼다. 아들이 며칠 다녀간 달이었다. 뒷장에는 남편이 떠난 뒤 <span class="meter">78</span>까지 내려간 겨울과, 아들이 원룸으로 나간 뒤 <span class="meter">42</span>에 머물던 겨울이 남아 있었다. 은숙은 그 옆의 아래쪽 화살표들을 한 번 쓸어 보고 수첩을 덮었다.</p>
+
+    <hr class="scene" role="separator" aria-hidden="true">
+
+    <p>봄이 오기 전, 회사 문자가 왔다. 다음 달부터 이 단지가 포함된 시범 구역에 원격 전송 장치를 부착한다는 내용이었다. 기존 계량기에 붙어 하루 한 번 지침을 보내는 방식이었다. 이상 감지 기능은 다음 단계로 미뤄졌다고 했다. 검침원에게는 고장 신고와 밸브 점검용 화면이 남는다고 했다. 끝에는 그간 수고하셨다는 인사가 있었다. 은숙은 문장을 두 번 읽었다. 단말기를 쥔 엄지에서 잠시 힘이 빠졌다.</p>
+
+    <hr class="scene" role="separator" aria-hidden="true">
+
+    <p>닷새째 되는 날, 4동 계단을 올랐다. 무릎이 유난히 욱신거렸다. 401호 앞에 분홍색 운동화가 없었다. 문틈으로 불빛도 새지 않았다.</p>
+
+    <p>계량기 뚜껑을 열었다. <span class="meter">04891</span>. 전월과 똑같은 숫자였다. 사용량 <span class="meter">0</span>. 붉은 바늘이 멈춰 있었다. 한 달 동안 가스가 한 번도 흐르지 않았다는 뜻이었다. 은숙은 업무 조회 화면을 열어 401호를 찾아보았다. 전출 접수도, 중지 신청도 보이지 않았다.</p>
+
+    <p>수첩에 <span class="meter">04891</span>과 <span class="meter">0</span>을 적고 동그라미를 그렸다. 이번에는 원래 의미 그대로였다. 그 옆에 다시 물음표를 붙였다.</p>
+
+    <p>내려오는 길에 관리실에 들렀다. 소장이 선풍기 앞에서 텔레비전을 보고 있었다.</p>
+
+    <p class="dialogue">“401호요. 김옥자 씨.”</p>
+
+    <p class="dialogue">“아, 지난달 스무날쯤이었나, 아들이 와서 짐을 빼 갔어요.”</p>
+
+    <p class="dialogue">“옥자 씨는요?”</p>
+
+    <p class="dialogue">“요양병원이라고 들은 것 같은데.” 소장은 리모컨을 만지작거렸다.</p>
+
+    <p class="dialogue">“아이는요?”</p>
+
+    <p class="dialogue">“글쎄요. 그건 잘…….”</p>
+
+    <p>은숙은 돌아서려다 멈췄다.</p>
+
+    <p class="dialogue">“어느 병원인지 아세요?”</p>
+
+    <p>소장이 그제야 은숙을 똑바로 보았다.</p>
+
+    <p class="dialogue">“모르겠는데요. 왜요, 무슨 일 있습니까?”</p>
+
+    <p class="dialogue">“아니요.”</p>
+
+    <p>관리실을 나온 은숙은 몇 걸음 걷다가 멈춰 섰다가, 다시 걸었다.</p>
+
+    <p>4동 앞 벤치에 앉아 이번 달 수첩을 펼쳤다. 401호의 동그라미 옆 물음표를 손가락으로 한 번 눌렀다. 지나간 수첩들이 서랍 어딘가에 한 권씩 놓여 있을 것이었다. 은숙은 볼펜을 들었다가 내려놓았다.</p>
+
+    <hr class="scene" role="separator" aria-hidden="true">
+
+    <p>집으로 가는 길에 두부 한 모를 샀다. 냉장고에는 며칠째 데워 먹는 된장국이 남아 있었다.</p>
+
+    <p>현관에서 자기 집 계량기를 열었다. <span class="meter">07623</span>. 지난달은 <span class="meter">4</span>, 이번 달은 <span class="meter">5</span>였다. 은숙은 웃음 비슷한 숨을 내쉬고, 수첩 맨 뒷장에 <span class="meter">07623</span>과 <span class="meter">5</span>를 적고 화살표 위를 그렸다.</p>
+
+    <p>국을 불에 올리고 두부를 썰어 넣었다. 불꽃이 파랗게 피어올랐다. 국이 데워지는 동안 401호 옆의 동그라미와 물음표를 오랫동안 바라보았다. 줄을 긋는 대신 그 아래에 작게 적었다.</p>
+
+    <p class="solo">요양병원.</p>
+
+    <p>다음 달이면 401호 계량기에도 전송 장치가 붙을 것이다. 하루에 한 번, <span class="meter">04891</span>이 서버로 갈 것이다. <span class="meter rep-1">04891</span>, <span class="meter rep-2">04891</span>, <span class="meter rep-3">04891</span>.</p>
+
+    <p>은숙은 다음 달에도 수첩을 사기로 했다.</p>
+
+    <p>국이 끓어올랐다. 불을 줄이고 맨 뒷장을 다시 폈다. <span class="meter">07623</span>, <span class="meter">5</span>, 화살표 위. 그 아래 여백에 볼펜을 대었다.</p>
+
+    <p class="solo">된장국.</p>
+
+    <p>은숙은 볼펜 뚜껑을 닫고 국그릇을 꺼냈다.</p>
+
+    <p class="closing">5는 작은 숫자였지만, <span class="meter">0</span>은 아니었다.</p>
+
+    <p class="endmark" aria-hidden="true">○</p>
+  </article>
+
+  <!-- ───────────── 푸터 ───────────── -->
+  <footer class="colophon">
+    <p class="row">「계량」 · 단편소설</p>
+    <p class="row">© 2025 작가 미상. All rights reserved.</p>
+    <p class="row">
+      <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     읽기 진행 바 (Reading progress bar)
+     선택 사항: 사용하지 않으려면 아래 값을 false 로 바꾸세요.
+     ============================================================ */
+  var ENABLE_PROGRESS_BAR = true;
+
+  /* ---------- 다크 모드: 시스템 설정 따름 + 토글 ---------- */
+  var root = document.documentElement;
+  var toggle = document.getElementById('themeToggle');
+  var icon = document.getElementById('themeIcon');
+  var STORAGE_KEY = 'gyeryang-theme';
+
+  function applyTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    if (icon) icon.textContent = theme === 'dark' ? '◐' : '◑';
+    if (toggle) {
+      var label = theme === 'dark' ? '라이트 모드 전환' : '다크 모드 전환';
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('title', label);
+      toggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    }
+  }
+
+  var stored = null;
+  try { stored = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(stored || (prefersDark ? 'dark' : 'light'));
+
+  if (toggle) {
+    toggle.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      try { localStorage.setItem(STORAGE_KEY, next); } catch (e) {}
+    });
+  }
+
+  // 사용자가 직접 선택하지 않은 경우, 시스템 설정 변화를 따라간다.
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    var onChange = function (e) {
+      var saved = null;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch (err) {}
+      if (!saved) applyTheme(e.matches ? 'dark' : 'light');
+    };
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+  }
+
+  /* ---------- 진행 바 ---------- */
+  if (ENABLE_PROGRESS_BAR) {
+    var bar = document.getElementById('progress');
+    var ticking = false;
+
+    function updateProgress() {
+      var doc = document.documentElement;
+      var scrollTop = window.pageYOffset || doc.scrollTop || 0;
+      var height = (doc.scrollHeight || document.body.scrollHeight) - window.innerHeight;
+      var pct = height > 0 ? Math.min(100, Math.max(0, (scrollTop / height) * 100)) : 0;
+      bar.style.width = pct.toFixed(2) + '%';
+      bar.setAttribute('aria-valuenow', Math.round(pct));
+      ticking = false;
+    }
+    function requestUpdate() {
+      if (!ticking) { ticking = true; window.requestAnimationFrame(updateProgress); }
+    }
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    updateProgress();
+  } else {
+    var el = document.getElementById('progress');
+    if (el) el.style.display = 'none';
+  }
+})();
+</script>
+
+</body>
+</html>
