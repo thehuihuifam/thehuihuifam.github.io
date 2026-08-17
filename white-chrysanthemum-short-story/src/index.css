@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --font-myeongjo: "Nanum Myeongjo", "Noto Serif KR", serif;
+  --font-body: "Noto Serif KR", "Nanum Myeongjo", serif;
+  --font-gowun: "Gowun Batang", "Nanum Myeongjo", serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: #141519;
+}
+
+::selection {
+  background: rgba(168, 98, 63, 0.25);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fade-up {
+  animation: fadeUp 1s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .fade-up {
+    animation: none;
+  }
+}
