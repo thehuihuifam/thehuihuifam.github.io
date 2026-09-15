@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ASCII Dungeon — Phase 1</title>
+<title>아스키 던전 — Phase 1</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     background: #121212;
     color: #e0e0e0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', '맑은 고딕', Roboto, sans-serif;
     min-height: 100vh;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
@@ -114,7 +114,7 @@
   }
   #btn-dir-up { grid-column: 2; grid-row: 1; }
   #btn-dir-left { grid-column: 1; grid-row: 2; }
-  #btn-act-wait { grid-column: 2; grid-row: 2; font-size: 13px; letter-spacing: 1px; }
+  #btn-act-wait { grid-column: 2; grid-row: 2; font-size: 14px; letter-spacing: 1px; }
   #btn-dir-right { grid-column: 3; grid-row: 2; }
   #btn-dir-down { grid-column: 2; grid-row: 3; }
   .actions {
@@ -186,46 +186,46 @@
 </head>
 <body>
 <div id="app">
-  <h1>ASCII DUNGEON — PHASE 1</h1>
+  <h1>아스키 던전 — Phase 1</h1>
   <div class="stats">
     <div class="stat-item">
-      <span class="stat-label">HP</span>
+      <span class="stat-label">체력</span>
       <span class="stat-value"><span id="stat-hp">30</span></span>
     </div>
     <div class="stat-item">
-      <span class="stat-label">MAX HP</span>
+      <span class="stat-label">최대 체력</span>
       <span class="stat-value"><span id="stat-max-hp">30</span></span>
     </div>
     <div class="stat-item">
-      <span class="stat-label">GOLD</span>
+      <span class="stat-label">골드</span>
       <span class="stat-value"><span id="stat-gold">0</span></span>
     </div>
     <div class="stat-item">
-      <span class="stat-label">TURN</span>
+      <span class="stat-label">턴</span>
       <span class="stat-value"><span id="stat-turn">0</span></span>
     </div>
     <div class="stat-item">
-      <span class="stat-label">LEVEL</span>
+      <span class="stat-label">레벨</span>
       <span class="stat-value"><span id="stat-level">1</span></span>
     </div>
   </div>
   <pre id="ascii-map-display"></pre>
   <div id="game-output"></div>
   <div class="controls">
-    <button id="btn-dir-up" class="dpad-btn" aria-label="Move Up">▲</button>
-    <button id="btn-dir-left" class="dpad-btn" aria-label="Move Left">◀</button>
-    <button id="btn-act-wait" class="dpad-btn" aria-label="Wait">WAIT</button>
-    <button id="btn-dir-right" class="dpad-btn" aria-label="Move Right">▶</button>
-    <button id="btn-dir-down" class="dpad-btn" aria-label="Move Down">▼</button>
+    <button id="btn-dir-up" class="dpad-btn" aria-label="위로 이동">▲</button>
+    <button id="btn-dir-left" class="dpad-btn" aria-label="왼쪽으로 이동">◀</button>
+    <button id="btn-act-wait" class="dpad-btn" aria-label="대기">대기</button>
+    <button id="btn-dir-right" class="dpad-btn" aria-label="오른쪽으로 이동">▶</button>
+    <button id="btn-dir-down" class="dpad-btn" aria-label="아래로 이동">▼</button>
   </div>
   <div class="actions">
-    <button id="btn-act-attack" class="action-btn" disabled>ATTACK</button>
-    <button id="btn-act-pickup" class="action-btn" disabled>PICKUP</button>
-    <button id="btn-act-use-potion" class="action-btn" disabled>POTION</button>
+    <button id="btn-act-attack" class="action-btn" disabled>공격</button>
+    <button id="btn-act-pickup" class="action-btn" disabled>줍기</button>
+    <button id="btn-act-use-potion" class="action-btn" disabled>포션</button>
   </div>
   <div class="console-row">
-    <input type="text" id="input-command" placeholder="command..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-    <button id="btn-command-submit">SEND</button>
+    <input type="text" id="input-command" placeholder="명령어 입력..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <button id="btn-command-submit">전송</button>
   </div>
 </div>
 <script>
@@ -458,12 +458,12 @@
       return;
     }
 
-    if (cmd === 'move up') { attemptMove(0, -1); }
-    else if (cmd === 'move down') { attemptMove(0, 1); }
-    else if (cmd === 'move left') { attemptMove(-1, 0); }
-    else if (cmd === 'move right') { attemptMove(1, 0); }
-    else if (cmd === 'wait') { attemptWait(); }
-    else if (cmd === 'status') {
+    if (cmd === 'move up' || cmd === '위' || cmd === 'up') { attemptMove(0, -1); }
+    else if (cmd === 'move down' || cmd === '아래' || cmd === 'down') { attemptMove(0, 1); }
+    else if (cmd === 'move left' || cmd === '왼쪽' || cmd === 'left') { attemptMove(-1, 0); }
+    else if (cmd === 'move right' || cmd === '오른쪽' || cmd === 'right') { attemptMove(1, 0); }
+    else if (cmd === 'wait' || cmd === '대기') { attemptWait(); }
+    else if (cmd === 'status' || cmd === '상태') {
       var s = window.gameState;
       log('[STATUS] Turn ' + s.turn + ', HP ' + s.player.hp + '/' + s.player.maxHp +
           ', Pos (' + s.player.x + ', ' + s.player.y + ')' +
@@ -502,7 +502,7 @@
       btn.click();
     }
 
-    // ---- Reset to pristine state ----
+    // ---- 초기 상태로 리셋 ----
     window.gameState.turn = 0;
     window.gameState.isGameOver = false;
     window.gameState.isVictory = false;
@@ -521,156 +521,154 @@
     refresh();
     log('[TURN] Turn 0 begins.');
 
-    // ---- 1. Initial state ----
-    record('Initial position (1,1)',
+    // ---- 1. 초기 상태 검증 ----
+    record('초기 위치 (1,1)',
       window.gameState.player.x === 1 && window.gameState.player.y === 1,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('Initial turn is 0',
+    record('초기 턴 0',
       window.gameState.turn === 0,
       'turn=' + window.gameState.turn);
-    record('Initial HP is 30',
+    record('초기 HP 30',
       window.gameState.player.hp === 30,
       'hp=' + window.gameState.player.hp);
-    record('Initial maxHp is 30',
+    record('초기 maxHp 30',
       window.gameState.player.maxHp === 30,
       'maxHp=' + window.gameState.player.maxHp);
-    record('Initial gold is 0',
+    record('초기 골드 0',
       window.gameState.player.gold === 0,
       'gold=' + window.gameState.player.gold);
-    record('Initial level is 1',
+    record('초기 레벨 1',
       window.gameState.player.level === 1,
       'level=' + window.gameState.player.level);
-    record('Initial up button disabled (1,0 is wall)',
+    record('위 버튼 비활성 (1,0은 벽)',
       btnUp.disabled === true);
-    record('Initial down button enabled (1,2 is floor)',
+    record('아래 버튼 활성 (1,2는 바닥)',
       btnDown.disabled === false);
-    record('Initial left button disabled (0,1 is wall)',
+    record('왼쪽 버튼 비활성 (0,1은 벽)',
       btnLeft.disabled === true);
-    record('Initial right button enabled (2,1 is floor)',
+    record('오른쪽 버튼 활성 (2,1은 바닥)',
       btnRight.disabled === false);
-    record('Phase1 attack button disabled', btnAttack.disabled === true);
-    record('Phase1 pickup button disabled', btnPickup.disabled === true);
-    record('Phase1 potion button disabled', btnPotion.disabled === true);
+    record('Phase1 공격 버튼 비활성', btnAttack.disabled === true);
+    record('Phase1 줍기 버튼 비활성', btnPickup.disabled === true);
+    record('Phase1 포션 버튼 비활성', btnPotion.disabled === true);
 
-    // ---- 2. Eight directional clicks (each direction x2) ----
-    // Sequence: right, left, up, down, right, left, up, down
-    // Path: (1,1) -> (2,1) -> (1,1) -> (1,1)[blocked] -> (1,2)
-    //            -> (1,2)[blocked] -> (1,2)[blocked] -> (1,1) -> (1,2)
+    // ---- 2. 4방향 버튼 각 2회 클릭 ----
+    // 순서: 오른쪽, 왼쪽, 위, 아래, 오른쪽, 왼쪽, 위, 아래
 
-    // right #1
+    // 오른쪽 #1
     forceClick(btnRight);
-    record('right#1 -> (2,1)',
+    record('오른쪽#1 -> (2,1)',
       window.gameState.player.x === 2 && window.gameState.player.y === 1,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('right#1 turn=1',
+    record('오른쪽#1 턴=1',
       window.gameState.turn === 1,
       'turn=' + window.gameState.turn);
-    record('right#1 status=MOVE_SUCCESS',
+    record('오른쪽#1 상태=MOVE_SUCCESS',
       window.gameState.lastActionStatus === 'MOVE_SUCCESS');
 
-    // left #1
+    // 왼쪽 #1
     forceClick(btnLeft);
-    record('left#1 -> (1,1)',
+    record('왼쪽#1 -> (1,1)',
       window.gameState.player.x === 1 && window.gameState.player.y === 1,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('left#1 turn=2',
+    record('왼쪽#1 턴=2',
       window.gameState.turn === 2,
       'turn=' + window.gameState.turn);
 
-    // up #1 (blocked by (1,0)=#)
+    // 위 #1 (벽 (1,0)에 막힘)
     var preUpTurn = window.gameState.turn;
     forceClick(btnUp);
-    record('up#1 blocked at (1,0)',
+    record('위#1 (1,0)에서 차단',
       window.gameState.player.x === 1 && window.gameState.player.y === 1,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('up#1 turn unchanged',
+    record('위#1 턴 변화 없음',
       window.gameState.turn === preUpTurn,
       'turn=' + window.gameState.turn);
-    record('up#1 status=MOVE_BLOCKED',
+    record('위#1 상태=MOVE_BLOCKED',
       window.gameState.lastActionStatus === 'MOVE_BLOCKED');
-    record('up#1 BLOCKED log present',
+    record('위#1 BLOCKED 로그 존재',
       getLogText().indexOf('Cannot move into the wall at (1, 0).') !== -1);
 
-    // down #1
+    // 아래 #1
     forceClick(btnDown);
-    record('down#1 -> (1,2)',
+    record('아래#1 -> (1,2)',
       window.gameState.player.x === 1 && window.gameState.player.y === 2,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('down#1 turn=3',
+    record('아래#1 턴=3',
       window.gameState.turn === 3,
       'turn=' + window.gameState.turn);
 
-    // right #2 (blocked by (2,2)=#)
+    // 오른쪽 #2 (벽 (2,2)에 막힘)
     var preRight2Turn = window.gameState.turn;
     forceClick(btnRight);
-    record('right#2 blocked at (2,2)',
+    record('오른쪽#2 (2,2)에서 차단',
       window.gameState.player.x === 1 && window.gameState.player.y === 2,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('right#2 turn unchanged',
+    record('오른쪽#2 턴 변화 없음',
       window.gameState.turn === preRight2Turn,
       'turn=' + window.gameState.turn);
-    record('right#2 BLOCKED log at (2,2)',
+    record('오른쪽#2 BLOCKED 로그 (2,2)',
       getLogText().indexOf('Cannot move into the wall at (2, 2).') !== -1);
 
-    // left #2 (blocked by (0,2)=#)
+    // 왼쪽 #2 (벽 (0,2)에 막힘)
     var preLeft2Turn = window.gameState.turn;
     forceClick(btnLeft);
-    record('left#2 blocked at (0,2)',
+    record('왼쪽#2 (0,2)에서 차단',
       window.gameState.player.x === 1 && window.gameState.player.y === 2,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('left#2 turn unchanged',
+    record('왼쪽#2 턴 변화 없음',
       window.gameState.turn === preLeft2Turn,
       'turn=' + window.gameState.turn);
-    record('left#2 BLOCKED log at (0,2)',
+    record('왼쪽#2 BLOCKED 로그 (0,2)',
       getLogText().indexOf('Cannot move into the wall at (0, 2).') !== -1);
 
-    // up #2
+    // 위 #2
     forceClick(btnUp);
-    record('up#2 -> (1,1)',
+    record('위#2 -> (1,1)',
       window.gameState.player.x === 1 && window.gameState.player.y === 1,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('up#2 turn=4',
+    record('위#2 턴=4',
       window.gameState.turn === 4,
       'turn=' + window.gameState.turn);
 
-    // down #2
+    // 아래 #2
     forceClick(btnDown);
-    record('down#2 -> (1,2)',
+    record('아래#2 -> (1,2)',
       window.gameState.player.x === 1 && window.gameState.player.y === 2,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('down#2 turn=5',
+    record('아래#2 턴=5',
       window.gameState.turn === 5,
       'turn=' + window.gameState.turn);
 
-    // ---- 3. Wait action ----
+    // ---- 3. 대기 액션 검증 ----
     var preWaitTurn = window.gameState.turn;
     var preWaitX = window.gameState.player.x;
     var preWaitY = window.gameState.player.y;
     forceClick(btnWait);
-    record('wait keeps position',
+    record('대기 시 위치 유지',
       window.gameState.player.x === preWaitX && window.gameState.player.y === preWaitY,
       'pos=(' + window.gameState.player.x + ',' + window.gameState.player.y + ')');
-    record('wait increments turn by 1',
+    record('대기 시 턴 +1',
       window.gameState.turn === preWaitTurn + 1,
       'turn=' + window.gameState.turn);
-    record('wait status=WAIT',
+    record('대기 상태=WAIT',
       window.gameState.lastActionStatus === 'WAIT');
-    record('wait log present',
+    record('대기 로그 존재',
       getLogText().indexOf('[WAIT] Player waits.') !== -1);
 
-    // ---- 4. DOM stat sync verification ----
-    record('#stat-hp matches gameState',
+    // ---- 4. DOM 스탯 동기화 검증 ----
+    record('#stat-hp 일치',
       statHp.textContent === String(window.gameState.player.hp));
-    record('#stat-max-hp matches gameState',
+    record('#stat-max-hp 일치',
       statMaxHp.textContent === String(window.gameState.player.maxHp));
-    record('#stat-gold matches gameState',
+    record('#stat-gold 일치',
       statGold.textContent === String(window.gameState.player.gold));
-    record('#stat-turn matches gameState',
+    record('#stat-turn 일치',
       statTurn.textContent === String(window.gameState.turn));
-    record('#stat-level matches gameState',
+    record('#stat-level 일치',
       statLevel.textContent === String(window.gameState.player.level));
 
-    // ---- 5. Final report ----
+    // ---- 5. 최종 리포트 ----
     var pass = errors.length === 0;
     var report = {
       result: pass ? 'PASS' : 'FAIL',
@@ -717,7 +715,7 @@
     return report;
   };
 
-  // Initial bootstrap
+  // 초기 부트스트랩
   refresh();
   log('[TURN] Turn 0 begins.');
 })();
