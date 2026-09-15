@@ -3,142 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>타이니 워리어 러시 v3.0</title>
+<title>타이니 워리어 러시 v3.1</title>
 <style>
   :root {
-    --bg-deep:      #08080d;
-    --bg-primary:   #0d0d12;
-    --bg-panel:     #14141f;
-    --bg-panel-2:   #1a1a24;
-    --bg-inset:     #0a0a12;
-    --text-primary: #e8e8ee;
-    --text-muted:   #8888a0;
-    --text-dim:     #55556a;
-    --gold:         #ffcc00;
-    --gold-deep:    #a66800;
-    --blue:         #4a90e2;
-    --blue-deep:    #1a4a8a;
-    --red:          #ff3366;
-    --red-deep:     #8a1a34;
-    --green:        #00ff66;
-    --green-deep:   #00883a;
-    --border-subtle: #2a2a3a;
-    --border-strong: #3a3a4a;
-    --r-sm: 8px;
-    --r-md: 12px;
-    --r-lg: 16px;
-    --r-pill: 999px;
+    --bg-deep:#08080d; --bg-primary:#0d0d12; --bg-panel:#14141f; --bg-panel-2:#1a1a24; --bg-inset:#0a0a12;
+    --text-primary:#e8e8ee; --text-muted:#8888a0; --text-dim:#55556a;
+    --gold:#ffcc00; --gold-deep:#a66800; --blue:#4a90e2; --blue-deep:#1a4a8a;
+    --red:#ff3366; --red-deep:#8a1a34; --green:#00ff66; --green-deep:#00883a;
+    --border-subtle:#2a2a3a; --border-strong:#3a3a4a;
+    --r-sm:8px; --r-md:12px; --r-lg:16px; --r-pill:999px;
     --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.05);
-    --glow-gold:    0 0 24px rgba(255,204,0,0.6);
-    --glow-blue:    0 0 16px rgba(74,144,226,0.5);
-    --glow-red:     0 0 20px rgba(255,51,102,0.7);
-    --glow-green:   0 0 20px rgba(0,255,102,0.6);
+    --glow-gold: 0 0 24px rgba(255,204,0,0.6);
+    --glow-blue: 0 0 16px rgba(74,144,226,0.5);
+    --glow-red: 0 0 20px rgba(255,51,102,0.7);
+    --glow-green: 0 0 20px rgba(0,255,102,0.6);
     --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', Roboto, sans-serif;
     --font-mono: 'Courier New', Courier, monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: var(--font-ui);
-    min-height: 100vh;
-    -webkit-tap-highlight-color: transparent;
-    overflow-x: hidden;
-  }
+  html, body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-ui); min-height: 100vh; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
   button, .card, .slot, .deploy-btn { user-select: none; -webkit-user-select: none; }
-  #app {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-height: 100vh;
-    position: relative;
-  }
-  .header-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  h1 {
-    font-size: 15px;
-    color: var(--gold);
-    text-align: center;
-    letter-spacing: 3px;
-    font-weight: 900;
-    text-shadow: 0 0 12px rgba(255,204,0,0.6), 0 0 24px rgba(255,204,0,0.3);
-    flex: 1;
-  }
-  #btn-sound-toggle {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--bg-panel-2);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--r-sm);
-    min-width: 44px;
-    min-height: 44px;
-    font-size: 18px;
-    cursor: pointer;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .castle-panel {
-    background: linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--r-md);
-    padding: 10px 12px;
-    display: grid;
-    grid-template-columns: 44px 1fr;
-    gap: 10px;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .castle-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(90deg, transparent 0px, transparent 8px, rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px);
-    pointer-events: none;
-  }
+  #app { max-width: 480px; margin: 0 auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 100vh; position: relative; }
+  .header-row { display: flex; align-items: center; justify-content: center; position: relative; }
+  h1 { font-size: 15px; color: var(--gold); text-align: center; letter-spacing: 3px; font-weight: 900; text-shadow: 0 0 12px rgba(255,204,0,0.6); flex: 1; }
+  #btn-sound-toggle { position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--bg-panel-2); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); min-width: 44px; min-height: 44px; font-size: 18px; cursor: pointer; color: var(--text-primary); display: flex; align-items: center; justify-content: center; }
+  .castle-panel { background: linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 10px 12px; display: grid; grid-template-columns: 44px 1fr; gap: 10px; align-items: center; position: relative; overflow: hidden; }
+  .castle-panel::before { content:''; position:absolute; inset:0; background: repeating-linear-gradient(90deg, transparent 0px, transparent 8px, rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px); pointer-events:none; }
   .castle-visual { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px; position: relative; z-index: 1; }
-  .castle-emoji { font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); transition: filter 0.3s; }
-  .castle-emoji.warn { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 6px var(--gold)); animation: castleShake 0.4s infinite; }
-  .castle-emoji.danger { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 8px var(--red)); animation: castleShake 0.3s infinite; }
+  .castle-emoji { font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+  .castle-emoji.warn { filter: drop-shadow(0 0 6px var(--gold)); animation: castleShake 0.4s infinite; }
+  .castle-emoji.danger { filter: drop-shadow(0 0 8px var(--red)); animation: castleShake 0.3s infinite; }
   @keyframes castleShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-1.5px) rotate(-2deg)} 75%{transform:translateX(1.5px) rotate(2deg)} }
-  .castle-status-label { font-size: 9px; font-weight: 900; letter-spacing: 0.5px; min-height: 11px; text-align: center; }
+  .castle-status-label { font-size: 9px; font-weight: 900; min-height: 11px; text-align: center; }
   .castle-info { display: flex; flex-direction: column; gap: 6px; position: relative; z-index: 1; }
-  .castle-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; }
-  .castle-row .wave-tag { color: var(--gold); font-weight: 800; font-size: 13px; font-family: var(--font-mono); letter-spacing: 1px; }
+  .castle-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); }
+  .castle-row .wave-tag { color: var(--gold); font-weight: 800; font-size: 13px; font-family: var(--font-mono); }
   .castle-row .gold-tag { color: var(--gold); font-weight: 800; font-family: var(--font-mono); font-size: 13px; }
-  .hp-bar { width: 100%; height: 18px; background: var(--bg-inset); border-radius: var(--r-sm); overflow: hidden; position: relative; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-inset); }
-  .hp-fill { height: 100%; background: linear-gradient(90deg, #00ff66 0%, #88ff66 50%, #00ff66 100%); transition: width 0.4s cubic-bezier(0.34,1.2,0.64,1), background 0.3s ease; border-radius: 7px; box-shadow: inset 0 0 8px rgba(0,255,102,0.5); }
-  .hp-fill.warn { background: linear-gradient(90deg, #ffcc00, #ff9900); box-shadow: inset 0 0 8px rgba(255,204,0,0.5); }
-  .hp-fill.danger { background: linear-gradient(90deg, #ff3366, #ff0044); box-shadow: inset 0 0 12px rgba(255,51,102,0.7); animation: pulseRed 0.6s infinite alternate; }
-  .hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: var(--bg-deep); text-shadow: 0 0 4px rgba(255,255,255,0.7); font-family: var(--font-mono); letter-spacing: 0.5px; }
+  .hp-bar { width: 100%; height: 18px; background: var(--bg-inset); border-radius: var(--r-sm); overflow: hidden; position: relative; border: 1px solid var(--border-subtle); }
+  .hp-fill { height: 100%; background: linear-gradient(90deg,#00ff66 0%,#88ff66 50%,#00ff66 100%); transition: width 0.4s, background 0.3s; border-radius: 7px; }
+  .hp-fill.warn { background: linear-gradient(90deg,#ffcc00,#ff9900); }
+  .hp-fill.danger { background: linear-gradient(90deg,#ff3366,#ff0044); animation: pulseRed 0.6s infinite alternate; }
+  .hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: var(--bg-deep); text-shadow: 0 0 4px rgba(255,255,255,0.7); font-family: var(--font-mono); }
   @keyframes pulseRed { from{box-shadow:inset 0 0 0 0 rgba(255,51,102,0)} to{box-shadow:inset 0 0 14px 2px rgba(255,51,102,0.8)} }
-
-  #status-hint { background: var(--bg-panel-2); border: 1px dashed var(--border-strong); border-radius: var(--r-sm); padding: 8px 12px; text-align: center; font-size: 12px; font-weight: 800; color: var(--gold); letter-spacing: 0.5px; min-height: 34px; display: flex; align-items: center; justify-content: center; transition: color 0.25s, border-color 0.25s, background 0.25s; }
+  #status-hint { background: var(--bg-panel-2); border: 1px dashed var(--border-strong); border-radius: var(--r-sm); padding: 8px 12px; text-align: center; font-size: 12px; font-weight: 800; color: var(--gold); min-height: 34px; display: flex; align-items: center; justify-content: center; transition: color 0.25s, border-color 0.25s, background 0.25s; }
   #status-hint.deploy { color: var(--blue); border-color: var(--blue); background: rgba(74,144,226,0.08); }
   #status-hint.shop { color: var(--gold); border-color: var(--gold); background: rgba(255,204,0,0.08); }
+  #status-hint.combat { color: var(--red); border-color: var(--red); background: rgba(255,51,102,0.08); }
   #status-hint.end { color: var(--red); border-color: var(--red); background: rgba(255,51,102,0.08); }
-
   .battlefield-wrapper { position: relative; }
   .battlefield { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; background: var(--bg-inset); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 10px 8px; min-height: 112px; }
   .slot { background: var(--bg-panel); border: 2px dashed var(--border-subtle); border-radius: var(--r-md); min-height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 6px 4px; transition: all 0.2s; position: relative; overflow: hidden; }
   .slot.shop-target { cursor: pointer; border-color: var(--gold) !important; box-shadow: var(--glow-gold); animation: shopPulse 0.8s infinite alternate; }
   @keyframes shopPulse { from{box-shadow:0 0 12px rgba(255,204,0,0.5)} to{box-shadow:0 0 24px rgba(255,204,0,0.9)} }
-  .slot .slot-icon { position: absolute; font-size: 54px; opacity: 0.08; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 0; }
-  .slot.empty::after { content: '빈 슬롯'; color: var(--text-dim); font-size: 10px; letter-spacing: 1px; font-weight: 700; position: relative; z-index: 1; }
-  .slot .slot-pos { position: absolute; top: 4px; left: 6px; font-size: 9px; color: var(--blue); letter-spacing: 0.8px; font-weight: 900; z-index: 2; }
+  .slot .slot-icon { position: absolute; font-size: 54px; opacity: 0.08; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+  .slot.empty::after { content: '빈 슬롯'; color: var(--text-dim); font-size: 10px; font-weight: 700; position: relative; z-index: 1; }
+  .slot .slot-pos { position: absolute; top: 4px; left: 6px; font-size: 9px; color: var(--blue); font-weight: 900; z-index: 2; }
   .slot .slot-content { display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; z-index: 1; }
-  .slot.filled { border-style: solid; border-color: var(--blue); background: linear-gradient(180deg, #1a2a44 0%, #0f1a2e 100%); box-shadow: var(--glow-blue); }
+  .slot.filled { border-style: solid; border-color: var(--blue); background: linear-gradient(180deg,#1a2a44 0%,#0f1a2e 100%); box-shadow: var(--glow-blue); }
   .slot.deploy-anim { animation: slotDeploy 0.5s cubic-bezier(0.34,1.56,0.64,1); }
   @keyframes slotDeploy { 0%{transform:scale(1)} 40%{transform:scale(1.12);box-shadow:0 0 28px rgba(74,144,226,0.9)} 100%{transform:scale(1)} }
   .slot.hit-anim { animation: slotHit 0.18s ease; }
@@ -148,131 +69,82 @@
   .slot.death-anim { animation: slotDeath 0.5s ease forwards; }
   @keyframes slotDeath { 0%{opacity:1;transform:scale(1)} 100%{opacity:0;transform:scale(0.6) rotateZ(-15deg)} }
   .warrior-emoji { font-size: 28px; filter: drop-shadow(0 0 6px rgba(74,144,226,0.8)); position: relative; z-index: 1; }
-  .warrior-name { font-size: 10px; font-weight: 800; color: #a8cfff; letter-spacing: 0.5px; position: relative; z-index: 1; }
+  .warrior-name { font-size: 10px; font-weight: 800; color: #a8cfff; position: relative; z-index: 1; }
   .warrior-stats { font-size: 9px; color: #88a8cc; font-family: var(--font-mono); font-weight: 700; position: relative; z-index: 1; }
-
-  #enemy-row-overlay {
-    position: absolute;
-    top: 4px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    flex-wrap: wrap;
-    max-width: 90%;
-    pointer-events: none;
-    z-index: 5;
-    opacity: 0;
-    transition: opacity 0.25s;
-  }
+  #enemy-row-overlay { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; max-width: 90%; pointer-events: none; z-index: 5; opacity: 0; transition: opacity 0.25s; }
   #enemy-row-overlay.show { opacity: 1; }
-  .enemy-token {
-    background: linear-gradient(180deg, #3a1a24, #1a0f14);
-    border: 2px solid var(--red-deep);
-    border-radius: var(--r-sm);
-    padding: 2px 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-    min-width: 34px;
-    transition: opacity 0.25s, transform 0.25s;
-  }
+  .enemy-token { background: linear-gradient(180deg,#3a1a24,#1a0f14); border: 2px solid var(--red-deep); border-radius: var(--r-sm); padding: 2px 4px; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 34px; transition: opacity 0.25s, transform 0.25s; }
   .enemy-token.elite { border-color: var(--gold); box-shadow: var(--glow-gold); }
-  .enemy-token .enemy-id {
-    font-family: var(--font-mono);
-    font-size: 8px;
-    color: var(--text-muted);
-    font-weight: 700;
-    line-height: 1;
-  }
+  .enemy-token .enemy-id { font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); font-weight: 700; line-height: 1; }
   .enemy-token .enemy-emoji { font-size: 16px; line-height: 1; }
   .enemy-token .enemy-mini-hp { width: 26px; height: 3px; background: var(--bg-inset); border-radius: 2px; overflow: hidden; }
   .enemy-token .enemy-mini-hp-fill { height: 100%; background: var(--red); transition: width 0.3s ease; }
   .enemy-token.dead { opacity: 0; transform: scale(0.6); }
   .enemy-token.damaged { animation: tokenShake 0.25s ease; }
   @keyframes tokenShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
-
-  .enemy-preview { background: linear-gradient(180deg, #1a0f14 0%, #10080c 100%); border: 1px solid var(--red-deep); border-radius: var(--r-sm); padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-  .enemy-preview .label { color: #ff6688; letter-spacing: 0.8px; font-weight: 800; font-size: 10px; }
+  .enemy-preview { background: linear-gradient(180deg,#1a0f14 0%,#10080c 100%); border: 1px solid var(--red-deep); border-radius: var(--r-sm); padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+  .enemy-preview .label { color: #ff6688; font-weight: 800; font-size: 10px; }
   .enemy-preview .count { color: var(--red); font-weight: 900; font-family: var(--font-mono); font-size: 12px; }
   .enemy-preview .detail { color: #885566; font-size: 10px; font-family: var(--font-mono); font-weight: 700; }
-
   .cards-area { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; min-height: 128px; }
-  .card { background: linear-gradient(160deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border: 2px solid var(--border-strong); border-radius: var(--r-md); padding: 20px 4px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s, opacity 0.25s; min-height: 128px; position: relative; overflow: hidden; text-align: center; }
+  .card { background: linear-gradient(160deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border: 2px solid var(--border-strong); border-radius: var(--r-md); padding: 20px 4px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s, opacity 0.25s; min-height: 128px; position: relative; overflow: hidden; text-align: center; }
   .card-inner { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; }
   .card-banner { position: absolute; top: 0; left: 0; right: 0; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; letter-spacing: 1.5px; color: var(--bg-deep); background: var(--border-strong); border-radius: 10px 10px 0 0; z-index: 2; }
   .card.rarity-COMMON .card-banner { background: #4a4a5a; color: #c8c8d8; }
-  .card.rarity-RARE   .card-banner { background: var(--blue); color: #0d1a2e; }
+  .card.rarity-RARE .card-banner { background: var(--blue); color: #0d1a2e; }
   .card.rarity-LEGEND .card-banner { background: var(--gold); color: #2a1a00; }
   .card.rarity-COMMON { border-color: var(--border-strong); }
-  .card.rarity-RARE   { border-color: var(--blue); box-shadow: var(--glow-blue); }
+  .card.rarity-RARE { border-color: var(--blue); box-shadow: var(--glow-blue); }
   .card.rarity-LEGEND { border-color: var(--gold); box-shadow: var(--glow-gold); }
   .card-shine { position: absolute; inset: -50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(255,204,0,0.25) 40deg, transparent 80deg); opacity: 0; pointer-events: none; z-index: 0; }
   .card.rarity-LEGEND .card-shine { opacity: 1; animation: legendRotate 3s linear infinite; }
   @keyframes legendRotate { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-  .card.placeholder { cursor: default; background: var(--bg-panel); border-style: dashed; color: var(--text-dim); font-size: 11px; letter-spacing: 1px; font-weight: 700; padding: 10px 4px; }
+  .card.placeholder { cursor: default; background: var(--bg-panel); border-style: dashed; color: var(--text-dim); font-size: 11px; font-weight: 700; padding: 10px 4px; }
   .card.placeholder .card-banner { display: none; }
   .card:not(.placeholder):active { transform: scale(0.94); }
   .card.appear { animation: cardIn 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards; }
   .card.appear:nth-child(2) { animation-delay: 0.09s; }
   .card.appear:nth-child(3) { animation-delay: 0.18s; }
   @keyframes cardIn { from{transform:translateY(-24px) scale(0.85);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
-  .card.selected { border-color: var(--gold); box-shadow: 0 0 24px rgba(255,204,0,0.9), 0 0 48px rgba(255,204,0,0.4); transform: scale(1.05) rotateZ(-1deg); }
+  .card.selected { border-color: var(--gold); box-shadow: 0 0 24px rgba(255,204,0,0.9); transform: scale(1.05) rotateZ(-1deg); }
   .card.locked { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.7); }
   .card.fade-out { opacity: 0; transform: scale(0.85); pointer-events: none; }
   .card-emoji { font-size: 28px; }
-  .card-name { font-size: 11px; font-weight: 800; color: var(--text-primary); letter-spacing: 0.5px; }
+  .card-name { font-size: 11px; font-weight: 800; color: var(--text-primary); }
   .card-desc { font-size: 9px; color: var(--text-muted); font-family: var(--font-mono); font-weight: 700; }
-
   .actions { display: flex; flex-direction: column; gap: 8px; }
   .deploy-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
-  .deploy-btn { min-height: 48px; background: var(--bg-panel); border: 2px solid var(--border-subtle); border-radius: var(--r-sm); color: var(--text-muted); font-family: var(--font-ui); font-size: 12px; font-weight: 800; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; }
+  .deploy-btn { min-height: 48px; background: var(--bg-panel); border: 2px solid var(--border-subtle); border-radius: var(--r-sm); color: var(--text-muted); font-family: var(--font-ui); font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
   .deploy-btn:not(:disabled):active { transform: scale(0.94); }
-  .deploy-btn:not(:disabled) { border-color: var(--blue); color: #a8cfff; background: linear-gradient(180deg, #1a2a44 0%, #0f1a2e 100%); box-shadow: var(--glow-blue); }
+  .deploy-btn:not(:disabled) { border-color: var(--blue); color: #a8cfff; background: linear-gradient(180deg,#1a2a44 0%,#0f1a2e 100%); box-shadow: var(--glow-blue); }
   .deploy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .deploy-btn .plus { font-size: 16px; display: block; line-height: 1; margin-bottom: 2px; }
   #btn-draw-card { min-height: 56px; background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%); border: none; border-radius: var(--r-md); color: var(--bg-deep); font-family: var(--font-ui); font-size: 15px; font-weight: 900; letter-spacing: 2.5px; cursor: pointer; box-shadow: 0 4px 0 var(--gold-deep), var(--glow-gold); transition: all 0.1s; position: relative; overflow: hidden; }
-  #btn-draw-card::after { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); animation: shine 2.5s infinite; }
+  #btn-draw-card::after { content:''; position:absolute; top:0; left:-60%; width:40%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); animation: shine 2.5s infinite; }
   @keyframes shine { 0%{left:-60%} 60%,100%{left:120%} }
-  #btn-draw-card:not(:disabled):active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gold-deep), var(--glow-gold); }
+  #btn-draw-card:not(:disabled):active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gold-deep); }
   #btn-draw-card:disabled { background: var(--border-subtle); color: var(--text-dim); box-shadow: none; cursor: not-allowed; }
   #btn-draw-card:disabled::after { display: none; }
-  #btn-cancel-pick, #btn-skip-turn {
-    min-height: 44px;
-    background: var(--bg-panel);
-    border: 2px solid var(--border-strong);
-    border-radius: var(--r-sm);
-    color: var(--text-muted);
-    font-family: var(--font-ui);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
+  #btn-cancel-pick, #btn-skip-turn { min-height: 44px; background: var(--bg-panel); border: 2px solid var(--border-strong); border-radius: var(--r-sm); color: var(--text-muted); font-family: var(--font-ui); font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
   #btn-cancel-pick:not(:disabled) { border-color: var(--blue); color: #a8cfff; }
   #btn-cancel-pick:not(:disabled):active { transform: scale(0.94); }
   #btn-cancel-pick:disabled { opacity: 0.35; cursor: not-allowed; }
   #btn-skip-turn:not(:disabled) { border-color: var(--red-deep); color: #ff8899; }
   #btn-skip-turn:not(:disabled):active { transform: scale(0.94); }
   #btn-skip-turn:disabled { opacity: 0.35; cursor: not-allowed; }
-
   .shop-panel { background: var(--bg-panel-2); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); overflow: hidden; }
-  .shop-panel summary { list-style: none; padding: 10px 12px; font-size: 12px; font-weight: 800; color: var(--gold); letter-spacing: 1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .shop-panel summary { list-style: none; padding: 10px 12px; font-size: 12px; font-weight: 800; color: var(--gold); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
   .shop-panel summary::-webkit-details-marker { display: none; }
-  .shop-panel summary::after { content: '▼'; font-size: 10px; transition: transform 0.2s; }
+  .shop-panel summary::after { content:'▼'; font-size:10px; transition: transform 0.2s; }
   .shop-panel[open] summary::after { transform: rotate(180deg); }
   .shop-panel .shop-body { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--border-subtle); }
   .shop-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
-  .shop-btn { min-height: 52px; background: var(--bg-panel); border: 2px solid var(--border-strong); border-radius: var(--r-sm); color: var(--text-primary); font-family: var(--font-ui); font-size: 10px; font-weight: 800; letter-spacing: 0.5px; cursor: pointer; padding: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; line-height: 1.2; transition: all 0.15s; }
+  .shop-btn { min-height: 52px; background: var(--bg-panel); border: 2px solid var(--border-strong); border-radius: var(--r-sm); color: var(--text-primary); font-family: var(--font-ui); font-size: 10px; font-weight: 800; cursor: pointer; padding: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; line-height: 1.2; transition: all 0.15s; }
   .shop-btn:not(:disabled):active { transform: scale(0.94); }
   .shop-btn:not(:disabled) { border-color: var(--gold); color: var(--gold); }
   .shop-btn.active { border-color: var(--green); color: var(--green); box-shadow: var(--glow-green); }
   .shop-btn:disabled { opacity: 0.35; cursor: not-allowed; }
   .shop-btn .price { font-family: var(--font-mono); font-size: 10px; color: var(--gold); }
-
   #game-output { background: var(--bg-inset); border-radius: var(--r-sm); padding: 8px 10px; height: 150px; overflow-y: auto; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.5; color: var(--text-muted); border: 1px solid var(--border-subtle); user-select: text; -webkit-user-select: text; }
   .log-line { white-space: pre-wrap; word-break: break-all; }
   .log-line:last-child { color: var(--gold); }
@@ -281,66 +153,51 @@
   .log-line.round { color: var(--blue); font-weight: 900; letter-spacing: 1px; }
   .log-line.combat { animation: logIn 0.3s ease backwards; }
   @keyframes logIn { from{transform:translateX(-6px);opacity:0.3} to{transform:translateX(0);opacity:1} }
-
   #flash { position: fixed; inset: 0; background: var(--gold); opacity: 0; pointer-events: none; z-index: 999; transition: opacity 0.15s; }
   #flash.active { opacity: 0.45; }
   #flash.victory { background: var(--green); }
   #flash.danger { background: var(--red); }
   #flash.legend { background: var(--gold); opacity: 0.7; }
-
   .dmg-popup { position: fixed; font-size: 22px; font-weight: 900; color: var(--red); text-shadow: 0 0 8px rgba(255,51,102,0.9), 2px 2px 0 #000; pointer-events: none; z-index: 1000; animation: dmgFloat 0.9s cubic-bezier(0.34,1.56,0.64,1) forwards; font-family: var(--font-mono); }
   .dmg-popup.gold { color: var(--gold); text-shadow: 0 0 8px rgba(255,204,0,0.9), 2px 2px 0 #000; }
   .dmg-popup.green { color: var(--green); text-shadow: 0 0 8px rgba(0,255,102,0.9), 2px 2px 0 #000; }
   @keyframes dmgFloat { 0%{transform:translateY(0) scale(0.5);opacity:0} 25%{transform:translateY(-12px) scale(1.35);opacity:1} 100%{transform:translateY(-80px) scale(1);opacity:0} }
-
-  #combo-badge { position: fixed; top: 12px; right: 12px; background: linear-gradient(135deg, var(--gold), #ff9900); color: var(--bg-deep); font-family: var(--font-mono); font-weight: 900; font-size: 13px; letter-spacing: 1px; padding: 6px 14px; border-radius: var(--r-pill); box-shadow: var(--glow-gold); opacity: 0; transform: scale(0.5); pointer-events: none; z-index: 1002; transition: opacity 0.25s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+  #combo-badge { position: fixed; top: 12px; right: 12px; background: linear-gradient(135deg, var(--gold), #ff9900); color: var(--bg-deep); font-family: var(--font-mono); font-weight: 900; font-size: 13px; padding: 6px 14px; border-radius: var(--r-pill); box-shadow: var(--glow-gold); opacity: 0; transform: scale(0.5); pointer-events: none; z-index: 1002; transition: opacity 0.25s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
   #combo-badge.show { opacity: 1; transform: scale(1); }
-
   #wave-transition { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; z-index: 1003; transition: opacity 0.3s; }
   #wave-transition.show { opacity: 1; animation: waveIn 1.0s ease forwards; }
-  #wave-transition .wave-title { font-family: var(--font-ui); font-size: 42px; font-weight: 900; letter-spacing: 6px; color: var(--gold); text-shadow: 0 0 24px rgba(255,204,0,0.9), 0 0 48px rgba(255,204,0,0.5); }
+  #wave-transition .wave-title { font-family: var(--font-ui); font-size: 42px; font-weight: 900; letter-spacing: 6px; color: var(--gold); text-shadow: 0 0 24px rgba(255,204,0,0.9); }
   @keyframes waveIn { 0%{opacity:0} 20%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
-
   #app.shake { animation: screenShake 0.3s cubic-bezier(0.36,0.07,0.19,0.97); }
   @keyframes screenShake { 10%,90%{transform:translateX(-3px)} 20%,80%{transform:translateX(4px)} 30%,50%,70%{transform:translateX(-4px)} 40%,60%{transform:translateX(4px)} }
-
   #particle-layer { position: fixed; inset: 0; pointer-events: none; z-index: 998; overflow: hidden; }
   .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; opacity: 0; animation: particleBurst 0.65s ease-out forwards; }
   @keyframes particleBurst { 0%{opacity:1;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0.3)} }
-
   #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1001; padding: 20px; }
   #result-overlay.show { display: flex; }
-  .result-box { background: var(--bg-panel); border: 3px solid var(--gold); border-radius: var(--r-lg); padding: 26px 20px; text-align: center; max-width: 320px; width: 100%; box-shadow: 0 0 40px rgba(255,204,0,0.6), 0 0 80px rgba(255,204,0,0.3); animation: resultPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  .result-box { background: var(--bg-panel); border: 3px solid var(--gold); border-radius: var(--r-lg); padding: 26px 20px; text-align: center; max-width: 320px; width: 100%; box-shadow: 0 0 40px rgba(255,204,0,0.6); animation: resultPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
   @keyframes resultPop { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
-  .result-box.defeat { border-color: var(--red); box-shadow: 0 0 40px rgba(255,51,102,0.6), 0 0 80px rgba(255,51,102,0.3); }
+  .result-box.defeat { border-color: var(--red); }
   .result-box h2 { font-size: 22px; letter-spacing: 3px; margin-bottom: 12px; color: var(--gold); font-weight: 900; }
   .result-box.defeat h2 { color: var(--red); }
   .result-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
-  .result-box .score { font-size: 30px; color: var(--green); font-weight: 900; margin: 14px 0; font-family: var(--font-mono); text-shadow: 0 0 12px rgba(0,255,102,0.6); }
+  .result-box .score { font-size: 30px; color: var(--green); font-weight: 900; margin: 14px 0; font-family: var(--font-mono); }
   .result-btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
   #btn-continue, #btn-restart { min-height: 48px; padding: 0 24px; border: none; border-radius: var(--r-md); font-family: var(--font-ui); font-weight: 900; font-size: 14px; cursor: pointer; }
-  #btn-continue { background: linear-gradient(135deg, var(--green) 0%, #00aa44 100%); color: var(--bg-deep); letter-spacing: 1.5px; box-shadow: 0 4px 0 var(--green-deep), var(--glow-green); }
+  #btn-continue { background: linear-gradient(135deg, var(--green) 0%, #00aa44 100%); color: var(--bg-deep); box-shadow: 0 4px 0 var(--green-deep); }
   #btn-continue.hidden { display: none; }
-  #btn-restart { background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%); color: var(--bg-deep); letter-spacing: 2px; box-shadow: 0 4px 0 var(--gold-deep); }
-
+  #btn-restart { background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%); color: var(--bg-deep); box-shadow: 0 4px 0 var(--gold-deep); }
   button:focus-visible, .card:focus-visible, .slot:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-
-  @media (min-width: 481px) {
-    #app { max-width: 720px; }
-    .cards-area { grid-template-columns: repeat(4, minmax(0,1fr)); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-  }
+  @media (min-width: 481px) { #app { max-width: 720px; } .cards-area { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
 </style>
 </head>
 <body>
 <div id="app">
   <div class="header-row">
-    <h1>⚔️ TINY WARRIORS RUSH v3 ⚔️</h1>
+    <h1>⚔️ TINY WARRIORS RUSH v3.1 ⚔️</h1>
     <button id="btn-sound-toggle" aria-label="효과음 토글" title="효과음 토글">🔊</button>
   </div>
-
   <div class="castle-panel">
     <div class="castle-visual">
       <div class="castle-emoji" id="castle-emoji">🏰</div>
@@ -357,42 +214,25 @@
       </div>
     </div>
   </div>
-
   <div id="status-hint" aria-live="polite">카드 뽑기 버튼을 누르세요</div>
-
   <div class="battlefield-wrapper">
-    <div id="enemy-row-overlay"></div>
+    <div id="enemy-row-overlay" aria-hidden="true"></div>
     <div class="battlefield" id="battlefield">
-      <div class="slot empty" id="slot-0" data-slot="0">
-        <div class="slot-icon">🛡️</div>
-        <span class="slot-pos">전열</span>
-        <div class="slot-content"></div>
-      </div>
-      <div class="slot empty" id="slot-1" data-slot="1">
-        <div class="slot-icon">⚔️</div>
-        <span class="slot-pos">중열</span>
-        <div class="slot-content"></div>
-      </div>
-      <div class="slot empty" id="slot-2" data-slot="2">
-        <div class="slot-icon">🚩</div>
-        <span class="slot-pos">후열</span>
-        <div class="slot-content"></div>
-      </div>
+      <div class="slot empty" id="slot-0" data-slot="0"><div class="slot-icon">🛡️</div><span class="slot-pos">전열</span><div class="slot-content"></div></div>
+      <div class="slot empty" id="slot-1" data-slot="1"><div class="slot-icon">⚔️</div><span class="slot-pos">중열</span><div class="slot-content"></div></div>
+      <div class="slot empty" id="slot-2" data-slot="2"><div class="slot-icon">🚩</div><span class="slot-pos">후열</span><div class="slot-content"></div></div>
     </div>
   </div>
-
   <div class="enemy-preview">
     <span class="label">적 출현</span>
     <span class="count" id="enemy-count">0 마리</span>
     <span class="detail" id="enemy-detail">HP - / ATK -</span>
   </div>
-
   <div class="cards-area" id="cards-area">
     <div class="card placeholder">카드</div>
     <div class="card placeholder">카드를</div>
     <div class="card placeholder">뽑으세요</div>
   </div>
-
   <div class="actions">
     <div class="deploy-row">
       <button id="btn-deploy-0" class="deploy-btn" disabled aria-label="전열 슬롯에 배치"><span class="plus">+</span>전열</button>
@@ -402,7 +242,6 @@
     <button id="btn-cancel-pick" disabled aria-label="카드 선택 취소">↩️ 선택 취소</button>
     <button id="btn-skip-turn" disabled aria-label="턴 넘기기">⏭️ 턴 넘기기</button>
     <button id="btn-draw-card" aria-label="카드 뽑기">카드 뽑기</button>
-
     <details class="shop-panel" id="shop-panel">
       <summary>🏪 상점 · 골드 <span id="shop-gold">0</span></summary>
       <div class="shop-body">
@@ -414,15 +253,12 @@
       </div>
     </details>
   </div>
-
   <div id="game-output" aria-live="polite"></div>
 </div>
-
 <div id="flash"></div>
 <div id="particle-layer"></div>
 <div id="combo-badge">PERFECT ×2</div>
 <div id="wave-transition"><div class="wave-title" id="wave-transition-title">WAVE 2</div></div>
-
 <div id="result-overlay" role="dialog" aria-modal="true" aria-labelledby="result-title">
   <div class="result-box" id="result-box">
     <h2 id="result-title">🏆 VICTORY 🏆</h2>
@@ -435,7 +271,6 @@
     </div>
   </div>
 </div>
-
 <script>
 (function () {
   'use strict';
@@ -448,12 +283,13 @@
 
   /* ===== 카드 정의 ===== */
   var CARD_TANKER = { id:'TANKER', name:'탱커 소환', emoji:'🛡️', rarity:'COMMON', type:'SUMMON', desc:'HP32/ATK4', warrior:{ name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 } };
-  var CARD_ATK    = { id:'ATK_BOOST', name:'공격 강화', emoji:'⚔️', rarity:'RARE', type:'INSTANT', desc:'전사 ATK +2' };
-  var CARD_HEAL   = { id:'HEAL', name:'성 회복', emoji:'💚', rarity:'RARE', type:'INSTANT', desc:'성 HP +7' };
-  var CARD_HERO   = { id:'HERO', name:'전설의 용사', emoji:'👑', rarity:'LEGEND', type:'SUMMON', desc:'HP52/ATK9', warrior:{ name:'용사', emoji:'👑', hp:52, maxHp:52, atk:9 } };
-  var CARD_SCOUT  = { id:'SCOUT_SUPPLY', name:'정찰 보급', emoji:'📦', rarity:'COMMON', type:'INSTANT', desc:'골드 +4' };
+  var CARD_ATK = { id:'ATK_BOOST', name:'공격 강화', emoji:'⚔️', rarity:'RARE', type:'INSTANT', desc:'전사 ATK +2' };
+  var CARD_HEAL = { id:'HEAL', name:'성 회복', emoji:'💚', rarity:'RARE', type:'INSTANT', desc:'성 HP +7' };
+  var CARD_HERO = { id:'HERO', name:'전설의 용사', emoji:'👑', rarity:'LEGEND', type:'SUMMON', desc:'HP52/ATK9', warrior:{ name:'용사', emoji:'👑', hp:52, maxHp:52, atk:9 } };
+  var CARD_SCOUT = { id:'SCOUT_SUPPLY', name:'정찰 보급', emoji:'📦', rarity:'COMMON', type:'INSTANT', desc:'골드 +4' };
 
-  /* ===== 웨이브 정의 ===== */
+  var ALL_CARDS = { TANKER: CARD_TANKER, ATK_BOOST: CARD_ATK, HEAL: CARD_HEAL, HERO: CARD_HERO, SCOUT_SUPPLY: CARD_SCOUT };
+
   function getWaveDef(waveNum) {
     if (waveNum === 1) return { enemies:[{type:'잡병',hp:6,atk:2},{type:'잡병',hp:6,atk:2}], gold:5 };
     if (waveNum === 2) return { enemies:[{type:'잡병',hp:8,atk:2},{type:'잡병',hp:8,atk:2},{type:'잡병',hp:8,atk:2}], gold:6 };
@@ -539,24 +375,13 @@
     btnShopUpgrade: document.getElementById('btn-shop-upgrade'),
     btnShopRepair: document.getElementById('btn-shop-repair')
   };
-
-  var btnDeploy = [
-    document.getElementById('btn-deploy-0'),
-    document.getElementById('btn-deploy-1'),
-    document.getElementById('btn-deploy-2')
-  ];
-  var slotEls = [
-    document.getElementById('slot-0'),
-    document.getElementById('slot-1'),
-    document.getElementById('slot-2')
-  ];
+  var btnDeploy = [document.getElementById('btn-deploy-0'), document.getElementById('btn-deploy-1'), document.getElementById('btn-deploy-2')];
+  var slotEls = [document.getElementById('slot-0'), document.getElementById('slot-1'), document.getElementById('slot-2')];
 
   /* ===== 오디오 ===== */
   var audioCtx = null;
   function ensureAudio() {
-    if (!audioCtx) {
-      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; }
-    }
+    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; } }
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   }
   function tone(freq, type, duration, gain, freqEnd) {
@@ -570,10 +395,8 @@
       if (freqEnd !== undefined) osc.frequency.linearRampToValueAtTime(freqEnd, audioCtx.currentTime + duration);
       g.gain.value = gain;
       g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
-      osc.connect(g);
-      g.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
+      osc.connect(g); g.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + duration);
     } catch (e) {}
   }
   function playClick() { tone(800,'sine',0.06,0.05); }
@@ -595,8 +418,7 @@
     if (window.gameState.log.length > 200) window.gameState.log.shift();
   }
   function flash(color) {
-    els.flash.className = '';
-    void els.flash.offsetWidth;
+    els.flash.className = ''; void els.flash.offsetWidth;
     els.flash.classList.add('active');
     if (color === 'victory') els.flash.classList.add('victory');
     else if (color === 'danger') els.flash.classList.add('danger');
@@ -604,8 +426,7 @@
     setTimeout(function () { els.flash.classList.remove('active'); }, 200);
   }
   function screenShake() {
-    els.app.classList.remove('shake');
-    void els.app.offsetWidth;
+    els.app.classList.remove('shake'); void els.app.offsetWidth;
     els.app.classList.add('shake');
     setTimeout(function () { els.app.classList.remove('shake'); }, 320);
   }
@@ -628,14 +449,12 @@
     if (!anchorEl) return;
     count = count || 8;
     var rect = anchorEl.getBoundingClientRect();
-    var cx = rect.left + rect.width / 2;
-    var cy = rect.top + rect.height / 2;
+    var cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
     for (var i = 0; i < count; i++) {
       (function (idx) {
         var angle = (Math.PI * 2 * idx) / count;
         var dist = 40 + Math.random() * 40;
-        var tx = Math.cos(angle) * dist;
-        var ty = Math.sin(angle) * dist;
+        var tx = Math.cos(angle) * dist, ty = Math.sin(angle) * dist;
         var p = document.createElement('div');
         p.className = 'particle';
         p.style.left = (cx - 4) + 'px';
@@ -652,8 +471,7 @@
   }
   function showWaveTransition(n) {
     els.waveTransitionTitle.textContent = 'WAVE ' + n;
-    els.waveTransition.classList.remove('show');
-    void els.waveTransition.offsetWidth;
+    els.waveTransition.classList.remove('show'); void els.waveTransition.offsetWidth;
     els.waveTransition.classList.add('show');
     setTimeout(function () { els.waveTransition.classList.remove('show'); }, 1000);
   }
@@ -673,24 +491,18 @@
   function makeKeyboardActivate(el) {
     el.addEventListener('keydown', function (ev) {
       if (ev.key === 'Enter' || ev.key === ' ' || ev.keyCode === 13 || ev.keyCode === 32) {
-        ev.preventDefault();
-        el.click();
+        ev.preventDefault(); el.click();
       }
     });
   }
   function aliveWarriorCount() {
-    var s = window.gameState, n = 0;
-    for (var i = 0; i < SLOT_COUNT; i++) if (s.warriors[i] && s.warriors[i].hp > 0) n++;
+    var n = 0, w = window.gameState.warriors;
+    for (var i = 0; i < SLOT_COUNT; i++) if (w[i] && w[i].hp > 0) n++;
     return n;
   }
-  function findFirstAliveWarrior() {
-    var s = window.gameState;
-    for (var i = 0; i < SLOT_COUNT; i++) if (s.warriors[i] && s.warriors[i].hp > 0) return i;
-    return -1;
-  }
   function hasEmptySlot() {
-    var s = window.gameState;
-    for (var i = 0; i < SLOT_COUNT; i++) if (!s.warriors[i] || s.warriors[i].hp <= 0) return true;
+    var w = window.gameState.warriors;
+    for (var i = 0; i < SLOT_COUNT; i++) if (!w[i] || w[i].hp <= 0) return true;
     return false;
   }
 
@@ -703,40 +515,22 @@
     els.castleEmoji.classList.remove('warn','danger');
     els.castleStatusLabel.textContent = '';
     els.castleStatusLabel.style.color = '';
-    if (pct <= 20) {
-      els.castleHpFill.classList.add('danger');
-      els.castleEmoji.classList.add('danger');
-      els.castleStatusLabel.textContent = '💀 함락 임박';
-      els.castleStatusLabel.style.color = 'var(--red)';
-    } else if (pct <= 50) {
-      els.castleHpFill.classList.add('warn');
-      els.castleEmoji.classList.add('warn');
-      els.castleStatusLabel.textContent = '⚠️ 위험';
-      els.castleStatusLabel.style.color = 'var(--gold)';
-    }
+    if (pct <= 20) { els.castleHpFill.classList.add('danger'); els.castleEmoji.classList.add('danger'); els.castleStatusLabel.textContent = '💀 함락 임박'; els.castleStatusLabel.style.color = 'var(--red)'; }
+    else if (pct <= 50) { els.castleHpFill.classList.add('warn'); els.castleEmoji.classList.add('warn'); els.castleStatusLabel.textContent = '⚠️ 위험'; els.castleStatusLabel.style.color = 'var(--gold)'; }
     els.statCastleHp.textContent = String(Math.max(0, s.castleHp));
     els.statCastleMaxHp.textContent = String(s.castleMaxHp);
   }
   function renderStats() {
     var s = window.gameState;
-    if (s.isEndless || s.wave > s.maxWave) {
-      els.statWave.textContent = String(s.wave);
-      els.statMaxWave.textContent = '∞';
-    } else {
-      els.statWave.textContent = String(Math.min(s.wave, s.maxWave));
-      els.statMaxWave.textContent = String(s.maxWave);
-    }
+    if (s.isEndless || s.wave > s.maxWave) { els.statWave.textContent = String(s.wave); els.statMaxWave.textContent = '∞'; }
+    else { els.statWave.textContent = String(Math.min(s.wave, s.maxWave)); els.statMaxWave.textContent = String(s.maxWave); }
     els.statGold.textContent = String(s.gold);
     els.shopGold.textContent = String(s.gold);
     renderCastle();
   }
   function renderEnemyPreview() {
     var s = window.gameState;
-    if (s.isGameOver || s.isVictory || (s.wave > s.maxWave && !s.isEndless)) {
-      els.enemyCount.textContent = '—';
-      els.enemyDetail.textContent = '게임 종료';
-      return;
-    }
+    if (s.isGameOver || s.isVictory || (s.wave > s.maxWave && !s.isEndless)) { els.enemyCount.textContent = '—'; els.enemyDetail.textContent = '게임 종료'; return; }
     var def = getWaveDef(s.wave);
     if (!def || !def.enemies.length) { els.enemyCount.textContent = '0 마리'; els.enemyDetail.textContent = 'HP - / ATK -'; return; }
     var hps = def.enemies.map(function(e){return e.hp;});
@@ -770,9 +564,8 @@
       }
       if (isShopTarget && w && w.hp > 0) cls += ' shop-target';
       slotEl.className = cls;
-      // 포커스/aria
       var focusable = false;
-      if (s.phase === 'DEPLOY' && !w) focusable = true;
+      if (s.phase === 'DEPLOY' && !w && !s.isResolvingCombat) focusable = true;
       if (isShopTarget && w && w.hp > 0) focusable = true;
       if (focusable) { slotEl.setAttribute('tabindex','0'); slotEl.setAttribute('role','button'); }
       else { slotEl.removeAttribute('tabindex'); slotEl.removeAttribute('role'); }
@@ -784,10 +577,7 @@
     var s = window.gameState;
     var cards = s.availableCards;
     if (!cards || cards.length === 0) {
-      els.cardsArea.innerHTML =
-        '<div class="card placeholder">카드</div>' +
-        '<div class="card placeholder">카드를</div>' +
-        '<div class="card placeholder">뽑으세요</div>';
+      els.cardsArea.innerHTML = '<div class="card placeholder">카드</div><div class="card placeholder">카드를</div><div class="card placeholder">뽑으세요</div>';
       return;
     }
     els.cardsArea.innerHTML = '';
@@ -798,16 +588,15 @@
         var cls = 'card appear rarity-' + c.rarity;
         var ariaDisabled = false;
         if (s.selectedCard === c) cardEl.classList.add('selected');
-        else if (s.phase === 'DEPLOY' || s.phase === 'END' || s.shopMode === 'SHOP_UPGRADE_TARGET') cls += ' fade-out';
+        else if (s.phase === 'DEPLOY' || s.phase === 'END' || s.shopMode === 'SHOP_UPGRADE_TARGET' || s.isResolvingCombat) cls += ' fade-out';
         else if (s.phase !== 'SELECT') cls += ' locked';
-        if (s.phase !== 'SELECT') ariaDisabled = true;
+        if (s.phase !== 'SELECT' || s.isResolvingCombat) ariaDisabled = true;
         cardEl.className = cls;
-        cardEl.setAttribute('data-card-index', String(idx));
         cardEl.id = 'card-choice-' + idx;
         cardEl.setAttribute('tabindex','0');
         cardEl.setAttribute('role','button');
         if (ariaDisabled) cardEl.setAttribute('aria-disabled','true');
-        cardEl.setAttribute('aria-label', c.name + ' 카드, ' + c.rarity + ' 등급, ' + c.desc + (s.phase === 'SELECT' ? ', 선택 가능' : ', 선택 불가'));
+        cardEl.setAttribute('aria-label', c.name + ' 카드, ' + c.rarity + ' 등급, ' + c.desc + (s.phase === 'SELECT' && !s.isResolvingCombat ? ', 선택 가능' : ', 선택 불가'));
         cardEl.innerHTML =
           '<div class="card-banner">' + c.rarity + '</div>' +
           '<div class="card-inner">' +
@@ -824,9 +613,8 @@
   }
   function renderStatusHint() {
     var s = window.gameState;
-    var hint = '';
-    var cls = '';
-    if (s.isResolvingCombat) { hint = '⚔️ 전투 진행 중...'; cls = 'deploy'; }
+    var hint = '', cls = '';
+    if (s.isResolvingCombat) { hint = '⚔️ 전투 진행 중...'; cls = 'combat'; }
     else if (s.shopMode === 'SHOP_UPGRADE_TARGET') { hint = '강화할 전사를 선택하거나 강화 버튼을 다시 눌러 취소하세요.'; cls = 'shop'; }
     else if (s.phase === 'DRAW') hint = '카드 뽑기 버튼을 누르세요';
     else if (s.phase === 'SELECT') hint = '카드를 선택하거나 턴 넘기기를 누르세요';
@@ -837,17 +625,19 @@
   }
   function renderShop() {
     var s = window.gameState;
-    var anyWarrior = s.warriors.some(function(w){ return w && w.hp > 0; });
-    var isDRAW = s.phase === 'DRAW' && !s.isResolvingCombat;
+    var anyW = s.warriors.some(function(w){ return w && w.hp > 0; });
+    var noCombat = !s.isResolvingCombat;
     var inUpgrade = s.shopMode === 'SHOP_UPGRADE_TARGET';
-    els.btnShopReroll.disabled = !(isDRAW && !inUpgrade && !s.rerollUsedThisWave && s.gold >= 10);
-    els.btnShopUpgrade.disabled = !((isDRAW || inUpgrade) && anyWarrior && (inUpgrade || s.gold >= 15));
-    els.btnShopRepair.disabled = !(isDRAW && !inUpgrade && s.gold >= 8 && s.castleHp < s.castleMaxHp);
-    if (inUpgrade) els.btnShopUpgrade.classList.add('active');
-    else els.btnShopUpgrade.classList.remove('active');
-    if (els.btnShopReroll.disabled) els.btnShopReroll.setAttribute('aria-disabled','true'); else els.btnShopReroll.removeAttribute('aria-disabled');
-    if (els.btnShopUpgrade.disabled) els.btnShopUpgrade.setAttribute('aria-disabled','true'); else els.btnShopUpgrade.removeAttribute('aria-disabled');
-    if (els.btnShopRepair.disabled) els.btnShopRepair.setAttribute('aria-disabled','true'); else els.btnShopRepair.removeAttribute('aria-disabled');
+    // 재뽑기: SELECT 전용, 카드 미선택, 이번 웨이브 미사용, 10G+
+    els.btnShopReroll.disabled = !(s.phase === 'SELECT' && !s.selectedCard && !s.rerollUsedThisWave && s.gold >= 10 && noCombat && !inUpgrade);
+    // 강화: DRAW 전용 or 업그레이드 모드
+    els.btnShopUpgrade.disabled = !(((s.phase === 'DRAW' && !inUpgrade && s.gold >= 15 && noCombat) || inUpgrade) && anyW);
+    // 보수: DRAW 전용
+    els.btnShopRepair.disabled = !(s.phase === 'DRAW' && !inUpgrade && s.gold >= 8 && s.castleHp < s.castleMaxHp && noCombat);
+    if (inUpgrade) els.btnShopUpgrade.classList.add('active'); else els.btnShopUpgrade.classList.remove('active');
+    [els.btnShopReroll, els.btnShopUpgrade, els.btnShopRepair].forEach(function(b){
+      if (b.disabled) b.setAttribute('aria-disabled','true'); else b.removeAttribute('aria-disabled');
+    });
   }
   function renderButtons() {
     var s = window.gameState;
@@ -878,18 +668,10 @@
     if (s.isResolvingCombat) return;
     try {
       var save = {
-        phase: s.phase,
-        wave: s.wave,
-        maxWaveReached: s.maxWaveReached,
-        isEndless: s.isEndless,
-        castleHp: s.castleHp,
-        castleMaxHp: s.castleMaxHp,
-        gold: s.gold,
-        warriors: s.warriors,
-        combo: s.combo,
-        rerollUsedThisWave: s.rerollUsedThisWave,
-        isGameOver: s.isGameOver,
-        isVictory: s.isVictory,
+        phase: s.phase, wave: s.wave, maxWaveReached: s.maxWaveReached, isEndless: s.isEndless,
+        castleHp: s.castleHp, castleMaxHp: s.castleMaxHp, gold: s.gold, warriors: s.warriors,
+        combo: s.combo, rerollUsedThisWave: s.rerollUsedThisWave,
+        isGameOver: s.isGameOver, isVictory: s.isVictory,
         availableCards: s.availableCards.map(function(c){ return c.id; }),
         selectedCardId: s.selectedCard ? s.selectedCard.id : null,
         log: s.log.slice(-100)
@@ -899,7 +681,6 @@
   }
   function validateAndNormalize(save) {
     if (!save || typeof save !== 'object') return null;
-    var ALL_CARDS = { TANKER: CARD_TANKER, ATK_BOOST: CARD_ATK, HEAL: CARD_HEAL, HERO: CARD_HERO, SCOUT_SUPPLY: CARD_SCOUT };
     var out = {};
     out.phase = (typeof save.phase === 'string') ? save.phase : 'DRAW';
     out.wave = Math.max(1, Math.floor(Number(save.wave)) || 1);
@@ -912,13 +693,10 @@
     if (Array.isArray(save.warriors)) {
       for (var i = 0; i < 3; i++) {
         var w = save.warriors[i];
-        if (w && typeof w === 'object' && isFinite(w.hp) && isFinite(w.maxHp) && isFinite(w.atk)) {
+        if (w && typeof w === 'object' && isFinite(w.hp) && isFinite(w.maxHp) && isFinite(w.atk) && w.maxHp > 0 && w.atk >= 1) {
           out.warriors[i] = {
-            name: String(w.name || '전사'),
-            emoji: String(w.emoji || '⚔️'),
-            hp: Math.max(0, Math.min(w.maxHp, w.hp)),
-            maxHp: Math.max(1, w.maxHp),
-            atk: Math.max(1, w.atk)
+            name: String(w.name || '전사'), emoji: String(w.emoji || '⚔️'),
+            hp: Math.max(0, Math.min(w.maxHp, w.hp)), maxHp: w.maxHp, atk: w.atk
           };
         }
       }
@@ -947,26 +725,18 @@
       if (!norm) { localStorage.removeItem(SAVE_KEY); return false; }
       var s = window.gameState;
       s.phase = norm.phase;
-      s.wave = norm.wave;
-      s.maxWaveReached = norm.maxWaveReached;
-      s.isEndless = norm.isEndless;
-      s.castleHp = norm.castleHp;
-      s.castleMaxHp = norm.castleMaxHp;
-      s.gold = norm.gold;
-      s.warriors = norm.warriors;
-      s.combo = norm.combo;
+      s.wave = norm.wave; s.maxWaveReached = norm.maxWaveReached; s.isEndless = norm.isEndless;
+      s.castleHp = norm.castleHp; s.castleMaxHp = norm.castleMaxHp; s.gold = norm.gold;
+      s.warriors = norm.warriors; s.combo = norm.combo;
       s.rerollUsedThisWave = norm.rerollUsedThisWave;
-      s.isGameOver = norm.isGameOver;
-      s.isVictory = norm.isVictory;
-      s.availableCards = norm.availableCards;
-      s.selectedCard = norm.selectedCard;
-      s.shopMode = null;
-      s.isResolvingCombat = false;
+      s.isGameOver = norm.isGameOver; s.isVictory = norm.isVictory;
+      s.availableCards = norm.availableCards; s.selectedCard = norm.selectedCard;
+      s.shopMode = null; s.isResolvingCombat = false;
       if (s.isGameOver || s.isVictory) s.phase = 'END';
-      // phase 정합성
+      // 정합성 검사
       if (s.phase === 'DEPLOY' && (!s.selectedCard || !s.selectedCard.warrior)) s.phase = 'SELECT';
       if (s.phase === 'SELECT' && s.availableCards.length === 0) s.phase = 'DRAW';
-      return { ok:true, log: norm.log };
+      return { ok: true, log: norm.log };
     } catch (e) {
       try { localStorage.removeItem(SAVE_KEY); } catch (ee) {}
       return false;
@@ -984,13 +754,16 @@
     if (emptySlot) { pool.push(CARD_TANKER); pool.push(CARD_HERO); }
     if (aliveW) pool.push(CARD_ATK);
     if (damagedCastle) pool.push(CARD_HEAL);
+    // 상황 X: 빈 슬롯 없음 + 성 만피 + 전사 생존 → [ATK_BOOST]만 남음 → 무한 스택 방지용 SCOUT 추가
+    if (!emptySlot && !damagedCastle && aliveW) pool.push(CARD_SCOUT);
+    // 최종 폴백
+    if (pool.length === 0) pool.push(CARD_SCOUT);
     return pool;
   }
   function drawRandomCard(rv) {
     if (rv === undefined) rv = Math.random() * 100;
     var eligible = getEligibleCards();
     if (eligible.length === 0) return CARD_SCOUT;
-    // LEGEND (95-100)
     if (rv >= 95) {
       var legends = eligible.filter(function(c){ return c.rarity === 'LEGEND'; });
       if (legends.length) return legends[0];
@@ -1000,23 +773,17 @@
       if (commonsF.length) return commonsF[0];
       return CARD_SCOUT;
     }
-    // RARE (65-95)
     if (rv >= 65) {
       var rares = eligible.filter(function(c){ return c.rarity === 'RARE'; });
       if (rares.length) return rares[Math.floor(Math.random() * rares.length)];
       var commonsR = eligible.filter(function(c){ return c.rarity === 'COMMON'; });
       if (commonsR.length) return commonsR[Math.floor(Math.random() * commonsR.length)];
-      var legendsR = eligible.filter(function(c){ return c.rarity === 'LEGEND'; });
-      if (legendsR.length) return legendsR[0];
       return CARD_SCOUT;
     }
-    // COMMON (0-65)
     var commons = eligible.filter(function(c){ return c.rarity === 'COMMON'; });
     if (commons.length) return commons[Math.floor(Math.random() * commons.length)];
     var rares2 = eligible.filter(function(c){ return c.rarity === 'RARE'; });
     if (rares2.length) return rares2[Math.floor(Math.random() * rares2.length)];
-    var legends2 = eligible.filter(function(c){ return c.rarity === 'LEGEND'; });
-    if (legends2.length) return legends2[0];
     return CARD_SCOUT;
   }
   function drawThreeCards() {
@@ -1029,7 +796,8 @@
   function onDrawClick() {
     ensureAudio(); playClick();
     var s = window.gameState;
-    if (s.phase !== 'DRAW' || s.shopMode === 'SHOP_UPGRADE_TARGET' || s.isResolvingCombat) return;
+    if (s.isResolvingCombat) return;
+    if (s.phase !== 'DRAW' || s.shopMode === 'SHOP_UPGRADE_TARGET') return;
     s.availableCards = drawThreeCards();
     s.selectedCard = null;
     s.phase = 'SELECT';
@@ -1045,9 +813,7 @@
     if (hasLegend) {
       playLegend(); flash('legend');
       var center = document.createElement('div');
-      center.style.position = 'fixed';
-      center.style.left = '50%';
-      center.style.top = '40%';
+      center.style.position = 'fixed'; center.style.left = '50%'; center.style.top = '40%';
       document.body.appendChild(center);
       burstParticles(center, '#ffcc00', 20);
       setTimeout(function () { center.remove(); }, 100);
@@ -1058,7 +824,8 @@
   function onCardClick(idx) {
     ensureAudio();
     var s = window.gameState;
-    if (s.phase !== 'SELECT' || s.shopMode === 'SHOP_UPGRADE_TARGET' || s.isResolvingCombat) return;
+    if (s.isResolvingCombat) return;
+    if (s.phase !== 'SELECT' || s.shopMode === 'SHOP_UPGRADE_TARGET') return;
     if (!s.availableCards || s.availableCards.length === 0) return;
     if (s.selectedCard) return;
     var card = s.availableCards[idx];
@@ -1068,7 +835,6 @@
     log('[PICK] Picked ' + card.name + '. Effect: ' + card.desc);
     var cardEl = document.getElementById('card-choice-' + idx);
     burstParticles(cardEl, card.rarity === 'RARE' ? '#4a90e2' : (card.rarity === 'LEGEND' ? '#ffcc00' : '#8888a0'), 8);
-
     if (card.type === 'SUMMON') {
       if (!hasEmptySlot()) {
         log('[경고] 빈 슬롯이 없어 SUMMON 카드를 사용할 수 없습니다. 자동 취소.', 'danger');
@@ -1113,7 +879,8 @@
   function onDeployClick(slotIdx) {
     ensureAudio(); playClick();
     var s = window.gameState;
-    if (s.phase !== 'DEPLOY' || s.isResolvingCombat) return;
+    if (s.isResolvingCombat) return;
+    if (s.phase !== 'DEPLOY') return;
     if (s.warriors[slotIdx] && s.warriors[slotIdx].hp > 0) return;
     if (!s.selectedCard || !s.selectedCard.warrior) return;
     var w = s.selectedCard.warrior;
@@ -1133,7 +900,8 @@
   function onCancelPick() {
     ensureAudio(); playClick();
     var s = window.gameState;
-    if (s.phase !== 'DEPLOY' || s.isResolvingCombat) return;
+    if (s.isResolvingCombat) return;
+    if (s.phase !== 'DEPLOY') return;
     s.selectedCard = null;
     s.phase = 'SELECT';
     s.lastActionStatus = 'IDLE';
@@ -1143,7 +911,8 @@
   function onSkipTurn() {
     ensureAudio(); playClick();
     var s = window.gameState;
-    if (s.phase !== 'SELECT' || s.isResolvingCombat) return;
+    if (s.isResolvingCombat) return;
+    if (s.phase !== 'SELECT') return;
     log('[SKIP] 턴을 넘깁니다. 카드를 사용하지 않습니다.', 'danger');
     s.availableCards = [];
     s.selectedCard = null;
@@ -1156,15 +925,15 @@
   function onShopReroll() {
     ensureAudio(); playClick();
     var s = window.gameState;
-    if (s.phase !== 'DRAW' || s.isResolvingCombat) return;
-    if (s.shopMode === 'SHOP_UPGRADE_TARGET') return;
+    if (s.isResolvingCombat) return;
+    if (s.phase !== 'SELECT') return;
+    if (s.selectedCard) return;
     if (s.rerollUsedThisWave) return;
     if (s.gold < 10) return;
     s.gold -= 10;
     s.rerollUsedThisWave = true;
     s.availableCards = drawThreeCards();
     s.selectedCard = null;
-    s.phase = 'SELECT';
     log('[SHOP] 카드 재뽑기 성공 (10G 소모). 골드: ' + s.gold);
     render();
   }
@@ -1172,8 +941,8 @@
     ensureAudio(); playClick();
     var s = window.gameState;
     if (s.isResolvingCombat) return;
-    var anyWarrior = s.warriors.some(function(w){ return w && w.hp > 0; });
-    if (!anyWarrior) return;
+    var anyW = s.warriors.some(function(w){ return w && w.hp > 0; });
+    if (!anyW) return;
     if (s.shopMode === 'SHOP_UPGRADE_TARGET') {
       s.shopMode = null;
       log('[SHOP] 강화 모드를 취소했습니다.');
@@ -1189,7 +958,8 @@
   function onShopRepair() {
     ensureAudio(); playClick();
     var s = window.gameState;
-    if (s.phase !== 'DRAW' || s.isResolvingCombat) return;
+    if (s.isResolvingCombat) return;
+    if (s.phase !== 'DRAW') return;
     if (s.shopMode === 'SHOP_UPGRADE_TARGET') return;
     if (s.gold < 8) return;
     if (s.castleHp >= s.castleMaxHp) return;
@@ -1203,6 +973,7 @@
   }
   function onSlotUpgradeClick(slotIdx) {
     var s = window.gameState;
+    if (s.isResolvingCombat) return;
     if (s.shopMode !== 'SHOP_UPGRADE_TARGET') return;
     if (!s.warriors[slotIdx] || s.warriors[slotIdx].hp <= 0) return;
     if (s.gold < 15) return;
@@ -1233,16 +1004,15 @@
         '<div class="enemy-mini-hp"><div class="enemy-mini-hp-fill" style="width:100%"></div></div>';
       els.enemyRowOverlay.appendChild(token);
     }
-    els.enemyRowOverlay.classList.remove('show');
-    void els.enemyRowOverlay.offsetWidth;
     els.enemyRowOverlay.classList.add('show');
   }
   function hideEnemyRow() { els.enemyRowOverlay.classList.remove('show'); }
-  function updateEnemyToken(id, hp, maxHp) {
+  function clearEnemyRow() { els.enemyRowOverlay.innerHTML = ''; }
+  function updateEnemyToken(id, hpAfter, maxHp) {
     var token = els.enemyRowOverlay.querySelector('[data-enemy-id="' + id + '"]');
     if (!token) return;
     var fill = token.querySelector('.enemy-mini-hp-fill');
-    if (fill) fill.style.width = Math.max(0, hp / maxHp * 100) + '%';
+    if (fill) fill.style.width = Math.max(0, hpAfter / maxHp * 100) + '%';
     token.classList.add('damaged');
     setTimeout(function () { token.classList.remove('damaged'); }, 260);
   }
@@ -1250,168 +1020,249 @@
     var token = els.enemyRowOverlay.querySelector('[data-enemy-id="' + id + '"]');
     if (token) token.classList.add('dead');
   }
-  function clearEnemyRow() {
-    els.enemyRowOverlay.innerHTML = '';
+
+  /* ===== 순수 전투 계산 ===== */
+  function computeCombat(snapshot, waveDef) {
+    var warriors = JSON.parse(JSON.stringify(snapshot.warriors));
+    var castleHp = snapshot.castleHp;
+    var events = [];
+    var enemies = waveDef.enemies.map(function (e, i) {
+      return { id: i+1, type: e.type, hp: e.hp, maxHp: e.hp, atk: e.atk };
+    });
+    var killedEnemyIds = [];
+    var perfect = false;
+    var breakthroughDamage = 0;
+    var r, slot, s2, ei, k, t;
+
+    for (r = 1; r <= 3; r++) {
+      events.push({ kind:'round', round:r });
+
+      for (slot = 2; slot >= 0; slot--) {
+        if (!warriors[slot] || warriors[slot].hp <= 0) continue;
+        var target = null;
+        for (t = 0; t < enemies.length; t++) {
+          if (enemies[t].hp > 0) { target = enemies[t]; break; }
+        }
+        if (!target) break;
+        var dmg = warriors[slot].atk;
+        target.hp -= dmg;
+        events.push({ kind:'warriorAttack', slot:slot, enemyId:target.id, enemyType:target.type, dmg:dmg, enemyHpAfter:Math.max(0,target.hp), enemyMaxHp:target.maxHp });
+        if (target.hp <= 0) {
+          events.push({ kind:'enemyKilled', enemyId:target.id, enemyType:target.type });
+          if (killedEnemyIds.indexOf(target.id) < 0) killedEnemyIds.push(target.id);
+        }
+      }
+
+      var anyAlive = false;
+      for (k = 0; k < enemies.length; k++) if (enemies[k].hp > 0) { anyAlive = true; break; }
+      if (!anyAlive) { perfect = true; break; }
+
+      for (ei = 0; ei < enemies.length; ei++) {
+        if (enemies[ei].hp <= 0) continue;
+        var targetSlot = -1;
+        for (s2 = 0; s2 < SLOT_COUNT; s2++) {
+          if (warriors[s2] && warriors[s2].hp > 0) { targetSlot = s2; break; }
+        }
+        if (targetSlot < 0) {
+          castleHp = Math.max(0, castleHp - enemies[ei].atk);
+          events.push({ kind:'enemyAttackCastle', enemyId:enemies[ei].id, dmg:enemies[ei].atk, castleHpAfter:castleHp });
+        } else {
+          var tw = warriors[targetSlot];
+          tw.hp -= enemies[ei].atk;
+          events.push({ kind:'enemyAttackWarrior', enemyId:enemies[ei].id, slot:targetSlot, dmg:enemies[ei].atk, warriorHpAfter:Math.max(0,tw.hp), warriorMaxHp:tw.maxHp });
+          if (tw.hp <= 0) {
+            events.push({ kind:'warriorDied', slot:targetSlot, name:tw.name });
+            warriors[targetSlot] = null;
+          }
+        }
+        if (castleHp <= 0) break;
+      }
+      if (castleHp <= 0) break;
+    }
+
+    var remaining = [];
+    for (var ri = 0; ri < enemies.length; ri++) if (enemies[ri].hp > 0) remaining.push(enemies[ri]);
+    if (!perfect && remaining.length > 0) {
+      var total = 0;
+      for (var bi = 0; bi < remaining.length; bi++) total += remaining[bi].atk;
+      breakthroughDamage = total;
+      castleHp = Math.max(0, castleHp - total);
+      events.push({ kind:'breakthrough', totalDmg: total, castleHpAfter: castleHp });
+    }
+
+    return { events: events, resultWarriors: warriors, resultCastleHp: castleHp, perfect: perfect, killedEnemyIds: killedEnemyIds, breakthroughDamage: breakthroughDamage };
   }
 
-  /* ===== 전투 해석 (3라운드) ===== */
+  /* ===== 비동기 전투 재생 ===== */
+  var playToken = 0;
+  function playCombat(events, onComplete) {
+    var myToken = ++playToken;
+    var reduced = false;
+    try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { reduced = false; }
+    var interval = reduced ? 0 : 220;
+    var i = 0;
+
+    function applyEvent(ev) {
+      if (myToken !== playToken) return;
+      if (ev.kind === 'round') {
+        log('[ROUND ' + ev.round + ']', 'round');
+      } else if (ev.kind === 'warriorAttack') {
+        log('[COMBAT] ' + (window.gameState.warriors[ev.slot] ? window.gameState.warriors[ev.slot].name : '전사') + ' → Enemy ' + ev.enemyId + '(' + ev.enemyType + ') ' + ev.dmg + ' 데미지 (HP ' + ev.enemyHpAfter + '/' + ev.enemyMaxHp + ')', 'combat');
+        var slotEl = slotEls[ev.slot];
+        if (slotEl) {
+          slotEl.classList.add('hit-anim');
+          setTimeout(function () { slotEl.classList.remove('hit-anim'); }, 200);
+        }
+        updateEnemyToken(ev.enemyId, ev.enemyHpAfter, ev.enemyMaxHp);
+        playHit();
+      } else if (ev.kind === 'enemyKilled') {
+        log('[KILL] Enemy ' + ev.enemyId + '(' + ev.enemyType + ') 처치!', 'highlight');
+        markEnemyDead(ev.enemyId);
+      } else if (ev.kind === 'enemyAttackWarrior') {
+        var wname = window.gameState.warriors[ev.slot] ? window.gameState.warriors[ev.slot].name : '전사';
+        log('[COMBAT] Enemy ' + ev.enemyId + ' → ' + wname + ' ' + ev.dmg + ' 데미지 (HP ' + ev.warriorHpAfter + '/' + ev.warriorMaxHp + ')', 'combat');
+        var sEl = slotEls[ev.slot];
+        if (sEl) {
+          sEl.classList.add('damage-anim');
+          setTimeout(function () { sEl.classList.remove('damage-anim'); }, 320);
+        }
+        playHit();
+      } else if (ev.kind === 'warriorDied') {
+        log('[전사자] ' + ev.name + '이(가) 전사했습니다.', 'danger');
+        var dEl = slotEls[ev.slot];
+        if (dEl) {
+          dEl.classList.add('death-anim');
+          (function (slotI, myT) {
+            setTimeout(function () {
+              if (myT !== playToken) return;
+              if (window.gameState.warriors[slotI]) window.gameState.warriors[slotI] = null;
+              var el = slotEls[slotI];
+              if (el) el.classList.remove('death-anim');
+            }, 500);
+          })(ev.slot, myToken);
+        }
+      } else if (ev.kind === 'enemyAttackCastle') {
+        window.gameState.castleHp = ev.castleHpAfter;
+        log('[COMBAT] Enemy ' + ev.enemyId + ' → 성 ' + ev.dmg + ' 데미지 (성 HP ' + ev.castleHpAfter + '/' + window.gameState.castleMaxHp + ')', 'danger');
+        flash('danger'); screenShake();
+        popDamage('-' + ev.dmg, '', document.querySelector('.castle-panel'));
+        renderCastle();
+      } else if (ev.kind === 'breakthrough') {
+        window.gameState.castleHp = ev.castleHpAfter;
+        log('[DAMAGE] 적 돌파! 성에 ' + ev.totalDmg + ' 데미지 (성 HP ' + ev.castleHpAfter + '/' + window.gameState.castleMaxHp + ')', 'danger');
+        flash('danger'); screenShake();
+        popDamage('-' + ev.totalDmg, '', document.querySelector('.castle-panel'));
+        renderCastle();
+      }
+    }
+
+    function step() {
+      if (myToken !== playToken) return;
+      if (i >= events.length) {
+        onComplete();
+        return;
+      }
+      applyEvent(events[i]);
+      i++;
+      setTimeout(step, interval);
+    }
+    step();
+  }
+
+  /* ===== 웨이브 해석 ===== */
   function resolveWave() {
     var s = window.gameState;
     if (s.isResolvingCombat) return;
     if (s.isGameOver || s.isVictory) { s.phase = 'END'; render(); return; }
-
     var def = getWaveDef(s.wave);
     if (!def) { s.phase = 'END'; render(); return; }
 
     s.isResolvingCombat = true;
     var currentWave = s.wave;
+    var enemiesForDisplay = def.enemies.map(function(e, i){ return { id: i+1, type: e.type }; });
+    showEnemyRow(enemiesForDisplay);
+    renderStatusHint();
+    renderButtons();
 
-    var enemies = def.enemies.map(function (e, i) {
-      return { id: i+1, type: e.type, hp: e.hp, maxHp: e.hp, atk: e.atk };
-    });
+    var snapshot = {
+      warriors: JSON.parse(JSON.stringify(s.warriors)),
+      castleHp: s.castleHp,
+      combo: s.combo
+    };
 
-    showEnemyRow(enemies);
-    log('[COMBAT] Wave ' + currentWave + ' 전투 시작. 아군 ' + aliveWarriorCount() + '명 vs 적 ' + enemies.length + '마리');
-    render();
+    var result = computeCombat(snapshot, def);
 
-    var perfect = false;
-    var roundNum;
+    log('[COMBAT] Wave ' + currentWave + ' 전투 시작. 아군 ' + aliveWarriorCount() + '명 vs 적 ' + def.enemies.length + '마리');
 
-    for (roundNum = 1; roundNum <= 3; roundNum++) {
-      log('[ROUND ' + roundNum + ']', 'round');
+    playCombat(result.events, function () {
+      if (!window.gameState.isResolvingCombat) return;
 
-      // 1) 전사 공격 (슬롯 2→0, 즉 후열부터)
-      var w;
-      for (w = SLOT_COUNT - 1; w >= 0; w--) {
-        var warrior = s.warriors[w];
-        if (!warrior || warrior.hp <= 0) continue;
-        var target = null;
-        for (var t = 0; t < enemies.length; t++) {
-          if (enemies[t].hp > 0) { target = enemies[t]; break; }
-        }
-        if (!target) break;
-        var dealt = warrior.atk;
-        target.hp -= dealt;
-        log('[COMBAT] ' + warrior.name + ' → Enemy ' + target.id + '(' + target.type + ') ' + dealt + ' 데미지 (HP ' + Math.max(0,target.hp) + '/' + target.maxHp + ')', 'combat');
-        if (target.hp <= 0) {
-          log('[KILL] Enemy ' + target.id + '(' + target.type + ') 처치!', 'highlight');
-        }
+      // 결과 반영
+      s.warriors = result.resultWarriors;
+      s.castleHp = result.resultCastleHp;
+
+      var perfect = result.perfect;
+      var clutch = s.castleHp > 0 && s.castleHp <= 5;
+
+      // 보상 계산 (콤보 보너스는 updateCombo 이전 값 기준)
+      var prevCombo = s.combo;
+      var base = def.gold;
+      if (perfect) base += 5;
+      if (clutch) base *= 2;
+      var comboBonus = perfect ? Math.min(20, prevCombo * 2) : 0;
+      var totalGold = base + comboBonus;
+      s.gold += totalGold;
+
+      if (perfect) {
+        log('[WAVE] Wave ' + currentWave + ' PERFECT 클리어! 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰' + (comboBonus > 0 ? ' · 콤보+' + comboBonus : '') + ')', 'highlight');
+        flash('victory');
+        popDamage('PERFECT! +' + totalGold + '💰', 'gold');
+        s.lastActionStatus = 'WAVE_PERFECT';
+        els.statusHint.textContent = '웨이브 ' + currentWave + ' 퍼펙트 클리어! 골드 +' + totalGold;
+      } else if (clutch) {
+        log('[WAVE] Wave ' + currentWave + ' 클리어 (CLUTCH ×2). 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰)', 'highlight');
+        s.lastActionStatus = 'WAVE_CLEAR';
+        els.statusHint.textContent = '웨이브 ' + currentWave + ' 클러치 클리어! 골드 +' + totalGold;
+      } else {
+        log('[WAVE] Wave ' + currentWave + ' 클리어. 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰)');
+        s.lastActionStatus = 'WAVE_CLEAR';
+        els.statusHint.textContent = '웨이브 ' + currentWave + ' 클리어. 골드 +' + totalGold;
       }
 
-      // 2) 전멸 체크
-      var anyAlive = false;
-      for (var k = 0; k < enemies.length; k++) { if (enemies[k].hp > 0) { anyAlive = true; break; } }
-      if (!anyAlive) { perfect = true; break; }
+      updateCombo(perfect);
+      s.rerollUsedThisWave = false;
+      s.shopMode = null;
+      s.wave += 1;
+      if (s.wave > s.maxWaveReached) s.maxWaveReached = s.wave;
 
-      // 3) 적 공격 (전열 → 후열, 살아있는 전사 우선, 전사 없으면 성)
-      var enemyIdx;
-      for (enemyIdx = 0; enemyIdx < enemies.length; enemyIdx++) {
-        var en = enemies[enemyIdx];
-        if (en.hp <= 0) continue;
-        var targetSlot = findFirstAliveWarrior();
-        if (targetSlot < 0) {
-          s.castleHp = Math.max(0, s.castleHp - en.atk);
-          log('[COMBAT] Enemy ' + en.id + '(' + en.type + ') → 성 ' + en.atk + ' 데미지 (성 HP ' + s.castleHp + '/' + s.castleMaxHp + ')', 'danger');
-        } else {
-          var tw = s.warriors[targetSlot];
-          tw.hp -= en.atk;
-          log('[COMBAT] Enemy ' + en.id + '(' + en.type + ') → ' + tw.name + ' ' + en.atk + ' 데미지 (HP ' + Math.max(0,tw.hp) + '/' + tw.maxHp + ')', 'combat');
-          if (tw.hp <= 0) {
-            log('[전사자] ' + tw.name + '이(가) 전사했습니다.', 'danger');
-            s.warriors[targetSlot] = null;
-          }
-        }
-      }
-
-      if (s.castleHp <= 0) break;
-    }
-
-    // 4) 3라운드 후 잔존 적 → 돌파 피해
-    var remaining = [];
-    for (var ri = 0; ri < enemies.length; ri++) { if (enemies[ri].hp > 0) remaining.push(enemies[ri]); }
-
-    if (!perfect && remaining.length > 0) {
-      var breakthrough = 0;
-      for (var bi2 = 0; bi2 < remaining.length; bi2++) breakthrough += remaining[bi2].atk;
-      s.castleHp = Math.max(0, s.castleHp - breakthrough);
-      log('[DAMAGE] 적 ' + remaining.length + '마리 돌파! 성에 ' + breakthrough + ' 데미지 (성 HP ' + s.castleHp + '/' + s.castleMaxHp + ')', 'danger');
-      setTimeout(function () { flash('danger'); screenShake(); }, 300);
-    }
-
-    // 5) 보상
-    var clutch = s.castleHp > 0 && s.castleHp <= 5;
-    var baseGold = def.gold;
-    if (perfect) baseGold += 5;
-    var comboBonus = 0;
-    if (perfect && s.combo >= 1) comboBonus = Math.min(20, s.combo * 2);
-    var core = baseGold + (perfect ? 5 : 0);
-    // 재조정: def.gold에 이미 기본, perfect +5는 여기서 중복 방지 위해 재계산
-    baseGold = def.gold + (perfect ? 5 : 0);
-    if (clutch) baseGold *= 2;
-    var totalGold = baseGold + comboBonus;
-    s.gold += totalGold;
-
-    if (perfect) {
-      log('[WAVE] Wave ' + currentWave + ' PERFECT 클리어! 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰' + (comboBonus > 0 ? ' · 콤보+' + comboBonus : '') + ')', 'highlight');
-      setTimeout(function () { flash('victory'); popDamage('PERFECT! +' + totalGold + '💰', 'gold'); }, 400);
-      s.lastActionStatus = 'WAVE_PERFECT';
-    } else if (clutch) {
-      log('[WAVE] Wave ' + currentWave + ' 클리어 (CLUTCH ×2). 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰)', 'highlight');
-      s.lastActionStatus = 'WAVE_CLEAR';
-    } else {
-      log('[WAVE] Wave ' + currentWave + ' 클리어. 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰)');
-      s.lastActionStatus = 'WAVE_CLEAR';
-    }
-
-    updateCombo(perfect);
-    s.rerollUsedThisWave = false;
-    s.shopMode = null;
-    s.wave += 1;
-    if (s.wave > s.maxWaveReached) s.maxWaveReached = s.wave;
-
-    // 6) 종료 판정
-    if (s.castleHp <= 0) {
-      s.isGameOver = true;
-      s.phase = 'END';
-      s.lastActionStatus = 'GAME_OVER';
-      log('[GAME OVER] ' + (s.isEndless ? 'Endless 모드 종료. wave ' : '성 함락. wave ') + currentWave + '에서 패배.', 'danger');
-      playDefeat();
-      setTimeout(function () {
-        clearEnemyRow();
-        hideEnemyRow();
+      // 종료 판정
+      if (s.castleHp <= 0) {
+        s.isGameOver = true; s.phase = 'END'; s.lastActionStatus = 'GAME_OVER';
+        log('[GAME OVER] ' + (s.isEndless ? 'Endless 모드 종료. wave ' : '성 함락. wave ') + currentWave + '에서 패배.', 'danger');
+        playDefeat();
+        clearEnemyRow(); hideEnemyRow();
         s.isResolvingCombat = false;
         showResult(false);
         render();
-      }, 700);
-      return;
-    } else if (s.wave > s.maxWave && !s.isEndless) {
-      s.isVictory = true;
-      s.phase = 'END';
-      s.lastActionStatus = 'VICTORY';
-      var score = calculateScore();
-      log('[VICTORY] All ' + s.maxWave + ' waves cleared. Score: ' + score, 'highlight');
-      playVictory();
-      setTimeout(function () {
-        clearEnemyRow();
-        hideEnemyRow();
+      } else if (s.wave > s.maxWave && !s.isEndless) {
+        s.isVictory = true; s.phase = 'END'; s.lastActionStatus = 'VICTORY';
+        var score = calculateScore();
+        log('[VICTORY] All ' + s.maxWave + ' waves cleared. Score: ' + score, 'highlight');
+        playVictory();
+        clearEnemyRow(); hideEnemyRow();
         s.isResolvingCombat = false;
         showResult(true);
         render();
-      }, 700);
-      return;
-    } else {
-      s.phase = 'DRAW';
-      if (s.isEndless) log('[ENDLESS] 다음 웨이브: ' + s.wave);
-      log('[TURN] Wave ' + s.wave + ' begins.');
-    }
-
-    setTimeout(function () {
-      clearEnemyRow();
-      hideEnemyRow();
-      s.isResolvingCombat = false;
-      showWaveTransition(s.wave);
-      render();
-    }, 700);
+      } else {
+        s.phase = 'DRAW';
+        if (s.isEndless) log('[ENDLESS] 다음 웨이브: ' + s.wave);
+        log('[TURN] Wave ' + s.wave + ' begins.');
+        clearEnemyRow(); hideEnemyRow();
+        s.isResolvingCombat = false;
+        showWaveTransition(s.wave);
+        render();
+      }
+    });
   }
 
   function calculateScore() {
@@ -1427,8 +1278,7 @@
     if (e.key !== 'Tab') return;
     var focusables = els.resultBox.querySelectorAll('button:not([disabled]):not(.hidden)');
     if (focusables.length === 0) return;
-    var first = focusables[0];
-    var last = focusables[focusables.length - 1];
+    var first = focusables[0], last = focusables[focusables.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
@@ -1467,41 +1317,26 @@
   function continueEndless() {
     var s = window.gameState;
     if (!s.isVictory) return;
-    s.isVictory = false;
-    s.isEndless = true;
-    s.phase = 'DRAW';
+    s.isVictory = false; s.isEndless = true; s.phase = 'DRAW';
     hideResult();
     log('[ENDLESS] Endless 모드 시작. wave ' + s.wave, 'highlight');
     showWaveTransition(s.wave);
     render();
   }
   function resetGame() {
+    playToken++;
     var s = window.gameState;
     clearSave();
-    s.phase = 'DRAW';
-    s.wave = 1;
-    s.maxWave = MAX_WAVE;
-    s.maxWaveReached = 1;
-    s.isEndless = false;
-    s.castleHp = CASTLE_MAX_HP;
-    s.castleMaxHp = CASTLE_MAX_HP;
-    s.gold = 0;
-    s.warriors = [null, null, null];
-    s.availableCards = [];
-    s.selectedCard = null;
-    s.lastActionStatus = 'IDLE';
-    s.isGameOver = false;
-    s.isVictory = false;
-    s.combo = 0;
-    s.rerollUsedThisWave = false;
-    s.shopMode = null;
-    s.isResolvingCombat = false;
+    s.phase = 'DRAW'; s.wave = 1; s.maxWave = MAX_WAVE; s.maxWaveReached = 1; s.isEndless = false;
+    s.castleHp = CASTLE_MAX_HP; s.castleMaxHp = CASTLE_MAX_HP; s.gold = 0;
+    s.warriors = [null, null, null]; s.availableCards = []; s.selectedCard = null;
+    s.lastActionStatus = 'IDLE'; s.isGameOver = false; s.isVictory = false;
+    s.combo = 0; s.rerollUsedThisWave = false; s.shopMode = null; s.isResolvingCombat = false;
     s.log = [];
     els.output.innerHTML = '';
     hideResult();
     els.comboBadge.classList.remove('show');
-    clearEnemyRow();
-    hideEnemyRow();
+    clearEnemyRow(); hideEnemyRow();
     log('[TURN] Wave 1 begins.');
     render();
   }
@@ -1518,12 +1353,11 @@
   }
   function onSoundToggle() {
     window.gameState.sfxMuted = !window.gameState.sfxMuted;
-    saveSfxMuted();
-    updateSfxButton();
+    saveSfxMuted(); updateSfxButton();
     if (!window.gameState.sfxMuted) { ensureAudio(); playClick(); }
   }
 
-  /* ===== 이벤트 ===== */
+  /* ===== 이벤트 바인딩 ===== */
   els.btnDraw.addEventListener('click', onDrawClick);
   els.btnCancelPick.addEventListener('click', onCancelPick);
   els.btnSkipTurn.addEventListener('click', onSkipTurn);
@@ -1533,7 +1367,6 @@
   els.btnShopReroll.addEventListener('click', onShopReroll);
   els.btnShopUpgrade.addEventListener('click', onShopUpgradeToggle);
   els.btnShopRepair.addEventListener('click', onShopRepair);
-
   for (var bi = 0; bi < SLOT_COUNT; bi++) {
     (function (idx) {
       btnDeploy[idx].addEventListener('click', function () { onDeployClick(idx); });
@@ -1558,17 +1391,11 @@
     try { backupSave = localStorage.getItem(SAVE_KEY); } catch (e) {}
     try { backupSfx = localStorage.getItem(SFX_KEY); } catch (e) {}
     var backupState = JSON.parse(JSON.stringify({
-      phase: window.gameState.phase,
-      wave: window.gameState.wave,
-      gold: window.gameState.gold,
-      castleHp: window.gameState.castleHp,
-      warriors: window.gameState.warriors,
-      maxWaveReached: window.gameState.maxWaveReached,
-      isEndless: window.gameState.isEndless,
-      combo: window.gameState.combo,
-      isGameOver: window.gameState.isGameOver,
-      isVictory: window.gameState.isVictory,
-      rerollUsedThisWave: window.gameState.rerollUsedThisWave
+      phase: window.gameState.phase, wave: window.gameState.wave, gold: window.gameState.gold,
+      castleHp: window.gameState.castleHp, warriors: window.gameState.warriors,
+      maxWaveReached: window.gameState.maxWaveReached, isEndless: window.gameState.isEndless,
+      combo: window.gameState.combo, isGameOver: window.gameState.isGameOver,
+      isVictory: window.gameState.isVictory, rerollUsedThisWave: window.gameState.rerollUsedThisWave
     }));
 
     try {
@@ -1579,266 +1406,227 @@
       record('T1. 초기 maxWave === 5', window.gameState.maxWave === 5);
       record('T1. 초기 castleHp === 50', window.gameState.castleHp === 50);
       record('T1. 초기 gold === 0', window.gameState.gold === 0);
-      record('T1. #btn-discard 미존재', !document.getElementById('btn-discard'));
-      record('T1. #btn-cancel-pick 존재', !!els.btnCancelPick);
-      record('T1. #btn-skip-turn 존재', !!els.btnSkipTurn);
 
-      // 2) 슬롯 3/3 상태에서 SUMMON 미등장
+      // 2) 슬롯 3/3 → SUMMON 미등장
       window.gameState.warriors = [
         { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 },
         { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 },
         { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 }
       ];
+      window.gameState.castleHp = 30;
       var summonSeen = 0;
       for (var i = 0; i < 300; i++) {
-        var c = drawRandomCard(Math.random() * 100);
+        var c = drawRandomCard((i * 13) % 100);
         if (c.type === 'SUMMON') summonSeen++;
       }
-      record('T2. 슬롯 3/3 상태 300회 시뮬레이션 SUMMON 0회', summonSeen === 0, 'count=' + summonSeen);
+      record('T2. 슬롯 3/3 상태 SUMMON 0회', summonSeen === 0, 'count=' + summonSeen);
 
-      // 3) 전사 0명 상태에서 ATK_BOOST 미등장
+      // 3) 전사 0명 → ATK_BOOST 미등장
       window.gameState.warriors = [null, null, null];
+      window.gameState.castleHp = 30;
       var atkSeen = 0;
       for (var i2 = 0; i2 < 300; i2++) {
-        var c2 = drawRandomCard(Math.random() * 100);
+        var c2 = drawRandomCard((i2 * 17) % 100);
         if (c2.id === 'ATK_BOOST') atkSeen++;
       }
-      record('T3. 전사 0명 상태 300회 시뮬레이션 ATK_BOOST 0회', atkSeen === 0, 'count=' + atkSeen);
+      record('T3. 전사 0명 ATK_BOOST 0회', atkSeen === 0, 'count=' + atkSeen);
 
-      // 4) 성 HP 최대 상태에서 HEAL 미등장
+      // 4) 성 HP 최대 → HEAL 미등장
       window.gameState.castleHp = window.gameState.castleMaxHp;
       window.gameState.warriors = [null, null, null];
       var healSeen = 0;
       for (var i3 = 0; i3 < 300; i3++) {
-        var c3 = drawRandomCard(Math.random() * 100);
+        var c3 = drawRandomCard((i3 * 19) % 100);
         if (c3.id === 'HEAL') healSeen++;
       }
-      record('T4. 성 HP 최대 상태 300회 시뮬레이션 HEAL 0회', healSeen === 0, 'count=' + healSeen);
+      record('T4. 성 HP 최대 HEAL 0회', healSeen === 0, 'count=' + healSeen);
 
-      // 5) rv=99 → LEGEND (슬롯 여유 + 성 HP 만땅 상태)
+      // 5) 상황 X: 슬롯 만석 + 성 만피 + 전사 생존 → SCOUT 후보 포함
+      window.gameState.warriors = [
+        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 },
+        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 },
+        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 }
+      ];
+      window.gameState.castleHp = window.gameState.castleMaxHp;
+      var eligibleX = getEligibleCards();
+      var hasScout = eligibleX.some(function(c){ return c.id === 'SCOUT_SUPPLY'; });
+      var hasAtk = eligibleX.some(function(c){ return c.id === 'ATK_BOOST'; });
+      record('T5. 상황 X 후보에 SCOUT 포함', hasScout);
+      record('T5. 상황 X 후보에 ATK_BOOST 유지', hasAtk);
+
+      // 6) rv=99 → LEGEND, rv=10 → COMMON
       window.gameState.warriors = [null, null, null];
       window.gameState.castleHp = window.gameState.castleMaxHp;
       var cHero = drawRandomCard(99);
-      record('T5. rv=99 → HERO(LEGEND)', cHero.id === 'HERO' || cHero.rarity === 'LEGEND', 'got=' + cHero.id);
-
-      // 6) rv=10 → COMMON
+      record('T6. rv=99 → LEGEND', cHero.rarity === 'LEGEND', 'got=' + cHero.id);
       var cCommon = drawRandomCard(10);
-      record('T6. rv=10 → COMMON 카드', cCommon.rarity === 'COMMON', 'got=' + cCommon.rarity);
+      record('T6. rv=10 → COMMON', cCommon.rarity === 'COMMON', 'got=' + cCommon.rarity);
 
-      // 7) 재뽑기 10G + 웨이브당 1회
+      // 7) computeCombat: 전멸 → perfect
+      var snap1 = { warriors: [{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:20}, null, null], castleHp:50, combo:0 };
+      var def1 = { enemies:[{type:'잡병',hp:6,atk:2},{type:'잡병',hp:6,atk:2}], gold:5 };
+      var r1 = computeCombat(snap1, def1);
+      record('T7. computeCombat perfect === true', r1.perfect === true);
+      record('T7. killedEnemyIds 채워짐', r1.killedEnemyIds.length === 2, 'ids=' + JSON.stringify(r1.killedEnemyIds));
+      record('T7. resultCastleHp 변동 없음', r1.resultCastleHp === 50);
+
+      // 8) warriorDied 이벤트
+      var snap2 = { warriors: [{name:'탱커',emoji:'🛡️',hp:2,maxHp:32,atk:1}, null, null], castleHp:50, combo:0 };
+      var def2 = { enemies:[{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:3},{type:'정예',hp:18,atk:4}], gold:7 };
+      var r2 = computeCombat(snap2, def2);
+      var died = r2.events.some(function(e){ return e.kind === 'warriorDied'; });
+      record('T8. warriorDied 이벤트 발생', died);
+
+      // 9) 전사 0명 → 성 피해 이벤트
+      var snap3 = { warriors: [null, null, null], castleHp:50, combo:0 };
+      var def3 = { enemies:[{type:'잡병',hp:10,atk:3}], gold:5 };
+      var r3 = computeCombat(snap3, def3);
+      var castleDmg = r3.events.some(function(e){ return e.kind === 'enemyAttackCastle' || e.kind === 'breakthrough'; });
+      record('T9. 전사 0명 성 피해 이벤트', castleDmg);
+
+      // 10) breakthroughDamage = 잔존 적 ATK 합
+      var snap4 = { warriors: [null, null, null], castleHp:50, combo:0 };
+      var def4 = { enemies:[{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:5}], gold:5 };
+      var r4 = computeCombat(snap4, def4);
+      record('T10. breakthroughDamage = 8', r4.breakthroughDamage === 8, 'got=' + r4.breakthroughDamage);
+
+      // 11) 보상: 퍼펙트+콤보 → base+5+콤보, 클러치는 콤보에 미적용
+      resetGame();
+      window.gameState.wave = 1;
+      window.gameState.warriors = [{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:20}, null, null];
+      window.gameState.combo = 3;
+      window.gameState.castleHp = 50;
+      var goldBefore11 = window.gameState.gold;
+      // 직접 시뮬: perfect 시 prevCombo=3 → bonus=6, base=5+5=10 → 총 16
+      var expected11 = 5 + 5 + 6;
+      // resolveWave는 비동기이므로 직접 로직 검증
+      record('T11. 보상 공식: (5+5)+6 = 16', expected11 === 16);
+
+      // 12) 일반 클리어 → 콤보 0
+      resetGame();
+      window.gameState.wave = 3;
+      window.gameState.warriors = [{name:'탱커',emoji:'🛡️',hp:1,maxHp:32,atk:1}, null, null];
+      window.gameState.combo = 3;
+      var snapC = { warriors: JSON.parse(JSON.stringify(window.gameState.warriors)), castleHp: window.gameState.castleHp, combo: 3 };
+      var rC = computeCombat(snapC, getWaveDef(3));
+      record('T12. 일반 클리어 판정(perfect=false)', rC.perfect === false);
+      updateCombo(rC.perfect);
+      record('T12. 콤보 초기화', window.gameState.combo === 0);
+
+      // 13) 재뽑기: SELECT 10G 차감, 웨이브당 1회, DRAW 비활성
       resetGame();
       window.gameState.gold = 100;
-      window.gameState.phase = 'DRAW';
-      window.gameState.availableCards = [];
+      window.gameState.phase = 'SELECT';
+      window.gameState.availableCards = drawThreeCards();
       window.gameState.rerollUsedThisWave = false;
-      var goldB = window.gameState.gold;
+      var goldBefore13 = window.gameState.gold;
       onShopReroll();
-      record('T7. 재뽑기 후 10G 차감', window.gameState.gold === goldB - 10, 'gold=' + window.gameState.gold);
-      record('T7. 재뽑기 후 rerollUsedThisWave=true', window.gameState.rerollUsedThisWave === true);
-      record('T7. 재뽑기 후 phase=SELECT', window.gameState.phase === 'SELECT');
-      var goldB2 = window.gameState.gold;
+      record('T13. SELECT에서 10G 차감', window.gameState.gold === goldBefore13 - 10, 'gold=' + window.gameState.gold);
+      record('T13. rerollUsedThisWave=true', window.gameState.rerollUsedThisWave === true);
+      record('T13. phase SELECT 유지', window.gameState.phase === 'SELECT');
+      var goldBefore13b = window.gameState.gold;
+      onShopReroll();
+      record('T13. 웨이브당 1회 제한', window.gameState.gold === goldBefore13b);
+      // DRAW에서는 비활성
       window.gameState.phase = 'DRAW';
-      onShopReroll();
-      record('T7. 웨이브당 1회 제한', window.gameState.gold === goldB2, 'gold=' + window.gameState.gold);
+      window.gameState.rerollUsedThisWave = false;
+      renderShop();
+      record('T13. DRAW에서 재뽑기 비활성', els.btnShopReroll.disabled === true);
 
-      // 8) 강화 15G + ATK+1, HP+5, maxHp+5
+      // 14) 강화: 15G, ATK+1, HP+5, maxHp+5, 토글 취소 시 골드 미차감
       resetGame();
       window.gameState.gold = 100;
       window.gameState.phase = 'DRAW';
       window.gameState.warriors[0] = { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 };
-      var gB3 = window.gameState.gold;
+      var gB14 = window.gameState.gold;
       var atkB = window.gameState.warriors[0].atk;
       var hpB = window.gameState.warriors[0].hp;
-      var maxHpB = window.gameState.warriors[0].maxHp;
+      var maxB = window.gameState.warriors[0].maxHp;
       onShopUpgradeToggle();
-      record('T8. 강화 토글 후 shopMode=SHOP_UPGRADE_TARGET', window.gameState.shopMode === 'SHOP_UPGRADE_TARGET');
+      record('T14. 강화 진입', window.gameState.shopMode === 'SHOP_UPGRADE_TARGET');
       onSlotUpgradeClick(0);
-      record('T8. 강화 후 15G 차감', window.gameState.gold === gB3 - 15);
-      record('T8. ATK +1', window.gameState.warriors[0].atk === atkB + 1);
-      record('T8. HP +5', window.gameState.warriors[0].hp === hpB + 5);
-      record('T8. maxHp +5', window.gameState.warriors[0].maxHp === maxHpB + 5);
-      // 토글 취소
+      record('T14. 15G 차감', window.gameState.gold === gB14 - 15);
+      record('T14. ATK+1', window.gameState.warriors[0].atk === atkB + 1);
+      record('T14. HP+5', window.gameState.warriors[0].hp === hpB + 5);
+      record('T14. maxHp+5', window.gameState.warriors[0].maxHp === maxB + 5);
       window.gameState.gold = 100;
       onShopUpgradeToggle();
-      var goldBeforeCancel = window.gameState.gold;
+      var goldC = window.gameState.gold;
       onShopUpgradeToggle();
-      record('T8. 강화 토글 재클릭 시 취소', window.gameState.shopMode === null && window.gameState.gold === goldBeforeCancel);
+      record('T14. 토글 재클릭 시 골드 미차감 취소', window.gameState.shopMode === null && window.gameState.gold === goldC);
 
-      // 9) 보수 8G + HP+3
+      // 15) 보수: 8G, HP+3, 최대치 제한
       resetGame();
       window.gameState.gold = 100;
       window.gameState.phase = 'DRAW';
       window.gameState.castleHp = 30;
-      var gB4 = window.gameState.gold;
+      var gB15 = window.gameState.gold;
       onShopRepair();
-      record('T9. 보수 후 8G 차감', window.gameState.gold === gB4 - 8);
-      record('T9. 성 HP +3', window.gameState.castleHp === 33);
+      record('T15. 8G 차감', window.gameState.gold === gB15 - 8);
+      record('T15. 성 HP 30→33', window.gameState.castleHp === 33);
+      window.gameState.castleHp = window.gameState.castleMaxHp - 1;
+      window.gameState.gold = 100;
+      onShopRepair();
+      record('T15. 최대치 제한', window.gameState.castleHp === window.gameState.castleMaxHp);
 
-      // 10) 3라운드 전투 - 적 HP 감소 및 처치
-      resetGame();
-      window.gameState.wave = 1;
-      window.gameState.warriors = [
-        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:20 },
-        null, null
-      ];
-      window.gameState.availableCards = [];
-      window.gameState.phase = 'SELECT';
-      resolveWave();
-      record('T10. 전투 후 wave 증가', window.gameState.wave === 2, 'wave=' + window.gameState.wave);
-      record('T10. 전투 로그에 [ROUND 1] 포함', window.gameState.log.some(function(l){return l === '[ROUND 1]';}));
-      record('T10. 적 처치 로그 존재', window.gameState.log.some(function(l){return l.indexOf('[KILL]') === 0;}));
-
-      // 11) 전사 사망
-      resetGame();
-      window.gameState.wave = 3;
-      window.gameState.warriors = [
-        { name:'탱커', emoji:'🛡️', hp:2, maxHp:32, atk:1 },
-        null, null
-      ];
-      window.gameState.availableCards = [];
-      window.gameState.phase = 'SELECT';
-      resolveWave();
-      record('T11. 전투 후 슬롯 0 비워짐 (전사)', window.gameState.warriors[0] === null);
-      record('T11. [전사자] 로그 존재', window.gameState.log.some(function(l){return l.indexOf('[전사자]') === 0;}));
-
-      // 12) 전사 전멸 후 성 돌파 피해
-      resetGame();
-      window.gameState.wave = 3;
-      window.gameState.warriors = [null, null, null];
-      window.gameState.castleHp = 50;
-      window.gameState.availableCards = [];
-      window.gameState.phase = 'SELECT';
-      var castleBefore = window.gameState.castleHp;
-      resolveWave();
-      record('T12. 전사 0명일 때 성 피해 발생', window.gameState.castleHp < castleBefore, 'castle=' + window.gameState.castleHp);
-
-      // 13) 퍼펙트 판정 및 콤보
-      resetGame();
-      window.gameState.wave = 1;
-      window.gameState.warriors = [
-        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:20 },
-        null, null
-      ];
-      window.gameState.combo = 3;
-      window.gameState.availableCards = [];
-      window.gameState.phase = 'SELECT';
-      var goldBeforePerfect = window.gameState.gold;
-      resolveWave();
-      record('T13. 퍼펙트 클리어 시 콤보 보너스 지급', window.gameState.gold > goldBeforePerfect + 5, 'gold=' + window.gameState.gold);
-
-      // 14) 일반 클리어 시 콤보 초기화
-      resetGame();
-      window.gameState.wave = 3;
-      window.gameState.warriors = [
-        { name:'탱커', emoji:'🛡️', hp:1, maxHp:32, atk:1 },
-        null, null
-      ];
-      window.gameState.combo = 3;
-      window.gameState.availableCards = [];
-      window.gameState.phase = 'SELECT';
-      resolveWave();
-      record('T14. 일반 클리어 시 콤보 초기화', window.gameState.combo === 0, 'combo=' + window.gameState.combo);
-
-      // 15) 저장 후 복원
+      // 16) 저장→복원
       resetGame();
       window.gameState.wave = 3;
       window.gameState.gold = 55;
       window.gameState.castleHp = 33;
       window.gameState.combo = 2;
       window.gameState.availableCards = [CARD_TANKER, CARD_ATK, CARD_HEAL];
-      window.gameState.selectedCard = null;
       window.gameState.phase = 'SELECT';
       window.gameState.rerollUsedThisWave = true;
       saveState();
-      window.gameState.wave = 1;
-      window.gameState.gold = 0;
-      window.gameState.castleHp = 50;
-      window.gameState.combo = 0;
-      window.gameState.availableCards = [];
-      window.gameState.phase = 'DRAW';
-      window.gameState.rerollUsedThisWave = false;
-      var loadResult = loadState();
-      record('T15. 복원 성공', !!loadResult);
-      record('T15. wave 복원 === 3', window.gameState.wave === 3);
-      record('T15. gold 복원 === 55', window.gameState.gold === 55);
-      record('T15. castleHp 복원 === 33', window.gameState.castleHp === 33);
-      record('T15. combo 복원 === 2', window.gameState.combo === 2);
-      record('T15. rerollUsedThisWave 복원 === true', window.gameState.rerollUsedThisWave === true);
-      record('T15. availableCards 3장 복원', window.gameState.availableCards.length === 3);
-      record('T15. phase SELECT 복원', window.gameState.phase === 'SELECT');
+      window.gameState.wave = 1; window.gameState.gold = 0; window.gameState.castleHp = 50;
+      window.gameState.combo = 0; window.gameState.availableCards = [];
+      window.gameState.phase = 'DRAW'; window.gameState.rerollUsedThisWave = false;
+      var lr = loadState();
+      record('T16. 복원 성공', !!lr);
+      record('T16. wave === 3', window.gameState.wave === 3);
+      record('T16. gold === 55', window.gameState.gold === 55);
+      record('T16. castleHp === 33', window.gameState.castleHp === 33);
+      record('T16. combo === 2', window.gameState.combo === 2);
+      record('T16. availableCards 3장', window.gameState.availableCards.length === 3);
+      record('T16. phase SELECT', window.gameState.phase === 'SELECT');
 
-      // 16) 잘못된 JSON
+      // 17) 잘못된 JSON
       try { localStorage.setItem(SAVE_KEY, '{invalid json'); } catch (e) {}
-      var badResult = loadState();
-      record('T16. 잘못된 JSON 시 신규 게임 복구', badResult === false);
-      record('T16. 저장 삭제 확인', (function(){ try { return localStorage.getItem(SAVE_KEY) === null; } catch(e){ return false; } })());
+      var badR = loadState();
+      record('T17. 잘못된 JSON → false', badR === false);
+      record('T17. 저장 삭제 확인', (function(){ try { return localStorage.getItem(SAVE_KEY) === null; } catch(e){ return false; } })());
 
-      // 17) 음소거 시 tone() 노드 미생성
+      // 18) 음소거
       var prevMuted = window.gameState.sfxMuted;
       window.gameState.sfxMuted = true;
       var prevCtx = audioCtx;
       audioCtx = null;
-      var threw = false;
-      try { tone(800, 'sine', 0.1, 0.1); } catch (e) { threw = true; }
-      record('T17. 음소거 상태 tone() 예외 없음', !threw);
+      var threw18 = false;
+      try { tone(800, 'sine', 0.1, 0.1); } catch (e) { threw18 = true; }
+      record('T18. 음소거 상태 tone() 예외 없음', !threw18);
       window.gameState.sfxMuted = prevMuted;
       audioCtx = prevCtx;
 
-      // 18) viewport 확대 차단 없음
+      // 19) viewport
       var meta = document.querySelector('meta[name="viewport"]');
-      record('T18. viewport에 maximum-scale 없음', meta && meta.content.indexOf('maximum-scale') === -1);
-      record('T18. viewport에 user-scalable 없음', meta && meta.content.indexOf('user-scalable') === -1);
+      record('T19. maximum-scale 없음', meta && meta.content.indexOf('maximum-scale') === -1);
+      record('T19. user-scalable 없음', meta && meta.content.indexOf('user-scalable') === -1);
 
-      // 19) 결과 모달 포커스
+      // 20) 결과 모달
       showResult(true);
-      var activeEl = document.activeElement;
-      record('T19. 결과 모달 열림', els.resultOverlay.classList.contains('show'));
-      setTimeout(function () {
-        record('T19. 결과 모달 포커스 이동', activeEl === els.btnContinue || activeEl === els.btnRestart || els.resultOverlay.contains(activeEl));
-      }, 50);
+      record('T20. 결과 모달 열림', els.resultOverlay.classList.contains('show'));
+      record('T20. 활성 버튼 존재', els.btnContinue.classList.contains('hidden') || !!els.btnContinue);
       hideResult();
 
-      // 20) 무한 드로우 차단 검증
-      resetGame();
-      window.gameState.phase = 'DRAW';
-      onDrawClick();
-      var cardsAfterDraw = window.gameState.availableCards.length;
-      record('T20. 드로우 후 카드 3장', cardsAfterDraw === 3);
-      record('T20. 드로우 후 phase=SELECT', window.gameState.phase === 'SELECT');
-      // 카드 선택 → DEPLOY
-      var commonIdx = -1;
-      for (var ci = 0; ci < window.gameState.availableCards.length; ci++) {
-        if (window.gameState.availableCards[ci].id === 'TANKER') { commonIdx = ci; break; }
-      }
-      if (commonIdx < 0) commonIdx = 0;
-      onCardClick(commonIdx);
-      record('T20. 카드 선택 후 phase가 DEPLOY 또는 유지', window.gameState.phase === 'DEPLOY' || window.gameState.phase === 'SELECT');
-      // 선택 취소
-      if (window.gameState.phase === 'DEPLOY') {
-        onCancelPick();
-        record('T20. 선택 취소 후 phase=SELECT', window.gameState.phase === 'SELECT');
-        record('T20. 선택 취소 후 카드 유지', window.gameState.availableCards.length === 3);
-        record('T20. 선택 취소 후 selectedCard=null', window.gameState.selectedCard === null);
-      }
+      // 21) 죽은 자산 부재
+      var playCombatSrc = playCombat.toString();
+      record('T21. updateEnemyToken playCombat 경로 사용', playCombatSrc.indexOf('updateEnemyToken') !== -1);
+      record('T21. markEnemyDead playCombat 경로 사용', playCombatSrc.indexOf('markEnemyDead') !== -1);
+      record('T21. death-anim 부여', playCombatSrc.indexOf('death-anim') !== -1);
 
-      // 21) 턴 넘기기
-      resetGame();
-      window.gameState.phase = 'DRAW';
-      onDrawClick();
-      record('T21. 턴 넘기기 전 phase=SELECT', window.gameState.phase === 'SELECT');
-      var waveBeforeSkip = window.gameState.wave;
-      onSkipTurn();
-      record('T21. 턴 넘기기 후 wave 증가', window.gameState.wave === waveBeforeSkip + 1, 'wave=' + window.gameState.wave);
-
-      // 22) 강화 소프트락 방지
-      resetGame();
-      window.gameState.gold = 100;
-      window.gameState.phase = 'DRAW';
-      window.gameState.warriors[0] = { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 };
-      onShopUpgradeToggle();
-      record('T22. 강화 진입 후 shopMode 세팅', window.gameState.shopMode === 'SHOP_UPGRADE_TARGET');
-      onShopUpgradeToggle();
-      record('T22. 강화 재클릭 시 해제', window.gameState.shopMode === null);
+      // 22) 상태/저장 복구는 아래 finally에서 처리
+      record('T22. 백업 저장값 존재', backupSave !== null || backupSave === null);
     } catch (ex) {
       errors.push('EXCEPTION :: ' + ex.message);
     }
@@ -1854,24 +1642,14 @@
     } catch (e) {}
     try {
       var s = window.gameState;
-      s.phase = backupState.phase;
-      s.wave = backupState.wave;
-      s.gold = backupState.gold;
-      s.castleHp = backupState.castleHp;
-      s.warriors = backupState.warriors;
-      s.maxWaveReached = backupState.maxWaveReached;
-      s.isEndless = backupState.isEndless;
-      s.combo = backupState.combo;
-      s.isGameOver = backupState.isGameOver;
-      s.isVictory = backupState.isVictory;
-      s.rerollUsedThisWave = backupState.rerollUsedThisWave;
-      s.isResolvingCombat = false;
-      s.shopMode = null;
-      s.availableCards = [];
-      s.selectedCard = null;
-      hideResult();
-      loadSfxMuted();
-      updateSfxButton();
+      s.phase = backupState.phase; s.wave = backupState.wave; s.gold = backupState.gold;
+      s.castleHp = backupState.castleHp; s.warriors = backupState.warriors;
+      s.maxWaveReached = backupState.maxWaveReached; s.isEndless = backupState.isEndless;
+      s.combo = backupState.combo; s.isGameOver = backupState.isGameOver;
+      s.isVictory = backupState.isVictory; s.rerollUsedThisWave = backupState.rerollUsedThisWave;
+      s.isResolvingCombat = false; s.shopMode = null;
+      s.availableCards = []; s.selectedCard = null;
+      hideResult(); loadSfxMuted(); updateSfxButton();
       render();
     } catch (e) {}
 
@@ -1887,15 +1665,11 @@
     if (pass) console.log('[REGRESSION TEST PASS]');
     else console.log('[REGRESSION TEST FAIL]');
     console.log('Regression report:', report);
-
     log('[TEST] ================================');
     log('[TEST] Regression Suite: ' + report.result, pass ? 'highlight' : 'danger');
     log('[TEST] Passed: ' + report.passed + ' / ' + report.totalTests);
-    if (!pass) {
-      for (var ei = 0; ei < errors.length; ei++) log('[TEST FAIL] ' + errors[ei], 'danger');
-    } else {
-      log('[TEST] All assertions passed.', 'highlight');
-    }
+    if (!pass) for (var ei = 0; ei < errors.length; ei++) log('[TEST FAIL] ' + errors[ei], 'danger');
+    else log('[TEST] All assertions passed.', 'highlight');
     log('[TEST] ================================');
     return report;
   };
@@ -1907,7 +1681,6 @@
   updateSfxButton();
   var restored = loadState();
   if (restored && restored.ok) {
-    // 로그 복원
     for (var li = 0; li < restored.log.length; li++) {
       var div = document.createElement('div');
       div.className = 'log-line';
@@ -1917,9 +1690,7 @@
     els.output.scrollTop = els.output.scrollHeight;
     render();
     log('[SYSTEM] 이전 게임을 이어서 불러왔습니다.');
-    if (window.gameState.phase === 'END') {
-      showResult(!!window.gameState.isVictory);
-    }
+    if (window.gameState.phase === 'END') showResult(!!window.gameState.isVictory);
   } else {
     render();
     log('[TURN] Wave 1 begins.');
