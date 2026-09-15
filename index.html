@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>타이니 워리어 러시 — Phase 1</title>
+<title>타이니 워리어 러시</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -34,8 +34,6 @@
     font-weight: 800;
     text-shadow: 0 0 12px rgba(255,204,0,0.6);
   }
-
-  /* 성 상태 바 */
   .castle-panel {
     background: linear-gradient(180deg, #1a1a24 0%, #0f0f18 100%);
     border: 1px solid #2a2a3a;
@@ -53,15 +51,8 @@
     color: #888;
     letter-spacing: 0.5px;
   }
-  .castle-row .wave-tag {
-    color: #ffcc00;
-    font-weight: 800;
-    font-size: 13px;
-  }
-  .castle-row .gold-tag {
-    color: #ffcc00;
-    font-weight: 700;
-  }
+  .castle-row .wave-tag { color: #ffcc00; font-weight: 800; font-size: 13px; }
+  .castle-row .gold-tag { color: #ffcc00; font-weight: 700; }
   .hp-bar {
     width: 100%;
     height: 16px;
@@ -94,8 +85,6 @@
     from { box-shadow: inset 0 0 0 0 rgba(255,51,102,0); }
     to   { box-shadow: inset 0 0 12px 2px rgba(255,51,102,0.6); }
   }
-
-  /* 전장 3슬롯 */
   .battlefield {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -134,28 +123,23 @@
     box-shadow: 0 0 12px rgba(74,144,226,0.4);
     animation: slotPop 0.35s ease;
   }
+  .slot .slot-pos {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-size: 8px;
+    color: #4a6a8a;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+  }
   @keyframes slotPop {
     0% { transform: scale(0.7); opacity: 0; }
     60% { transform: scale(1.1); }
     100% { transform: scale(1); opacity: 1; }
   }
-  .warrior-emoji {
-    font-size: 26px;
-    filter: drop-shadow(0 0 6px rgba(74,144,226,0.8));
-  }
-  .warrior-name {
-    font-size: 10px;
-    font-weight: 700;
-    color: #a8cfff;
-    letter-spacing: 0.5px;
-  }
-  .warrior-stats {
-    font-size: 9px;
-    color: #88a8cc;
-    font-family: 'Courier New', monospace;
-  }
-
-  /* 적 미리보기 */
+  .warrior-emoji { font-size: 26px; filter: drop-shadow(0 0 6px rgba(74,144,226,0.8)); }
+  .warrior-name { font-size: 10px; font-weight: 700; color: #a8cfff; letter-spacing: 0.5px; }
+  .warrior-stats { font-size: 9px; color: #88a8cc; font-family: 'Courier New', monospace; }
   .enemy-preview {
     background: #1a0f14;
     border: 1px solid #3a1a24;
@@ -169,8 +153,6 @@
   .enemy-preview .label { color: #ff6688; letter-spacing: 0.5px; font-weight: 700; }
   .enemy-preview .count { color: #ff3366; font-weight: 800; font-family: 'Courier New', monospace; }
   .enemy-preview .detail { color: #885566; font-size: 10px; font-family: 'Courier New', monospace; }
-
-  /* 카드 영역 */
   .cards-area {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -219,7 +201,6 @@
   .card-emoji { font-size: 26px; }
   .card-name { font-size: 10px; font-weight: 700; color: #e8e8ee; letter-spacing: 0.5px; }
   .card-desc { font-size: 9px; color: #888; font-family: 'Courier New', monospace; }
-
   .card.rarity-COMMON { border-color: #4a4a5a; }
   .card.rarity-RARE   { border-color: #4a90e2; box-shadow: 0 0 8px rgba(74,144,226,0.4); }
   .card.rarity-LEGEND { border-color: #ffcc00; box-shadow: 0 0 18px rgba(255,204,0,0.8); animation: legendGlow 1s infinite alternate; }
@@ -227,18 +208,8 @@
     from { box-shadow: 0 0 12px rgba(255,204,0,0.5); }
     to   { box-shadow: 0 0 26px rgba(255,204,0,1); }
   }
-
-  /* 조작 영역 */
-  .actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .deploy-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-  }
+  .actions { display: flex; flex-direction: column; gap: 8px; }
+  .deploy-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .deploy-btn {
     min-height: 48px;
     background: #14141f;
@@ -261,7 +232,6 @@
   }
   .deploy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .deploy-btn .plus { font-size: 16px; display: block; line-height: 1; margin-bottom: 2px; }
-
   #btn-draw-card {
     min-height: 56px;
     background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%);
@@ -286,8 +256,6 @@
     box-shadow: none;
     cursor: not-allowed;
   }
-
-  /* 로그 */
   #game-output {
     background: #0a0a12;
     border-radius: 8px;
@@ -304,8 +272,6 @@
   .log-line:last-child { color: #ffcc00; }
   .log-line.highlight { color: #00ff66; font-weight: 700; }
   .log-line.danger { color: #ff3366; font-weight: 700; }
-
-  /* 플래시 오버레이 */
   #flash {
     position: fixed;
     inset: 0;
@@ -318,8 +284,6 @@
   #flash.active { opacity: 0.5; }
   #flash.victory { background: #00ff66; }
   #flash.danger { background: #ff3366; }
-
-  /* 데미지 팝업 */
   .dmg-popup {
     position: fixed;
     font-size: 22px;
@@ -338,8 +302,6 @@
     20% { transform: translateY(-10px) scale(1.3); opacity: 1; }
     100% { transform: translateY(-70px) scale(1); opacity: 0; }
   }
-
-  /* 결과 오버레이 */
   #result-overlay {
     position: fixed;
     inset: 0;
@@ -402,9 +364,9 @@
   </div>
 
   <div class="battlefield" id="battlefield">
-    <div class="slot empty" id="slot-0" data-slot="0"></div>
-    <div class="slot empty" id="slot-1" data-slot="1"></div>
-    <div class="slot empty" id="slot-2" data-slot="2"></div>
+    <div class="slot empty" id="slot-0" data-slot="0"><span class="slot-pos">전열</span></div>
+    <div class="slot empty" id="slot-1" data-slot="1"><span class="slot-pos">중열</span></div>
+    <div class="slot empty" id="slot-2" data-slot="2"><span class="slot-pos">후열</span></div>
   </div>
 
   <div class="enemy-preview">
@@ -421,9 +383,9 @@
 
   <div class="actions">
     <div class="deploy-row">
-      <button id="btn-deploy-0" class="deploy-btn" disabled><span class="plus">+</span>슬롯 1</button>
-      <button id="btn-deploy-1" class="deploy-btn" disabled><span class="plus">+</span>슬롯 2</button>
-      <button id="btn-deploy-2" class="deploy-btn" disabled><span class="plus">+</span>슬롯 3</button>
+      <button id="btn-deploy-0" class="deploy-btn" disabled><span class="plus">+</span>전열</button>
+      <button id="btn-deploy-1" class="deploy-btn" disabled><span class="plus">+</span>중열</button>
+      <button id="btn-deploy-2" class="deploy-btn" disabled><span class="plus">+</span>후열</button>
     </div>
     <button id="btn-draw-card">카드 뽑기</button>
   </div>
@@ -435,8 +397,8 @@
 
 <div id="result-overlay">
   <div class="result-box" id="result-box">
-    <h2 id="result-title">VICTORY</h2>
-    <p id="result-wave">도달 웨이브: 3</p>
+    <h2 id="result-title">🏆 VICTORY 🏆</h2>
+    <p id="result-wave">도달 웨이브: 3 / 3</p>
     <div class="score" id="result-score">0</div>
     <p id="result-detail"></p>
     <button id="btn-restart">다시 도전</button>
@@ -451,15 +413,20 @@
   var CASTLE_MAX_HP = 50;
   var SLOT_COUNT = 3;
 
-  var CARD_POOL = [
-    { id: 'TANKER',    name: '탱커 소환', emoji: '🛡️', rarity: 'COMMON', type: 'SUMMON',
-      desc: 'HP30/ATK3', color: '#4a90e2',
-      warrior: { name: '탱커', emoji: '🛡️', hp: 30, maxHp: 30, atk: 3, color: '#4a90e2' } },
-    { id: 'ATK_BOOST', name: '공격 강화', emoji: '⚔️', rarity: 'RARE', type: 'INSTANT',
-      desc: '전사 ATK +2', color: '#ffcc00' },
-    { id: 'HEAL',      name: '성 회복',   emoji: '💚', rarity: 'RARE', type: 'INSTANT',
-      desc: '성 HP +5', color: '#00ff66' }
-  ];
+  var CARD_TANKER = {
+    id: 'TANKER', name: '탱커 소환', emoji: '🛡️', rarity: 'COMMON', type: 'SUMMON',
+    desc: 'HP30/ATK3',
+    warrior: { name: '탱커', emoji: '🛡️', hp: 30, maxHp: 30, atk: 3 }
+  };
+  var CARD_ATK = {
+    id: 'ATK_BOOST', name: '공격 강화', emoji: '⚔️', rarity: 'RARE', type: 'INSTANT',
+    desc: '전사 ATK +2'
+  };
+  var CARD_HEAL = {
+    id: 'HEAL', name: '성 회복', emoji: '💚', rarity: 'RARE', type: 'INSTANT',
+    desc: '성 HP +5'
+  };
+  var CARD_POOL = [CARD_TANKER, CARD_ATK, CARD_HEAL];
 
   var WAVES = [
     { enemies: [{ hp: 6, atk: 2 }, { hp: 6, atk: 2 }] },
@@ -482,6 +449,8 @@
     isVictory: false,
     log: []
   };
+
+  var resolving = false;
 
   var els = {
     statWave: document.getElementById('stat-wave'),
@@ -527,6 +496,7 @@
 
   function flash(color) {
     els.flash.className = '';
+    void els.flash.offsetWidth;
     els.flash.classList.add('active');
     if (color === 'victory') els.flash.classList.add('victory');
     else if (color === 'danger') els.flash.classList.add('danger');
@@ -568,7 +538,7 @@
   }
 
   function renderEnemyPreview() {
-    if (window.gameState.wave > window.gameState.maxWave || window.gameState.isGameOver || window.gameState.isVictory) {
+    if (window.gameState.isGameOver || window.gameState.isVictory || window.gameState.wave > window.gameState.maxWave) {
       els.enemyCount.textContent = '—';
       els.enemyDetail.textContent = '게임 종료';
       return;
@@ -579,25 +549,25 @@
       els.enemyDetail.textContent = 'HP - / ATK -';
       return;
     }
-    var hp = def.enemies[0].hp;
-    var atk = def.enemies[0].atk;
     els.enemyCount.textContent = def.enemies.length + ' 마리';
-    els.enemyDetail.textContent = 'HP ' + hp + ' / ATK ' + atk;
+    els.enemyDetail.textContent = 'HP ' + def.enemies[0].hp + ' / ATK ' + def.enemies[0].atk;
   }
 
   function renderBattlefield() {
+    var positions = ['전열', '중열', '후열'];
     for (var i = 0; i < SLOT_COUNT; i++) {
       var slotEl = document.getElementById('slot-' + i);
       var w = window.gameState.warriors[i];
       if (w) {
         slotEl.className = 'slot filled';
         slotEl.innerHTML =
+          '<span class="slot-pos">' + positions[i] + '</span>' +
           '<div class="warrior-emoji">' + w.emoji + '</div>' +
           '<div class="warrior-name">' + w.name + '</div>' +
           '<div class="warrior-stats">HP' + w.hp + ' ATK' + w.atk + '</div>';
       } else {
         slotEl.className = 'slot empty';
-        slotEl.innerHTML = '';
+        slotEl.innerHTML = '<span class="slot-pos">' + positions[i] + '</span>';
       }
     }
   }
@@ -617,9 +587,7 @@
         var c = cards[idx];
         var cardEl = document.createElement('div');
         cardEl.className = 'card appear rarity-' + c.rarity;
-        if (window.gameState.selectedCard === c) {
-          cardEl.classList.add('selected');
-        }
+        if (window.gameState.selectedCard === c) cardEl.classList.add('selected');
         cardEl.setAttribute('data-card-index', String(idx));
         cardEl.id = 'card-choice-' + idx;
         cardEl.innerHTML =
@@ -635,12 +603,12 @@
   function renderButtons() {
     var s = window.gameState;
     var gameOver = s.isGameOver || s.isVictory;
-    var canDraw = !gameOver && !s.pendingDeploy && (!s.availableCards || s.availableCards.length === 0);
+    var canDraw = !gameOver && !resolving && !s.pendingDeploy && (!s.availableCards || s.availableCards.length === 0);
     els.btnDraw.disabled = !canDraw;
 
     for (var i = 0; i < SLOT_COUNT; i++) {
       var slotEmpty = s.warriors[i] === null;
-      var canDeploy = s.pendingDeploy && slotEmpty && !gameOver;
+      var canDeploy = s.pendingDeploy && slotEmpty && !gameOver && !resolving;
       btnDeploy[i].disabled = !canDeploy;
     }
   }
@@ -653,25 +621,45 @@
     renderButtons();
   }
 
+  function drawRandomCard() {
+    var r = Math.random() * 100;
+    if (r < 70) return CARD_TANKER;
+    if (r < 95) return CARD_ATK;
+    return CARD_HEAL;
+  }
+
+  function drawThreeCards() {
+    var cards = [drawRandomCard(), drawRandomCard(), drawRandomCard()];
+    var hasCommon = false;
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].rarity === 'COMMON') { hasCommon = true; break; }
+    }
+    if (!hasCommon) cards[0] = CARD_TANKER;
+    return cards;
+  }
+
   function onDrawClick() {
     var s = window.gameState;
     if (s.isGameOver || s.isVictory) return;
+    if (resolving) return;
     if (s.availableCards && s.availableCards.length > 0) return;
     if (s.pendingDeploy) return;
 
-    // Phase 1: draw deterministically (TANKER, ATK_BOOST, HEAL) — Phase 3에서 랜덤·전설 도입
-    s.availableCards = [CARD_POOL[0], CARD_POOL[1], CARD_POOL[2]];
+    s.availableCards = drawThreeCards();
     s.selectedCard = null;
     s.pendingDeploy = false;
     s.lastActionStatus = 'DRAW_SUCCESS';
 
-    log('[DRAW] Drew 3 cards: ' + CARD_POOL[0].name + ', ' + CARD_POOL[1].name + ', ' + CARD_POOL[2].name + '.');
+    var names = [];
+    for (var i = 0; i < s.availableCards.length; i++) names.push(s.availableCards[i].name);
+    log('[DRAW] Drew 3 cards: ' + names.join(', ') + '.');
     render();
   }
 
   function onCardClick(idx) {
     var s = window.gameState;
     if (s.isGameOver || s.isVictory) return;
+    if (resolving) return;
     if (!s.availableCards || s.availableCards.length === 0) return;
     if (s.selectedCard) return;
 
@@ -691,8 +679,13 @@
       s.pendingDeploy = false;
       s.availableCards = [];
       s.selectedCard = null;
+      s.lastActionStatus = 'INSTANT_SUCCESS';
+      resolving = true;
       render();
-      setTimeout(resolveWave, 250);
+      setTimeout(function () {
+        resolving = false;
+        resolveWave();
+      }, 250);
     }
   }
 
@@ -701,18 +694,15 @@
     if (card.id === 'ATK_BOOST') {
       var count = 0;
       for (var i = 0; i < s.warriors.length; i++) {
-        if (s.warriors[i]) {
-          s.warriors[i].atk += 2;
-          count++;
-        }
+        if (s.warriors[i]) { s.warriors[i].atk += 2; count++; }
       }
-      log('[EFFECT] All warriors gained +2 ATK. (' + count + ' warriors affected)');
+      log('[EFFECT] 전사 ATK +2 (대상 ' + count + '명)');
       if (count > 0) popDamage('+2 ATK', 'gold');
     } else if (card.id === 'HEAL') {
       var before = s.castleHp;
       s.castleHp = Math.min(s.castleMaxHp, s.castleHp + 5);
       var gained = s.castleHp - before;
-      log('[EFFECT] Castle healed by ' + gained + '. (HP: ' + s.castleHp + '/' + s.castleMaxHp + ')');
+      log('[EFFECT] 성 HP +' + gained + ' (HP: ' + s.castleHp + '/' + s.castleMaxHp + ')');
       popDamage('+' + gained + ' HP', 'green');
     }
   }
@@ -720,18 +710,14 @@
   function onDeployClick(slotIdx) {
     var s = window.gameState;
     if (s.isGameOver || s.isVictory) return;
+    if (resolving) return;
     if (!s.pendingDeploy) return;
     if (s.warriors[slotIdx] !== null) return;
     if (!s.selectedCard || !s.selectedCard.warrior) return;
 
     var w = s.selectedCard.warrior;
     s.warriors[slotIdx] = {
-      name: w.name,
-      emoji: w.emoji,
-      hp: w.hp,
-      maxHp: w.maxHp,
-      atk: w.atk,
-      color: w.color
+      name: w.name, emoji: w.emoji, hp: w.hp, maxHp: w.maxHp, atk: w.atk
     };
     s.lastActionStatus = 'DEPLOY_SUCCESS';
     log('[DEPLOY] Deployed ' + w.name + ' at slot ' + (slotIdx + 1) + '.');
@@ -739,9 +725,14 @@
     s.pendingDeploy = false;
     s.availableCards = [];
     s.selectedCard = null;
+    resolving = true;
     flash('default');
     render();
-    setTimeout(resolveWave, 250);
+
+    setTimeout(function () {
+      resolving = false;
+      resolveWave();
+    }, 250);
   }
 
   function resolveWave() {
@@ -752,34 +743,29 @@
     var def = WAVES[s.wave - 1];
     if (!def) return;
 
-    // 적 복사
     var enemies = [];
     for (var k = 0; k < def.enemies.length; k++) {
       enemies.push({ hp: def.enemies[k].hp, atk: def.enemies[k].atk, maxHp: def.enemies[k].hp });
     }
-    var enemyCountAtStart = enemies.length;
 
-    // 아군 전사들이 순차적으로 적 1명씩 공격 (라운드로빈 1틱)
     var aliveWarriors = [];
-    for (var w = 0; w < s.warriors.length; w++) {
-      if (s.warriors[w]) aliveWarriors.push(s.warriors[w]);
+    for (var i = SLOT_COUNT - 1; i >= 0; i--) {
+      if (s.warriors[i]) aliveWarriors.push(s.warriors[i]);
     }
 
     log('[COMBAT] Wave ' + s.wave + ' combat begins. Warriors: ' + aliveWarriors.length + ', Enemies: ' + enemies.length);
 
-    for (var i = 0; i < aliveWarriors.length; i++) {
-      // 살아있는 첫 적 찾기
+    for (var w = 0; w < aliveWarriors.length; w++) {
       var targetIdx = -1;
       for (var j = 0; j < enemies.length; j++) {
         if (enemies[j].hp > 0) { targetIdx = j; break; }
       }
       if (targetIdx < 0) break;
-      var atk = aliveWarriors[i].atk;
+      var atk = aliveWarriors[w].atk;
       enemies[targetIdx].hp -= atk;
-      log('[COMBAT] ' + aliveWarriors[i].name + ' dealt ' + atk + ' damage to Enemy ' + (targetIdx + 1) + '.');
+      log('[COMBAT] ' + aliveWarriors[w].name + ' dealt ' + atk + ' damage to Enemy ' + (targetIdx + 1) + '.');
     }
 
-    // 남은 적들이 성 공격
     var remaining = [];
     for (var m = 0; m < enemies.length; m++) {
       if (enemies[m].hp > 0) remaining.push(enemies[m]);
@@ -787,9 +773,7 @@
 
     var perfect = remaining.length === 0;
     var dmgToCastle = 0;
-    for (var n = 0; n < remaining.length; n++) {
-      dmgToCastle += remaining[n].atk;
-    }
+    for (var n = 0; n < remaining.length; n++) dmgToCastle += remaining[n].atk;
 
     if (dmgToCastle > 0) {
       s.castleHp = Math.max(0, s.castleHp - dmgToCastle);
@@ -798,29 +782,43 @@
       popDamage('-' + dmgToCastle, '', null);
     }
 
-    // 웨이브 클리어 처리
+    var clutch = s.castleHp > 0 && s.castleHp <= 5;
+    var baseGold = 5;
+    if (perfect) baseGold += 5;
+    if (clutch) baseGold *= 2;
+    s.gold += baseGold;
+
     if (perfect) {
-      s.gold += 5;
       log('[WAVE] Wave ' + s.wave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: YES', 'highlight');
       flash('victory');
-      popDamage('PERFECT! +5💰', 'gold');
+      popDamage('PERFECT! +' + baseGold + '💰', 'gold');
+      s.lastActionStatus = 'WAVE_PERFECT';
+    } else if (clutch) {
+      log('[WAVE] Wave ' + s.wave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO', 'highlight');
+      log('[CLUTCH] 성 HP 5 이하! 골드 2배 (+' + baseGold + ')', 'highlight');
+      popDamage('CLUTCH! +' + baseGold + '💰', 'gold');
+      s.lastActionStatus = 'WAVE_CLEAR';
     } else {
       log('[WAVE] Wave ' + s.wave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO');
+      popDamage('+' + baseGold + '💰', 'gold');
+      s.lastActionStatus = 'WAVE_CLEAR';
     }
 
-    s.lastActionStatus = 'WAVE_CLEAR';
     s.wave += 1;
 
-    // 종료 판정
     if (s.castleHp <= 0) {
       s.isGameOver = true;
+      s.lastActionStatus = 'GAME_OVER';
       log('[GAME OVER] Castle destroyed at wave ' + (s.wave - 1) + '.', 'danger');
       showResult(false);
     } else if (s.wave > s.maxWave) {
       s.isVictory = true;
+      s.lastActionStatus = 'VICTORY';
       var score = calculateScore();
       log('[VICTORY] All ' + s.maxWave + ' waves cleared. Score: ' + score, 'highlight');
       showResult(true);
+    } else {
+      log('[TURN] Wave ' + s.wave + ' begins.');
     }
 
     render();
@@ -839,11 +837,10 @@
     var s = window.gameState;
     if (isVictory) {
       els.resultBox.className = 'result-box';
-      els.resultTitle.textContent = '🏆 VICTORY';
-      els.resultBox.querySelector('h2').textContent = '🏆 VICTORY 🏆';
+      els.resultTitle.textContent = '🏆 VICTORY 🏆';
     } else {
       els.resultBox.className = 'result-box defeat';
-      els.resultBox.querySelector('h2').textContent = '💀 DEFEAT 💀';
+      els.resultTitle.textContent = '💀 DEFEAT 💀';
     }
     els.resultWave.textContent = '도달 웨이브: ' + (isVictory ? s.maxWave : s.wave - 1) + ' / ' + s.maxWave;
     els.resultScore.textContent = String(calculateScore());
@@ -867,6 +864,7 @@
     s.isGameOver = false;
     s.isVictory = false;
     s.log = [];
+    resolving = false;
     els.output.innerHTML = '';
     els.resultOverlay.classList.remove('show');
     log('[TURN] Wave 1 begins.');
@@ -876,104 +874,106 @@
   els.btnDraw.addEventListener('click', onDrawClick);
   els.btnRestart.addEventListener('click', resetGame);
 
-  for (var i = 0; i < SLOT_COUNT; i++) {
+  for (var bi = 0; bi < SLOT_COUNT; bi++) {
     (function (idx) {
       btnDeploy[idx].addEventListener('click', function () { onDeployClick(idx); });
-    })(i);
+    })(bi);
   }
 
-  // ================== 자가 테스트 ==================
-  window.runPhase1SelfTest = function () {
+  window.runPhase1SelfTest = async function () {
     var results = [];
     var errors = [];
+
     function record(name, pass, detail) {
       results.push({ name: name, pass: !!pass, detail: detail || '' });
       if (!pass) errors.push(name + (detail ? ' :: ' + detail : ''));
     }
 
-    // 리셋
     resetGame();
 
-    // 1. 초기 상태 검증
-    record('초기 wave = 1', window.gameState.wave === 1, 'wave=' + window.gameState.wave);
-    record('초기 castleHp = 50', window.gameState.castleHp === 50, 'hp=' + window.gameState.castleHp);
-    record('초기 gold = 0', window.gameState.gold === 0, 'gold=' + window.gameState.gold);
+    // 1. 초기 상태
+    record('초기 wave === 1', window.gameState.wave === 1, 'wave=' + window.gameState.wave);
+    record('초기 castleHp === 50', window.gameState.castleHp === 50, 'hp=' + window.gameState.castleHp);
+    record('초기 gold === 0', window.gameState.gold === 0, 'gold=' + window.gameState.gold);
     record('초기 warriors 모두 null',
-      window.gameState.warriors[0] === null && window.gameState.warriors[1] === null && window.gameState.warriors[2] === null);
+      window.gameState.warriors[0] === null &&
+      window.gameState.warriors[1] === null &&
+      window.gameState.warriors[2] === null);
     record('초기 availableCards 비어있음', window.gameState.availableCards.length === 0);
     record('초기 draw 버튼 활성', els.btnDraw.disabled === false);
-    record('초기 deploy 0 비활성', btnDeploy[0].disabled === true);
-    record('초기 deploy 1 비활성', btnDeploy[1].disabled === true);
-    record('초기 deploy 2 비활성', btnDeploy[2].disabled === true);
+    record('초기 deploy-0 비활성', btnDeploy[0].disabled === true);
+    record('초기 deploy-1 비활성', btnDeploy[1].disabled === true);
+    record('초기 deploy-2 비활성', btnDeploy[2].disabled === true);
 
     // 2. 카드 뽑기
     els.btnDraw.click();
     record('뽑기 후 카드 3장', window.gameState.availableCards.length === 3,
       'cards=' + window.gameState.availableCards.length);
-    record('뽑기 후 lastActionStatus = DRAW_SUCCESS',
+    record('뽑기 후 lastActionStatus === DRAW_SUCCESS',
       window.gameState.lastActionStatus === 'DRAW_SUCCESS');
     record('뽑기 후 draw 버튼 비활성', els.btnDraw.disabled === true);
-    record('뽑기 로그 존재', window.gameState.log.some(function (l) {
+    record('뽑기 로그 포함', window.gameState.log.some(function (l) {
       return l.indexOf('[DRAW] Drew 3 cards:') === 0;
     }));
 
-    // 3. 첫 카드(탱커) 선택
-    var firstCard = window.gameState.availableCards[0];
-    record('첫 카드는 탱커 소환', firstCard && firstCard.id === 'TANKER',
-      'id=' + (firstCard ? firstCard.id : 'null'));
+    // 3. COMMON 카드 탐색 및 선택
+    var tankerIdx = -1;
+    for (var i = 0; i < window.gameState.availableCards.length; i++) {
+      if (window.gameState.availableCards[i].id === 'TANKER') { tankerIdx = i; break; }
+    }
+    record('COMMON 카드 1장 이상 존재', tankerIdx >= 0, 'tankerIdx=' + tankerIdx);
 
-    var cardEl = document.getElementById('card-choice-0');
-    record('카드 DOM 요소 존재', !!cardEl);
-    if (cardEl) cardEl.click();
-
-    record('카드 선택 후 selectedCard 설정', window.gameState.selectedCard !== null);
-    record('카드 선택 후 pendingDeploy = true', window.gameState.pendingDeploy === true);
-    record('카드 선택 후 lastActionStatus = PICK_SUCCESS',
+    if (tankerIdx >= 0) {
+      var cardEl = document.getElementById('card-choice-' + tankerIdx);
+      record('카드 DOM 존재', !!cardEl);
+      if (cardEl) cardEl.click();
+    }
+    record('선택 후 selectedCard.id === TANKER',
+      window.gameState.selectedCard && window.gameState.selectedCard.id === 'TANKER');
+    record('선택 후 pendingDeploy === true', window.gameState.pendingDeploy === true);
+    record('선택 후 lastActionStatus === PICK_SUCCESS',
       window.gameState.lastActionStatus === 'PICK_SUCCESS');
-    record('카드 선택 로그 존재', window.gameState.log.some(function (l) {
-      return l.indexOf('[PICK] Picked') === 0;
+    record('선택 로그 포함', window.gameState.log.some(function (l) {
+      return l.indexOf('[PICK] Picked 탱커 소환.') === 0;
     }));
 
     // 4. 배치
-    record('배치 전 deploy 0 활성', btnDeploy[0].disabled === false);
-    record('배치 전 deploy 1 활성', btnDeploy[1].disabled === false);
-    record('배치 전 deploy 2 활성', btnDeploy[2].disabled === false);
-
+    record('배치 전 deploy-0 활성', btnDeploy[0].disabled === false);
     btnDeploy[0].click();
-    record('배치 후 slot 0에 전사', window.gameState.warriors[0] !== null);
-    record('배치된 전사 이름 = 탱커',
+    record('배치 후 warriors[0] 존재', window.gameState.warriors[0] !== null);
+    record('warriors[0].name === 탱커',
       window.gameState.warriors[0] && window.gameState.warriors[0].name === '탱커');
-    record('배치 후 pendingDeploy = false', window.gameState.pendingDeploy === false);
-    record('배치 로그 존재', window.gameState.log.some(function (l) {
-      return l.indexOf('[DEPLOY] Deployed 탱커 at slot 1.') === 0;
+    record('배치 후 pendingDeploy === false', window.gameState.pendingDeploy === false);
+    record('배치 로그 포함', window.gameState.log.some(function (l) {
+      return l === '[DEPLOY] Deployed 탱커 at slot 1.';
     }));
 
-    // 5. 웨이브 자동 진행 (setTimeout 이후 상태 반영 대기)
-    // 즉시 확인: 배치 직후 wave는 아직 1, resolveWave는 비동기
-    var waveBefore = window.gameState.wave;
+    // 5. 웨이브 자동 진행 대기
+    await new Promise(function (r) { setTimeout(r, 500); });
 
-    // resolveWave 강제 실행 (동기 검증용)
-    // 이미 setTimeout이 걸려있지만, 테스트를 위해 wave를 먼저 확인
-    // 실제로는 비동기이므로, 여기서는 wave가 1인 상태에서 조작 검증 완료.
-    // 이후 동기적으로 wave 진행을 시뮬레이션하기 위해 resolveWave를 직접 호출하지 않고,
-    // 테스트 환경에서는 상태만 검증.
+    record('웨이브 클리어 후 wave === 2', window.gameState.wave === 2,
+      'wave=' + window.gameState.wave);
+    record('웨이브 클리어 후 gold >= 5', window.gameState.gold >= 5,
+      'gold=' + window.gameState.gold);
+    record('lastActionStatus가 WAVE_CLEAR 또는 WAVE_PERFECT',
+      window.gameState.lastActionStatus === 'WAVE_CLEAR' ||
+      window.gameState.lastActionStatus === 'WAVE_PERFECT',
+      'status=' + window.gameState.lastActionStatus);
+    record('웨이브 클리어 로그 포함', window.gameState.log.some(function (l) {
+      return l.indexOf('[WAVE] Wave 1 cleared.') === 0;
+    }));
 
-    // 6. DOM 동기화 검증
-    record('#stat-wave 텍스트가 gameState.wave와 일치',
+    // 6. DOM 동기화
+    record('#stat-wave 텍스트 일치',
       els.statWave.textContent === String(Math.min(window.gameState.wave, window.gameState.maxWave)),
       'dom=' + els.statWave.textContent + ' state=' + window.gameState.wave);
-    record('#stat-castle-hp 텍스트가 gameState.castleHp와 일치',
+    record('#stat-castle-hp 텍스트 일치',
       els.statCastleHp.textContent === String(Math.max(0, window.gameState.castleHp)),
       'dom=' + els.statCastleHp.textContent + ' state=' + window.gameState.castleHp);
-    record('#stat-gold 텍스트가 gameState.gold와 일치',
+    record('#stat-gold 텍스트 일치',
       els.statGold.textContent === String(window.gameState.gold),
       'dom=' + els.statGold.textContent + ' state=' + window.gameState.gold);
 
-    // 7. 두 번째 카드 뽑기 - ATK_BOOST 인스턴트 효과 검증 (전사 1명 있으므로 ATK +2 예상)
-    // 배치 후 availableCards가 비워졌는지 확인
-    record('배치 후 availableCards 비어있음', window.gameState.availableCards.length === 0);
-
-    // 8. 리포트
     var pass = errors.length === 0;
     var report = {
       result: pass ? 'PASS' : 'FAIL',
@@ -989,7 +989,9 @@
         warriors: window.gameState.warriors.map(function (w) {
           return w ? { name: w.name, hp: w.hp, atk: w.atk } : null;
         }),
-        lastActionStatus: window.gameState.lastActionStatus
+        lastActionStatus: window.gameState.lastActionStatus,
+        isGameOver: window.gameState.isGameOver,
+        isVictory: window.gameState.isVictory
       }
     };
 
@@ -1001,7 +1003,7 @@
     log('[TEST] Phase 1 Self-Test: ' + report.result, pass ? 'highlight' : 'danger');
     log('[TEST] Passed: ' + report.passed + ' / ' + report.totalTests);
     if (!pass) {
-      for (var i = 0; i < errors.length; i++) log('[TEST FAIL] ' + errors[i], 'danger');
+      for (var e = 0; e < errors.length; e++) log('[TEST FAIL] ' + errors[e], 'danger');
     } else {
       log('[TEST] All assertions passed.', 'highlight');
     }
@@ -1010,7 +1012,6 @@
     return report;
   };
 
-  // 부트스트랩
   resetGame();
 })();
 </script>
