@@ -3,199 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>타이니 워리어 러시 v3.1</title>
+<title>타이니 워리어 러시 v3.2</title>
 <style>
-  :root {
-    --bg-deep:#08080d; --bg-primary:#0d0d12; --bg-panel:#14141f; --bg-panel-2:#1a1a24; --bg-inset:#0a0a12;
-    --text-primary:#e8e8ee; --text-muted:#8888a0; --text-dim:#55556a;
-    --gold:#ffcc00; --gold-deep:#a66800; --blue:#4a90e2; --blue-deep:#1a4a8a;
-    --red:#ff3366; --red-deep:#8a1a34; --green:#00ff66; --green-deep:#00883a;
-    --border-subtle:#2a2a3a; --border-strong:#3a3a4a;
-    --r-sm:8px; --r-md:12px; --r-lg:16px; --r-pill:999px;
-    --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.05);
-    --glow-gold: 0 0 24px rgba(255,204,0,0.6);
-    --glow-blue: 0 0 16px rgba(74,144,226,0.5);
-    --glow-red: 0 0 20px rgba(255,51,102,0.7);
-    --glow-green: 0 0 20px rgba(0,255,102,0.6);
-    --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', Roboto, sans-serif;
-    --font-mono: 'Courier New', Courier, monospace;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-ui); min-height: 100vh; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-  button, .card, .slot, .deploy-btn { user-select: none; -webkit-user-select: none; }
-  #app { max-width: 480px; margin: 0 auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 100vh; position: relative; }
-  .header-row { display: flex; align-items: center; justify-content: center; position: relative; }
-  h1 { font-size: 15px; color: var(--gold); text-align: center; letter-spacing: 3px; font-weight: 900; text-shadow: 0 0 12px rgba(255,204,0,0.6); flex: 1; }
-  #btn-sound-toggle { position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--bg-panel-2); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); min-width: 44px; min-height: 44px; font-size: 18px; cursor: pointer; color: var(--text-primary); display: flex; align-items: center; justify-content: center; }
-  .castle-panel { background: linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 10px 12px; display: grid; grid-template-columns: 44px 1fr; gap: 10px; align-items: center; position: relative; overflow: hidden; }
-  .castle-panel::before { content:''; position:absolute; inset:0; background: repeating-linear-gradient(90deg, transparent 0px, transparent 8px, rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px); pointer-events:none; }
-  .castle-visual { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px; position: relative; z-index: 1; }
-  .castle-emoji { font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
-  .castle-emoji.warn { filter: drop-shadow(0 0 6px var(--gold)); animation: castleShake 0.4s infinite; }
-  .castle-emoji.danger { filter: drop-shadow(0 0 8px var(--red)); animation: castleShake 0.3s infinite; }
-  @keyframes castleShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-1.5px) rotate(-2deg)} 75%{transform:translateX(1.5px) rotate(2deg)} }
-  .castle-status-label { font-size: 9px; font-weight: 900; min-height: 11px; text-align: center; }
-  .castle-info { display: flex; flex-direction: column; gap: 6px; position: relative; z-index: 1; }
-  .castle-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); }
-  .castle-row .wave-tag { color: var(--gold); font-weight: 800; font-size: 13px; font-family: var(--font-mono); }
-  .castle-row .gold-tag { color: var(--gold); font-weight: 800; font-family: var(--font-mono); font-size: 13px; }
-  .hp-bar { width: 100%; height: 18px; background: var(--bg-inset); border-radius: var(--r-sm); overflow: hidden; position: relative; border: 1px solid var(--border-subtle); }
-  .hp-fill { height: 100%; background: linear-gradient(90deg,#00ff66 0%,#88ff66 50%,#00ff66 100%); transition: width 0.4s, background 0.3s; border-radius: 7px; }
-  .hp-fill.warn { background: linear-gradient(90deg,#ffcc00,#ff9900); }
-  .hp-fill.danger { background: linear-gradient(90deg,#ff3366,#ff0044); animation: pulseRed 0.6s infinite alternate; }
-  .hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: var(--bg-deep); text-shadow: 0 0 4px rgba(255,255,255,0.7); font-family: var(--font-mono); }
-  @keyframes pulseRed { from{box-shadow:inset 0 0 0 0 rgba(255,51,102,0)} to{box-shadow:inset 0 0 14px 2px rgba(255,51,102,0.8)} }
-  #status-hint { background: var(--bg-panel-2); border: 1px dashed var(--border-strong); border-radius: var(--r-sm); padding: 8px 12px; text-align: center; font-size: 12px; font-weight: 800; color: var(--gold); min-height: 34px; display: flex; align-items: center; justify-content: center; transition: color 0.25s, border-color 0.25s, background 0.25s; }
-  #status-hint.deploy { color: var(--blue); border-color: var(--blue); background: rgba(74,144,226,0.08); }
-  #status-hint.shop { color: var(--gold); border-color: var(--gold); background: rgba(255,204,0,0.08); }
-  #status-hint.combat { color: var(--red); border-color: var(--red); background: rgba(255,51,102,0.08); }
-  #status-hint.end { color: var(--red); border-color: var(--red); background: rgba(255,51,102,0.08); }
-  .battlefield-wrapper { position: relative; }
-  .battlefield { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; background: var(--bg-inset); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 10px 8px; min-height: 112px; }
-  .slot { background: var(--bg-panel); border: 2px dashed var(--border-subtle); border-radius: var(--r-md); min-height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 6px 4px; transition: all 0.2s; position: relative; overflow: hidden; }
-  .slot.shop-target { cursor: pointer; border-color: var(--gold) !important; box-shadow: var(--glow-gold); animation: shopPulse 0.8s infinite alternate; }
-  @keyframes shopPulse { from{box-shadow:0 0 12px rgba(255,204,0,0.5)} to{box-shadow:0 0 24px rgba(255,204,0,0.9)} }
-  .slot .slot-icon { position: absolute; font-size: 54px; opacity: 0.08; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
-  .slot.empty::after { content: '빈 슬롯'; color: var(--text-dim); font-size: 10px; font-weight: 700; position: relative; z-index: 1; }
-  .slot .slot-pos { position: absolute; top: 4px; left: 6px; font-size: 9px; color: var(--blue); font-weight: 900; z-index: 2; }
-  .slot .slot-content { display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; z-index: 1; }
-  .slot.filled { border-style: solid; border-color: var(--blue); background: linear-gradient(180deg,#1a2a44 0%,#0f1a2e 100%); box-shadow: var(--glow-blue); }
-  .slot.deploy-anim { animation: slotDeploy 0.5s cubic-bezier(0.34,1.56,0.64,1); }
-  @keyframes slotDeploy { 0%{transform:scale(1)} 40%{transform:scale(1.12);box-shadow:0 0 28px rgba(74,144,226,0.9)} 100%{transform:scale(1)} }
-  .slot.hit-anim { animation: slotHit 0.18s ease; }
-  @keyframes slotHit { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
-  .slot.damage-anim { animation: slotDamage 0.3s ease; }
-  @keyframes slotDamage { 0%,100%{transform:scale(1);filter:none} 50%{transform:scale(0.94);filter:brightness(1.6) hue-rotate(-30deg)} }
-  .slot.death-anim { animation: slotDeath 0.5s ease forwards; }
-  @keyframes slotDeath { 0%{opacity:1;transform:scale(1)} 100%{opacity:0;transform:scale(0.6) rotateZ(-15deg)} }
-  .warrior-emoji { font-size: 28px; filter: drop-shadow(0 0 6px rgba(74,144,226,0.8)); position: relative; z-index: 1; }
-  .warrior-name { font-size: 10px; font-weight: 800; color: #a8cfff; position: relative; z-index: 1; }
-  .warrior-stats { font-size: 9px; color: #88a8cc; font-family: var(--font-mono); font-weight: 700; position: relative; z-index: 1; }
-  #enemy-row-overlay { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; max-width: 90%; pointer-events: none; z-index: 5; opacity: 0; transition: opacity 0.25s; }
-  #enemy-row-overlay.show { opacity: 1; }
-  .enemy-token { background: linear-gradient(180deg,#3a1a24,#1a0f14); border: 2px solid var(--red-deep); border-radius: var(--r-sm); padding: 2px 4px; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 34px; transition: opacity 0.25s, transform 0.25s; }
-  .enemy-token.elite { border-color: var(--gold); box-shadow: var(--glow-gold); }
-  .enemy-token .enemy-id { font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); font-weight: 700; line-height: 1; }
-  .enemy-token .enemy-emoji { font-size: 16px; line-height: 1; }
-  .enemy-token .enemy-mini-hp { width: 26px; height: 3px; background: var(--bg-inset); border-radius: 2px; overflow: hidden; }
-  .enemy-token .enemy-mini-hp-fill { height: 100%; background: var(--red); transition: width 0.3s ease; }
-  .enemy-token.dead { opacity: 0; transform: scale(0.6); }
-  .enemy-token.damaged { animation: tokenShake 0.25s ease; }
-  @keyframes tokenShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
-  .enemy-preview { background: linear-gradient(180deg,#1a0f14 0%,#10080c 100%); border: 1px solid var(--red-deep); border-radius: var(--r-sm); padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-  .enemy-preview .label { color: #ff6688; font-weight: 800; font-size: 10px; }
-  .enemy-preview .count { color: var(--red); font-weight: 900; font-family: var(--font-mono); font-size: 12px; }
-  .enemy-preview .detail { color: #885566; font-size: 10px; font-family: var(--font-mono); font-weight: 700; }
-  .cards-area { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; min-height: 128px; }
-  .card { background: linear-gradient(160deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border: 2px solid var(--border-strong); border-radius: var(--r-md); padding: 20px 4px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s, opacity 0.25s; min-height: 128px; position: relative; overflow: hidden; text-align: center; }
-  .card-inner { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; }
-  .card-banner { position: absolute; top: 0; left: 0; right: 0; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; letter-spacing: 1.5px; color: var(--bg-deep); background: var(--border-strong); border-radius: 10px 10px 0 0; z-index: 2; }
-  .card.rarity-COMMON .card-banner { background: #4a4a5a; color: #c8c8d8; }
-  .card.rarity-RARE .card-banner { background: var(--blue); color: #0d1a2e; }
-  .card.rarity-LEGEND .card-banner { background: var(--gold); color: #2a1a00; }
-  .card.rarity-COMMON { border-color: var(--border-strong); }
-  .card.rarity-RARE { border-color: var(--blue); box-shadow: var(--glow-blue); }
-  .card.rarity-LEGEND { border-color: var(--gold); box-shadow: var(--glow-gold); }
-  .card-shine { position: absolute; inset: -50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(255,204,0,0.25) 40deg, transparent 80deg); opacity: 0; pointer-events: none; z-index: 0; }
-  .card.rarity-LEGEND .card-shine { opacity: 1; animation: legendRotate 3s linear infinite; }
-  @keyframes legendRotate { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-  .card.placeholder { cursor: default; background: var(--bg-panel); border-style: dashed; color: var(--text-dim); font-size: 11px; font-weight: 700; padding: 10px 4px; }
-  .card.placeholder .card-banner { display: none; }
-  .card:not(.placeholder):active { transform: scale(0.94); }
-  .card.appear { animation: cardIn 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards; }
-  .card.appear:nth-child(2) { animation-delay: 0.09s; }
-  .card.appear:nth-child(3) { animation-delay: 0.18s; }
-  @keyframes cardIn { from{transform:translateY(-24px) scale(0.85);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
-  .card.selected { border-color: var(--gold); box-shadow: 0 0 24px rgba(255,204,0,0.9); transform: scale(1.05) rotateZ(-1deg); }
-  .card.locked { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.7); }
-  .card.fade-out { opacity: 0; transform: scale(0.85); pointer-events: none; }
-  .card-emoji { font-size: 28px; }
-  .card-name { font-size: 11px; font-weight: 800; color: var(--text-primary); }
-  .card-desc { font-size: 9px; color: var(--text-muted); font-family: var(--font-mono); font-weight: 700; }
-  .actions { display: flex; flex-direction: column; gap: 8px; }
-  .deploy-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
-  .deploy-btn { min-height: 48px; background: var(--bg-panel); border: 2px solid var(--border-subtle); border-radius: var(--r-sm); color: var(--text-muted); font-family: var(--font-ui); font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
-  .deploy-btn:not(:disabled):active { transform: scale(0.94); }
-  .deploy-btn:not(:disabled) { border-color: var(--blue); color: #a8cfff; background: linear-gradient(180deg,#1a2a44 0%,#0f1a2e 100%); box-shadow: var(--glow-blue); }
-  .deploy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .deploy-btn .plus { font-size: 16px; display: block; line-height: 1; margin-bottom: 2px; }
-  #btn-draw-card { min-height: 56px; background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%); border: none; border-radius: var(--r-md); color: var(--bg-deep); font-family: var(--font-ui); font-size: 15px; font-weight: 900; letter-spacing: 2.5px; cursor: pointer; box-shadow: 0 4px 0 var(--gold-deep), var(--glow-gold); transition: all 0.1s; position: relative; overflow: hidden; }
-  #btn-draw-card::after { content:''; position:absolute; top:0; left:-60%; width:40%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); animation: shine 2.5s infinite; }
-  @keyframes shine { 0%{left:-60%} 60%,100%{left:120%} }
-  #btn-draw-card:not(:disabled):active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gold-deep); }
-  #btn-draw-card:disabled { background: var(--border-subtle); color: var(--text-dim); box-shadow: none; cursor: not-allowed; }
-  #btn-draw-card:disabled::after { display: none; }
-  #btn-cancel-pick, #btn-skip-turn { min-height: 44px; background: var(--bg-panel); border: 2px solid var(--border-strong); border-radius: var(--r-sm); color: var(--text-muted); font-family: var(--font-ui); font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
-  #btn-cancel-pick:not(:disabled) { border-color: var(--blue); color: #a8cfff; }
-  #btn-cancel-pick:not(:disabled):active { transform: scale(0.94); }
-  #btn-cancel-pick:disabled { opacity: 0.35; cursor: not-allowed; }
-  #btn-skip-turn:not(:disabled) { border-color: var(--red-deep); color: #ff8899; }
-  #btn-skip-turn:not(:disabled):active { transform: scale(0.94); }
-  #btn-skip-turn:disabled { opacity: 0.35; cursor: not-allowed; }
-  .shop-panel { background: var(--bg-panel-2); border: 1px solid var(--border-subtle); border-radius: var(--r-sm); overflow: hidden; }
-  .shop-panel summary { list-style: none; padding: 10px 12px; font-size: 12px; font-weight: 800; color: var(--gold); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-  .shop-panel summary::-webkit-details-marker { display: none; }
-  .shop-panel summary::after { content:'▼'; font-size:10px; transition: transform 0.2s; }
-  .shop-panel[open] summary::after { transform: rotate(180deg); }
-  .shop-panel .shop-body { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--border-subtle); }
-  .shop-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
-  .shop-btn { min-height: 52px; background: var(--bg-panel); border: 2px solid var(--border-strong); border-radius: var(--r-sm); color: var(--text-primary); font-family: var(--font-ui); font-size: 10px; font-weight: 800; cursor: pointer; padding: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; line-height: 1.2; transition: all 0.15s; }
-  .shop-btn:not(:disabled):active { transform: scale(0.94); }
-  .shop-btn:not(:disabled) { border-color: var(--gold); color: var(--gold); }
-  .shop-btn.active { border-color: var(--green); color: var(--green); box-shadow: var(--glow-green); }
-  .shop-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-  .shop-btn .price { font-family: var(--font-mono); font-size: 10px; color: var(--gold); }
-  #game-output { background: var(--bg-inset); border-radius: var(--r-sm); padding: 8px 10px; height: 150px; overflow-y: auto; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.5; color: var(--text-muted); border: 1px solid var(--border-subtle); user-select: text; -webkit-user-select: text; }
-  .log-line { white-space: pre-wrap; word-break: break-all; }
-  .log-line:last-child { color: var(--gold); }
-  .log-line.highlight { color: var(--green); font-weight: 700; }
-  .log-line.danger { color: var(--red); font-weight: 700; }
-  .log-line.round { color: var(--blue); font-weight: 900; letter-spacing: 1px; }
-  .log-line.combat { animation: logIn 0.3s ease backwards; }
-  @keyframes logIn { from{transform:translateX(-6px);opacity:0.3} to{transform:translateX(0);opacity:1} }
-  #flash { position: fixed; inset: 0; background: var(--gold); opacity: 0; pointer-events: none; z-index: 999; transition: opacity 0.15s; }
-  #flash.active { opacity: 0.45; }
-  #flash.victory { background: var(--green); }
-  #flash.danger { background: var(--red); }
-  #flash.legend { background: var(--gold); opacity: 0.7; }
-  .dmg-popup { position: fixed; font-size: 22px; font-weight: 900; color: var(--red); text-shadow: 0 0 8px rgba(255,51,102,0.9), 2px 2px 0 #000; pointer-events: none; z-index: 1000; animation: dmgFloat 0.9s cubic-bezier(0.34,1.56,0.64,1) forwards; font-family: var(--font-mono); }
-  .dmg-popup.gold { color: var(--gold); text-shadow: 0 0 8px rgba(255,204,0,0.9), 2px 2px 0 #000; }
-  .dmg-popup.green { color: var(--green); text-shadow: 0 0 8px rgba(0,255,102,0.9), 2px 2px 0 #000; }
-  @keyframes dmgFloat { 0%{transform:translateY(0) scale(0.5);opacity:0} 25%{transform:translateY(-12px) scale(1.35);opacity:1} 100%{transform:translateY(-80px) scale(1);opacity:0} }
-  #combo-badge { position: fixed; top: 12px; right: 12px; background: linear-gradient(135deg, var(--gold), #ff9900); color: var(--bg-deep); font-family: var(--font-mono); font-weight: 900; font-size: 13px; padding: 6px 14px; border-radius: var(--r-pill); box-shadow: var(--glow-gold); opacity: 0; transform: scale(0.5); pointer-events: none; z-index: 1002; transition: opacity 0.25s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
-  #combo-badge.show { opacity: 1; transform: scale(1); }
-  #wave-transition { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; z-index: 1003; transition: opacity 0.3s; }
-  #wave-transition.show { opacity: 1; animation: waveIn 1.0s ease forwards; }
-  #wave-transition .wave-title { font-family: var(--font-ui); font-size: 42px; font-weight: 900; letter-spacing: 6px; color: var(--gold); text-shadow: 0 0 24px rgba(255,204,0,0.9); }
-  @keyframes waveIn { 0%{opacity:0} 20%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
-  #app.shake { animation: screenShake 0.3s cubic-bezier(0.36,0.07,0.19,0.97); }
-  @keyframes screenShake { 10%,90%{transform:translateX(-3px)} 20%,80%{transform:translateX(4px)} 30%,50%,70%{transform:translateX(-4px)} 40%,60%{transform:translateX(4px)} }
-  #particle-layer { position: fixed; inset: 0; pointer-events: none; z-index: 998; overflow: hidden; }
-  .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; opacity: 0; animation: particleBurst 0.65s ease-out forwards; }
-  @keyframes particleBurst { 0%{opacity:1;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0.3)} }
-  #result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1001; padding: 20px; }
-  #result-overlay.show { display: flex; }
-  .result-box { background: var(--bg-panel); border: 3px solid var(--gold); border-radius: var(--r-lg); padding: 26px 20px; text-align: center; max-width: 320px; width: 100%; box-shadow: 0 0 40px rgba(255,204,0,0.6); animation: resultPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-  @keyframes resultPop { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
-  .result-box.defeat { border-color: var(--red); }
-  .result-box h2 { font-size: 22px; letter-spacing: 3px; margin-bottom: 12px; color: var(--gold); font-weight: 900; }
-  .result-box.defeat h2 { color: var(--red); }
-  .result-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
-  .result-box .score { font-size: 30px; color: var(--green); font-weight: 900; margin: 14px 0; font-family: var(--font-mono); }
-  .result-btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-  #btn-continue, #btn-restart { min-height: 48px; padding: 0 24px; border: none; border-radius: var(--r-md); font-family: var(--font-ui); font-weight: 900; font-size: 14px; cursor: pointer; }
-  #btn-continue { background: linear-gradient(135deg, var(--green) 0%, #00aa44 100%); color: var(--bg-deep); box-shadow: 0 4px 0 var(--green-deep); }
-  #btn-continue.hidden { display: none; }
-  #btn-restart { background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%); color: var(--bg-deep); box-shadow: 0 4px 0 var(--gold-deep); }
-  button:focus-visible, .card:focus-visible, .slot:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-  @media (min-width: 481px) { #app { max-width: 720px; } .cards-area { grid-template-columns: repeat(4, minmax(0,1fr)); } }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
+  :root{--bg-deep:#08080d;--bg-primary:#0d0d12;--bg-panel:#14141f;--bg-panel-2:#1a1a24;--bg-inset:#0a0a12;
+    --text-primary:#e8e8ee;--text-muted:#8888a0;--text-dim:#55556a;
+    --gold:#ffcc00;--gold-deep:#a66800;--blue:#4a90e2;--blue-deep:#1a4a8a;
+    --red:#ff3366;--red-deep:#8a1a34;--green:#00ff66;--green-deep:#00883a;
+    --border-subtle:#2a2a3a;--border-strong:#3a3a4a;
+    --r-sm:8px;--r-md:12px;--r-lg:16px;--r-pill:999px;
+    --glow-gold:0 0 24px rgba(255,204,0,0.6);--glow-blue:0 0 16px rgba(74,144,226,0.5);
+    --glow-red:0 0 20px rgba(255,51,102,0.7);--glow-green:0 0 20px rgba(0,255,102,0.6);
+    --font-ui:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',Roboto,sans-serif;
+    --font-mono:'Courier New',Courier,monospace;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg-primary);color:var(--text-primary);font-family:var(--font-ui);min-height:100vh;-webkit-tap-highlight-color:transparent;overflow-x:hidden;}
+  button,.card,.slot,.deploy-btn{user-select:none;-webkit-user-select:none;}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  #app{max-width:480px;margin:0 auto;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:100vh;position:relative;}
+  .header-row{display:flex;align-items:center;justify-content:center;position:relative;}
+  h1{font-size:15px;color:var(--gold);text-align:center;letter-spacing:3px;font-weight:900;text-shadow:0 0 12px rgba(255,204,0,0.6);flex:1;}
+  #btn-sound-toggle{position:absolute;right:0;top:50%;transform:translateY(-50%);background:var(--bg-panel-2);border:1px solid var(--border-subtle);border-radius:var(--r-sm);min-width:44px;min-height:44px;font-size:18px;cursor:pointer;color:var(--text-primary);display:flex;align-items:center;justify-content:center;}
+  .castle-panel{background:linear-gradient(180deg,var(--bg-panel-2) 0%,var(--bg-panel) 100%);border:1px solid var(--border-subtle);border-radius:var(--r-md);padding:10px 12px;display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;position:relative;overflow:hidden;}
+  .castle-panel::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0px,transparent 8px,rgba(255,255,255,0.02) 8px,rgba(255,255,255,0.02) 9px);pointer-events:none;}
+  .castle-visual{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;position:relative;z-index:1;}
+  .castle-emoji{font-size:32px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.6));}
+  .castle-emoji.warn{filter:drop-shadow(0 0 6px var(--gold));animation:castleShake 0.4s infinite;}
+  .castle-emoji.danger{filter:drop-shadow(0 0 8px var(--red));animation:castleShake 0.3s infinite;}
+  @keyframes castleShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.5px) rotate(-2deg)}75%{transform:translateX(1.5px) rotate(2deg)}}
+  .castle-status-label{font-size:9px;font-weight:900;min-height:11px;text-align:center;}
+  .castle-info{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1;}
+  .castle-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text-muted);}
+  .castle-row .wave-tag{color:var(--gold);font-weight:800;font-size:13px;font-family:var(--font-mono);}
+  .castle-row .gold-tag{color:var(--gold);font-weight:800;font-family:var(--font-mono);font-size:13px;}
+  .hp-bar{width:100%;height:18px;background:var(--bg-inset);border-radius:var(--r-sm);overflow:hidden;position:relative;border:1px solid var(--border-subtle);}
+  .hp-fill{height:100%;background:linear-gradient(90deg,#00ff66 0%,#88ff66 50%,#00ff66 100%);transition:width 0.4s,background 0.3s;border-radius:7px;}
+  .hp-fill.warn{background:linear-gradient(90deg,#ffcc00,#ff9900);}
+  .hp-fill.danger{background:linear-gradient(90deg,#ff3366,#ff0044);animation:pulseRed 0.6s infinite alternate;}
+  .hp-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--bg-deep);text-shadow:0 0 4px rgba(255,255,255,0.7);font-family:var(--font-mono);}
+  @keyframes pulseRed{from{box-shadow:inset 0 0 0 0 rgba(255,51,102,0)}to{box-shadow:inset 0 0 14px 2px rgba(255,51,102,0.8)}}
+  #status-hint{background:var(--bg-panel-2);border:1px dashed var(--border-strong);border-radius:var(--r-sm);padding:8px 12px;text-align:center;font-size:12px;font-weight:800;color:var(--gold);min-height:34px;display:flex;align-items:center;justify-content:center;transition:color 0.25s,border-color 0.25s,background 0.25s;cursor:pointer;}
+  #status-hint.deploy{color:var(--blue);border-color:var(--blue);background:rgba(74,144,226,0.08);}
+  #status-hint.shop{color:var(--gold);border-color:var(--gold);background:rgba(255,204,0,0.08);}
+  #status-hint.combat{color:var(--red);border-color:var(--red);background:rgba(255,51,102,0.08);cursor:pointer;}
+  #status-hint.end{color:var(--red);border-color:var(--red);background:rgba(255,51,102,0.08);}
+  .enemy-lane{min-height:48px;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--bg-inset);border:1px solid var(--border-subtle);border-radius:var(--r-sm);padding:4px 8px;font-size:11px;color:var(--text-muted);flex-wrap:wrap;font-family:var(--font-mono);}
+  .enemy-lane .lane-text{font-weight:700;letter-spacing:0.5px;}
+  .enemy-token{background:linear-gradient(180deg,#3a1a24,#1a0f14);border:2px solid var(--red-deep);border-radius:var(--r-sm);padding:2px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:36px;transition:opacity 0.25s,transform 0.25s;}
+  .enemy-token.elite{border-color:var(--gold);box-shadow:var(--glow-gold);}
+  .enemy-token .enemy-id{font-family:var(--font-mono);font-size:8px;color:var(--text-muted);font-weight:700;line-height:1;}
+  .enemy-token .enemy-emoji{font-size:16px;line-height:1;}
+  .enemy-token .enemy-mini-hp{width:28px;height:3px;background:var(--bg-inset);border-radius:2px;overflow:hidden;}
+  .enemy-token .enemy-mini-hp-fill{height:100%;background:var(--red);transition:width 0.3s ease;}
+  .enemy-token.dead{opacity:0;transform:scale(0.6);}
+  .enemy-token.damaged{animation:tokenShake 0.25s ease;}
+  @keyframes tokenShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+  .battlefield{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--bg-inset);border:1px solid var(--border-subtle);border-radius:var(--r-md);padding:10px 8px;min-height:112px;}
+  .slot{background:var(--bg-panel);border:2px dashed var(--border-subtle);border-radius:var(--r-md);min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;transition:all 0.2s;position:relative;overflow:hidden;}
+  .slot.shop-target{cursor:pointer;border-color:var(--gold)!important;box-shadow:var(--glow-gold);animation:shopPulse 0.8s infinite alternate;}
+  @keyframes shopPulse{from{box-shadow:0 0 12px rgba(255,204,0,0.5)}to{box-shadow:0 0 24px rgba(255,204,0,0.9)}}
+  .slot.deploy-target{cursor:pointer;}
+  .slot .slot-icon{position:absolute;font-size:54px;opacity:0.08;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+  .slot.empty::after{content:'빈 슬롯';color:var(--text-dim);font-size:10px;font-weight:700;position:relative;z-index:1;}
+  .slot .slot-pos{position:absolute;top:4px;left:6px;font-size:9px;color:var(--blue);font-weight:900;z-index:2;}
+  .slot .slot-content{display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;z-index:1;}
+  .slot.filled{border-style:solid;border-color:var(--blue);background:linear-gradient(180deg,#1a2a44 0%,#0f1a2e 100%);box-shadow:var(--glow-blue);}
+  .slot.deploy-anim{animation:slotDeploy 0.5s cubic-bezier(0.34,1.56,0.64,1);}
+  @keyframes slotDeploy{0%{transform:scale(1)}40%{transform:scale(1.12);box-shadow:0 0 28px rgba(74,144,226,0.9)}100%{transform:scale(1)}}
+  .slot.hit-anim{animation:slotHit 0.18s ease;}
+  @keyframes slotHit{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .slot.damage-anim{animation:slotDamage 0.3s ease;}
+  @keyframes slotDamage{0%,100%{transform:scale(1);filter:none}50%{transform:scale(0.94);filter:brightness(1.6) hue-rotate(-30deg)}}
+  .slot.death-anim{animation:slotDeath 0.5s ease forwards;}
+  @keyframes slotDeath{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0.6) rotateZ(-15deg)}}
+  .warrior-emoji{font-size:28px;filter:drop-shadow(0 0 6px rgba(74,144,226,0.8));position:relative;z-index:1;}
+  .warrior-name{font-size:10px;font-weight:800;color:#a8cfff;position:relative;z-index:1;}
+  .warrior-stats{font-size:9px;color:#88a8cc;font-family:var(--font-mono);font-weight:700;position:relative;z-index:1;}
+  .enemy-preview{background:linear-gradient(180deg,#1a0f14 0%,#10080c 100%);border:1px solid var(--red-deep);border-radius:var(--r-sm);padding:7px 10px;display:flex;justify-content:space-between;align-items:center;font-size:11px;}
+  .enemy-preview .label{color:#ff6688;font-weight:800;font-size:10px;}
+  .enemy-preview .count{color:var(--red);font-weight:900;font-family:var(--font-mono);font-size:12px;}
+  .enemy-preview .detail{color:#885566;font-size:10px;font-family:var(--font-mono);font-weight:700;}
+  .cards-area{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;min-height:128px;}
+  .card{background:linear-gradient(160deg,var(--bg-panel-2) 0%,var(--bg-panel) 100%);border:2px solid var(--border-strong);border-radius:var(--r-md);padding:20px 4px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:transform 0.15s,box-shadow 0.2s,opacity 0.25s;min-height:128px;position:relative;overflow:hidden;text-align:center;}
+  .card-inner{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;}
+  .card-banner{position:absolute;top:0;left:0;right:0;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;letter-spacing:1.5px;color:var(--bg-deep);background:var(--border-strong);border-radius:10px 10px 0 0;z-index:2;}
+  .card.rarity-COMMON .card-banner{background:#4a4a5a;color:#c8c8d8;}
+  .card.rarity-RARE .card-banner{background:var(--blue);color:#0d1a2e;}
+  .card.rarity-LEGEND .card-banner{background:var(--gold);color:#2a1a00;}
+  .card.rarity-COMMON{border-color:var(--border-strong);}
+  .card.rarity-RARE{border-color:var(--blue);box-shadow:var(--glow-blue);}
+  .card.rarity-LEGEND{border-color:var(--gold);box-shadow:var(--glow-gold);}
+  .card-shine{position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent 0deg,rgba(255,204,0,0.25) 40deg,transparent 80deg);opacity:0;pointer-events:none;z-index:0;}
+  .card.rarity-LEGEND .card-shine{opacity:1;animation:legendRotate 3s linear infinite;}
+  @keyframes legendRotate{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .card.placeholder{cursor:default;background:var(--bg-panel);border-style:dashed;color:var(--text-dim);font-size:11px;font-weight:700;padding:10px 4px;}
+  .card.placeholder .card-banner{display:none;}
+  .card:not(.placeholder):active{transform:scale(0.94);}
+  .card.appear{animation:cardIn 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards;}
+  .card.appear:nth-child(2){animation-delay:0.09s;}
+  .card.appear:nth-child(3){animation-delay:0.18s;}
+  @keyframes cardIn{from{transform:translateY(-24px) scale(0.85);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+  .card.selected{border-color:var(--gold);box-shadow:0 0 24px rgba(255,204,0,0.9);transform:scale(1.05) rotateZ(-1deg);}
+  .card.locked{opacity:0.35;cursor:not-allowed;filter:grayscale(0.7);}
+  .card.fade-out{opacity:0;transform:scale(0.85);pointer-events:none;}
+  .card-emoji{font-size:28px;}
+  .card-name{font-size:11px;font-weight:800;color:var(--text-primary);}
+  .card-desc{font-size:9px;color:var(--text-muted);font-family:var(--font-mono);font-weight:700;}
+  .actions{display:flex;flex-direction:column;gap:8px;}
+  .deploy-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+  .deploy-btn{min-height:48px;background:var(--bg-panel);border:2px solid var(--border-subtle);border-radius:var(--r-sm);color:var(--text-muted);font-family:var(--font-ui);font-size:12px;font-weight:800;cursor:pointer;transition:all 0.15s;}
+  .deploy-btn:not(:disabled):active{transform:scale(0.94);}
+  .deploy-btn:not(:disabled){border-color:var(--blue);color:#a8cfff;background:linear-gradient(180deg,#1a2a44 0%,#0f1a2e 100%);box-shadow:var(--glow-blue);}
+  .deploy-btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .deploy-btn .plus{font-size:16px;display:block;line-height:1;margin-bottom:2px;}
+  #btn-draw-card{min-height:56px;background:linear-gradient(135deg,var(--gold) 0%,#ff9900 100%);border:none;border-radius:var(--r-md);color:var(--bg-deep);font-family:var(--font-ui);font-size:15px;font-weight:900;letter-spacing:2.5px;cursor:pointer;box-shadow:0 4px 0 var(--gold-deep);transition:all 0.1s;position:relative;overflow:hidden;}
+  #btn-draw-card::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);animation:shine 2.5s infinite;}
+  @keyframes shine{0%{left:-60%}60%,100%{left:120%}}
+  #btn-draw-card:not(:disabled):active{transform:translateY(3px);box-shadow:0 1px 0 var(--gold-deep);}
+  #btn-draw-card:disabled{background:var(--border-subtle);color:var(--text-dim);box-shadow:none;cursor:not-allowed;}
+  #btn-draw-card:disabled::after{display:none;}
+  #btn-cancel-pick,#btn-skip-turn{min-height:44px;background:var(--bg-panel);border:2px solid var(--border-strong);border-radius:var(--r-sm);color:var(--text-muted);font-family:var(--font-ui);font-size:12px;font-weight:800;cursor:pointer;transition:all 0.15s;}
+  #btn-cancel-pick:not(:disabled){border-color:var(--blue);color:#a8cfff;}
+  #btn-cancel-pick:not(:disabled):active{transform:scale(0.94);}
+  #btn-cancel-pick:disabled{opacity:0.35;cursor:not-allowed;}
+  #btn-skip-turn:not(:disabled){border-color:var(--red-deep);color:#ff8899;}
+  #btn-skip-turn:not(:disabled):active{transform:scale(0.94);}
+  #btn-skip-turn:disabled{opacity:0.35;cursor:not-allowed;}
+  .shop-panel{background:var(--bg-panel-2);border:1px solid var(--border-subtle);border-radius:var(--r-sm);overflow:hidden;}
+  .shop-panel summary{list-style:none;padding:10px 12px;font-size:12px;font-weight:800;color:var(--gold);cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+  .shop-panel summary::-webkit-details-marker{display:none;}
+  .shop-panel summary::after{content:'▼';font-size:10px;transition:transform 0.2s;}
+  .shop-panel[open] summary::after{transform:rotate(180deg);}
+  .shop-panel .shop-body{padding:8px 10px 10px;display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--border-subtle);}
+  .shop-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+  .shop-btn{min-height:52px;background:var(--bg-panel);border:2px solid var(--border-strong);border-radius:var(--r-sm);color:var(--text-primary);font-family:var(--font-ui);font-size:10px;font-weight:800;cursor:pointer;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.2;transition:all 0.15s;}
+  .shop-btn:not(:disabled):active{transform:scale(0.94);}
+  .shop-btn:not(:disabled){border-color:var(--gold);color:var(--gold);}
+  .shop-btn.active{border-color:var(--green);color:var(--green);box-shadow:var(--glow-green);}
+  .shop-btn:disabled{opacity:0.35;cursor:not-allowed;}
+  .shop-btn .price{font-family:var(--font-mono);font-size:10px;color:var(--gold);}
+  #game-output{background:var(--bg-inset);border-radius:var(--r-sm);padding:8px 10px;height:150px;overflow-y:auto;font-family:var(--font-mono);font-size:10.5px;line-height:1.5;color:var(--text-muted);border:1px solid var(--border-subtle);user-select:text;-webkit-user-select:text;}
+  .log-line{white-space:pre-wrap;word-break:break-all;}
+  .log-line:last-child{color:var(--gold);}
+  .log-line.highlight{color:var(--green);font-weight:700;}
+  .log-line.danger{color:var(--red);font-weight:700;}
+  .log-line.round{color:var(--blue);font-weight:900;letter-spacing:1px;}
+  #flash{position:fixed;inset:0;background:var(--gold);opacity:0;pointer-events:none;z-index:999;transition:opacity 0.15s;}
+  #flash.active{opacity:0.45;}
+  #flash.victory{background:var(--green);}
+  #flash.danger{background:var(--red);}
+  #flash.legend{background:var(--gold);opacity:0.7;}
+  .dmg-popup{position:fixed;font-size:22px;font-weight:900;color:var(--red);text-shadow:0 0 8px rgba(255,51,102,0.9),2px 2px 0 #000;pointer-events:none;z-index:1005;animation:dmgFloat 0.9s cubic-bezier(0.34,1.56,0.64,1) forwards;font-family:var(--font-mono);}
+  .dmg-popup.gold{color:var(--gold);text-shadow:0 0 8px rgba(255,204,0,0.9),2px 2px 0 #000;}
+  .dmg-popup.green{color:var(--green);text-shadow:0 0 8px rgba(0,255,102,0.9),2px 2px 0 #000;}
+  @keyframes dmgFloat{0%{transform:translateY(0) scale(0.5);opacity:0}25%{transform:translateY(-12px) scale(1.35);opacity:1}100%{transform:translateY(-80px) scale(1);opacity:0}}
+  #combo-badge{position:fixed;top:12px;right:12px;background:linear-gradient(135deg,var(--gold),#ff9900);color:var(--bg-deep);font-family:var(--font-mono);font-weight:900;font-size:13px;padding:6px 14px;border-radius:var(--r-pill);box-shadow:var(--glow-gold);opacity:0;transform:scale(0.5);pointer-events:none;z-index:1002;transition:opacity 0.25s,transform 0.35s cubic-bezier(0.34,1.56,0.64,1);}
+  #combo-badge.show{opacity:1;transform:scale(1);}
+  #wave-transition{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;z-index:1000;transition:opacity 0.3s;}
+  #wave-transition.show{opacity:1;animation:waveIn 1.0s ease forwards;}
+  #wave-transition .wave-title{font-family:var(--font-ui);font-size:42px;font-weight:900;letter-spacing:6px;color:var(--gold);text-shadow:0 0 24px rgba(255,204,0,0.9);}
+  @keyframes waveIn{0%{opacity:0}20%{opacity:1}70%{opacity:1}100%{opacity:0}}
+  #app.shake{animation:screenShake 0.3s cubic-bezier(0.36,0.07,0.19,0.97);}
+  @keyframes screenShake{10%,90%{transform:translateX(-3px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+  #particle-layer{position:fixed;inset:0;pointer-events:none;z-index:998;overflow:hidden;}
+  .particle{position:absolute;width:8px;height:8px;border-radius:50%;opacity:0;animation:particleBurst 0.65s ease-out forwards;}
+  @keyframes particleBurst{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0.3)}}
+  #result-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1001;padding:20px;}
+  #result-overlay.show{display:flex;}
+  .result-box{background:var(--bg-panel);border:3px solid var(--gold);border-radius:var(--r-lg);padding:26px 20px;text-align:center;max-width:320px;width:100%;box-shadow:0 0 40px rgba(255,204,0,0.6);animation:resultPop 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+  @keyframes resultPop{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+  .result-box.defeat{border-color:var(--red);}
+  .result-box h2{font-size:22px;letter-spacing:3px;margin-bottom:12px;color:var(--gold);font-weight:900;}
+  .result-box.defeat h2{color:var(--red);}
+  .result-box p{font-size:13px;color:var(--text-muted);margin-bottom:6px;}
+  .result-box .score{font-size:30px;color:var(--green);font-weight:900;margin:14px 0;font-family:var(--font-mono);}
+  .result-btn-row{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+  #btn-continue,#btn-restart{min-height:48px;padding:0 24px;border:none;border-radius:var(--r-md);font-family:var(--font-ui);font-weight:900;font-size:14px;cursor:pointer;}
+  #btn-continue{background:linear-gradient(135deg,var(--green) 0%,#00aa44 100%);color:var(--bg-deep);box-shadow:0 4px 0 var(--green-deep);}
+  #btn-continue.hidden{display:none;}
+  #btn-restart{background:linear-gradient(135deg,var(--gold) 0%,#ff9900 100%);color:var(--bg-deep);box-shadow:0 4px 0 var(--gold-deep);}
+  button:focus-visible,.card:focus-visible,.slot:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  @media (min-width:481px){#app{max-width:720px;}.cards-area{grid-template-columns:repeat(4,minmax(0,1fr));}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;}}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="header-row">
-    <h1>⚔️ TINY WARRIORS RUSH v3.1 ⚔️</h1>
+    <h1>⚔️ TINY WARRIORS RUSH v3.2 ⚔️</h1>
     <button id="btn-sound-toggle" aria-label="효과음 토글" title="효과음 토글">🔊</button>
   </div>
   <div class="castle-panel">
@@ -215,13 +209,11 @@
     </div>
   </div>
   <div id="status-hint" aria-live="polite">카드 뽑기 버튼을 누르세요</div>
-  <div class="battlefield-wrapper">
-    <div id="enemy-row-overlay" aria-hidden="true"></div>
-    <div class="battlefield" id="battlefield">
-      <div class="slot empty" id="slot-0" data-slot="0"><div class="slot-icon">🛡️</div><span class="slot-pos">전열</span><div class="slot-content"></div></div>
-      <div class="slot empty" id="slot-1" data-slot="1"><div class="slot-icon">⚔️</div><span class="slot-pos">중열</span><div class="slot-content"></div></div>
-      <div class="slot empty" id="slot-2" data-slot="2"><div class="slot-icon">🚩</div><span class="slot-pos">후열</span><div class="slot-content"></div></div>
-    </div>
+  <div class="enemy-lane" id="enemy-lane" aria-hidden="true"></div>
+  <div class="battlefield" id="battlefield">
+    <div class="slot empty" id="slot-0" data-slot="0"><div class="slot-icon">🛡️</div><span class="slot-pos">전열</span><div class="slot-content"></div></div>
+    <div class="slot empty" id="slot-1" data-slot="1"><div class="slot-icon">⚔️</div><span class="slot-pos">중열</span><div class="slot-content"></div></div>
+    <div class="slot empty" id="slot-2" data-slot="2"><div class="slot-icon">🚩</div><span class="slot-pos">후열</span><div class="slot-content"></div></div>
   </div>
   <div class="enemy-preview">
     <span class="label">적 출현</span>
@@ -254,6 +246,7 @@
     </details>
   </div>
   <div id="game-output" aria-live="polite"></div>
+  <div id="sr-announcer" class="sr-only" aria-live="polite"></div>
 </div>
 <div id="flash"></div>
 <div id="particle-layer"></div>
@@ -272,1429 +265,506 @@
   </div>
 </div>
 <script>
-(function () {
-  'use strict';
+(function(){
+'use strict';
 
-  var MAX_WAVE = 5;
-  var CASTLE_MAX_HP = 50;
-  var SLOT_COUNT = 3;
-  var SAVE_KEY = 'tinyWarriorsSave';
-  var SFX_KEY = 'sfxMuted';
+var MAX_WAVE=5,CASTLE_MAX_HP=50,SLOT_COUNT=3;
+var SAVE_KEY='tinyWarriorsSave',SFX_KEY='sfxMuted';
 
-  /* ===== 카드 정의 ===== */
-  var CARD_TANKER = { id:'TANKER', name:'탱커 소환', emoji:'🛡️', rarity:'COMMON', type:'SUMMON', desc:'HP32/ATK4', warrior:{ name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 } };
-  var CARD_ATK = { id:'ATK_BOOST', name:'공격 강화', emoji:'⚔️', rarity:'RARE', type:'INSTANT', desc:'전사 ATK +2' };
-  var CARD_HEAL = { id:'HEAL', name:'성 회복', emoji:'💚', rarity:'RARE', type:'INSTANT', desc:'성 HP +7' };
-  var CARD_HERO = { id:'HERO', name:'전설의 용사', emoji:'👑', rarity:'LEGEND', type:'SUMMON', desc:'HP52/ATK9', warrior:{ name:'용사', emoji:'👑', hp:52, maxHp:52, atk:9 } };
-  var CARD_SCOUT = { id:'SCOUT_SUPPLY', name:'정찰 보급', emoji:'📦', rarity:'COMMON', type:'INSTANT', desc:'골드 +4' };
+/* ===== 카드 정의 ===== */
+var CARD_TANKER={id:'TANKER',name:'탱커 소환',emoji:'🛡️',rarity:'COMMON',type:'SUMMON',desc:'HP32/ATK5',warrior:{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5}};
+var CARD_ATK={id:'ATK_BOOST',name:'공격 강화',emoji:'⚔️',rarity:'RARE',type:'INSTANT',desc:'전사 ATK +2'};
+var CARD_HEAL={id:'HEAL',name:'성 회복',emoji:'💚',rarity:'RARE',type:'INSTANT',desc:'성 HP +7'};
+var CARD_HERO={id:'HERO',name:'전설의 용사',emoji:'👑',rarity:'LEGEND',type:'SUMMON',desc:'HP52/ATK10',warrior:{name:'용사',emoji:'👑',hp:52,maxHp:52,atk:10}};
+var CARD_SCOUT={id:'SCOUT_SUPPLY',name:'정찰 보급',emoji:'📦',rarity:'COMMON',type:'INSTANT',desc:'골드 +4'};
+var ALL_CARDS={TANKER:CARD_TANKER,ATK_BOOST:CARD_ATK,HEAL:CARD_HEAL,HERO:CARD_HERO,SCOUT_SUPPLY:CARD_SCOUT};
 
-  var ALL_CARDS = { TANKER: CARD_TANKER, ATK_BOOST: CARD_ATK, HEAL: CARD_HEAL, HERO: CARD_HERO, SCOUT_SUPPLY: CARD_SCOUT };
+function getWaveDef(w){
+  if(w===1)return{enemies:[{type:'잡병',hp:6,atk:2},{type:'잡병',hp:6,atk:2}],gold:5};
+  if(w===2)return{enemies:[{type:'잡병',hp:8,atk:2},{type:'잡병',hp:8,atk:2},{type:'잡병',hp:8,atk:2}],gold:6};
+  if(w===3)return{enemies:[{type:'잡병',hp:9,atk:3},{type:'잡병',hp:9,atk:3},{type:'잡병',hp:9,atk:3},{type:'정예',hp:15,atk:4}],gold:7};
+  if(w===4)return{enemies:[{type:'잡병',hp:11,atk:3},{type:'잡병',hp:11,atk:3},{type:'잡병',hp:11,atk:3},{type:'정예',hp:18,atk:5}],gold:8};
+  if(w===5)return{enemies:[{type:'잡병',hp:12,atk:4},{type:'잡병',hp:12,atk:4},{type:'잡병',hp:12,atk:4},{type:'잡병',hp:12,atk:4},{type:'정예',hp:22,atk:6}],gold:10};
+  var over=w-5,gHp=12+2*over,gAtk=4+Math.floor(over/3),eHp=22+4*over,eAtk=6+Math.floor(over/2);
+  var total=Math.min(8,5+Math.floor(over/2));
+  var eC=Math.max(1,Math.floor(total*0.2)),gC=total-eC;
+  var arr=[];for(var i=0;i<gC;i++)arr.push({type:'잡병',hp:gHp,atk:gAtk});
+  for(var j=0;j<eC;j++)arr.push({type:'정예',hp:eHp,atk:eAtk});
+  return{enemies:arr,gold:10+over};
+}
 
-  function getWaveDef(waveNum) {
-    if (waveNum === 1) return { enemies:[{type:'잡병',hp:6,atk:2},{type:'잡병',hp:6,atk:2}], gold:5 };
-    if (waveNum === 2) return { enemies:[{type:'잡병',hp:8,atk:2},{type:'잡병',hp:8,atk:2},{type:'잡병',hp:8,atk:2}], gold:6 };
-    if (waveNum === 3) return { enemies:[{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:3},{type:'정예',hp:18,atk:4}], gold:7 };
-    if (waveNum === 4) return { enemies:[{type:'잡병',hp:12,atk:3},{type:'잡병',hp:12,atk:3},{type:'잡병',hp:12,atk:3},{type:'정예',hp:22,atk:5}], gold:8 };
-    if (waveNum === 5) return { enemies:[{type:'잡병',hp:14,atk:4},{type:'잡병',hp:14,atk:4},{type:'잡병',hp:14,atk:4},{type:'잡병',hp:14,atk:4},{type:'정예',hp:26,atk:6}], gold:10 };
-    var over = waveNum - 5;
-    var gruntHp = 14 + over * 2;
-    var gruntAtk = 4 + Math.floor(over / 3);
-    var eliteHp = 26 + over * 4;
-    var eliteAtk = 6 + Math.floor(over / 2);
-    var total = Math.min(8, 5 + Math.floor(over / 2));
-    var eliteCount = Math.max(1, Math.floor(total * 0.2));
-    var gruntCount = total - eliteCount;
-    var arr = [];
-    var i;
-    for (i = 0; i < gruntCount; i++) arr.push({ type:'잡병', hp:gruntHp, atk:gruntAtk });
-    for (i = 0; i < eliteCount; i++) arr.push({ type:'정예', hp:eliteHp, atk:eliteAtk });
-    return { enemies: arr, gold: 5 + Math.floor(over / 2) };
-  }
+/* ===== 상태 ===== */
+window.gameState={
+  phase:'DRAW',wave:1,maxWave:MAX_WAVE,maxWaveReached:1,isEndless:false,
+  castleHp:CASTLE_MAX_HP,castleMaxHp:CASTLE_MAX_HP,gold:0,
+  warriors:[null,null,null],availableCards:[],selectedCardIndex:-1,
+  lastActionStatus:'IDLE',isGameOver:false,isVictory:false,combo:0,
+  rerollUsedThisWave:false,shopMode:null,isResolvingCombat:false,
+  sfxMuted:false,cardsJustDrawn:false,log:[]
+};
 
-  /* ===== 상태 ===== */
-  window.gameState = {
-    phase: 'DRAW',
-    wave: 1,
-    maxWave: MAX_WAVE,
-    maxWaveReached: 1,
-    isEndless: false,
-    castleHp: CASTLE_MAX_HP,
-    castleMaxHp: CASTLE_MAX_HP,
-    gold: 0,
-    warriors: [null, null, null],
-    availableCards: [],
-    selectedCard: null,
-    lastActionStatus: 'IDLE',
-    isGameOver: false,
-    isVictory: false,
-    combo: 0,
-    rerollUsedThisWave: false,
-    shopMode: null,
-    isResolvingCombat: false,
-    sfxMuted: false,
-    log: []
-  };
+/* ===== DOM ===== */
+var els={app:document.getElementById('app'),statWave:document.getElementById('stat-wave'),statMaxWave:document.getElementById('stat-max-wave'),statGold:document.getElementById('stat-gold'),statCastleHp:document.getElementById('stat-castle-hp'),statCastleMaxHp:document.getElementById('stat-castle-max-hp'),castleHpFill:document.getElementById('castle-hp-fill'),castleEmoji:document.getElementById('castle-emoji'),castleStatusLabel:document.getElementById('castle-status-label'),enemyCount:document.getElementById('enemy-count'),enemyDetail:document.getElementById('enemy-detail'),enemyLane:document.getElementById('enemy-lane'),cardsArea:document.getElementById('cards-area'),battlefield:document.getElementById('battlefield'),output:document.getElementById('game-output'),srAnnouncer:document.getElementById('sr-announcer'),btnDraw:document.getElementById('btn-draw-card'),btnCancelPick:document.getElementById('btn-cancel-pick'),btnSkipTurn:document.getElementById('btn-skip-turn'),btnContinue:document.getElementById('btn-continue'),btnRestart:document.getElementById('btn-restart'),btnSoundToggle:document.getElementById('btn-sound-toggle'),flash:document.getElementById('flash'),statusHint:document.getElementById('status-hint'),comboBadge:document.getElementById('combo-badge'),waveTransition:document.getElementById('wave-transition'),waveTransitionTitle:document.getElementById('wave-transition-title'),particleLayer:document.getElementById('particle-layer'),resultOverlay:document.getElementById('result-overlay'),resultBox:document.getElementById('result-box'),resultTitle:document.getElementById('result-title'),resultWave:document.getElementById('result-wave'),resultScore:document.getElementById('result-score'),resultDetail:document.getElementById('result-detail'),shopGold:document.getElementById('shop-gold'),btnShopReroll:document.getElementById('btn-shop-reroll'),btnShopUpgrade:document.getElementById('btn-shop-upgrade'),btnShopRepair:document.getElementById('btn-shop-repair')};
+var btnDeploy=[document.getElementById('btn-deploy-0'),document.getElementById('btn-deploy-1'),document.getElementById('btn-deploy-2')];
+var slotEls=[document.getElementById('slot-0'),document.getElementById('slot-1'),document.getElementById('slot-2')];
 
-  /* ===== DOM ===== */
-  var els = {
-    app: document.getElementById('app'),
-    statWave: document.getElementById('stat-wave'),
-    statMaxWave: document.getElementById('stat-max-wave'),
-    statGold: document.getElementById('stat-gold'),
-    statCastleHp: document.getElementById('stat-castle-hp'),
-    statCastleMaxHp: document.getElementById('stat-castle-max-hp'),
-    castleHpFill: document.getElementById('castle-hp-fill'),
-    castleEmoji: document.getElementById('castle-emoji'),
-    castleStatusLabel: document.getElementById('castle-status-label'),
-    enemyCount: document.getElementById('enemy-count'),
-    enemyDetail: document.getElementById('enemy-detail'),
-    cardsArea: document.getElementById('cards-area'),
-    battlefield: document.getElementById('battlefield'),
-    output: document.getElementById('game-output'),
-    btnDraw: document.getElementById('btn-draw-card'),
-    btnCancelPick: document.getElementById('btn-cancel-pick'),
-    btnSkipTurn: document.getElementById('btn-skip-turn'),
-    btnContinue: document.getElementById('btn-continue'),
-    btnRestart: document.getElementById('btn-restart'),
-    btnSoundToggle: document.getElementById('btn-sound-toggle'),
-    flash: document.getElementById('flash'),
-    statusHint: document.getElementById('status-hint'),
-    comboBadge: document.getElementById('combo-badge'),
-    waveTransition: document.getElementById('wave-transition'),
-    waveTransitionTitle: document.getElementById('wave-transition-title'),
-    particleLayer: document.getElementById('particle-layer'),
-    enemyRowOverlay: document.getElementById('enemy-row-overlay'),
-    resultOverlay: document.getElementById('result-overlay'),
-    resultBox: document.getElementById('result-box'),
-    resultTitle: document.getElementById('result-title'),
-    resultWave: document.getElementById('result-wave'),
-    resultScore: document.getElementById('result-score'),
-    resultDetail: document.getElementById('result-detail'),
-    shopGold: document.getElementById('shop-gold'),
-    btnShopReroll: document.getElementById('btn-shop-reroll'),
-    btnShopUpgrade: document.getElementById('btn-shop-upgrade'),
-    btnShopRepair: document.getElementById('btn-shop-repair')
-  };
-  var btnDeploy = [document.getElementById('btn-deploy-0'), document.getElementById('btn-deploy-1'), document.getElementById('btn-deploy-2')];
-  var slotEls = [document.getElementById('slot-0'), document.getElementById('slot-1'), document.getElementById('slot-2')];
+/* ===== 오디오 ===== */
+var audioCtx=null;
+function ensureAudio(){if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){audioCtx=null;}}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();}
+function tone(freq,type,dur,gain,fEnd){if(window.gameState.sfxMuted)return;if(!audioCtx)return;try{var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;if(fEnd!==undefined)o.frequency.linearRampToValueAtTime(fEnd,audioCtx.currentTime+dur);g.gain.value=gain;g.gain.linearRampToValueAtTime(0,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur);}catch(e){}}
+function playClick(){tone(800,'sine',0.06,0.05);}
+function playHit(){tone(200,'square',0.1,0.06,120);}
+function playGacha(rare){tone(rare?800:400,'sine',0.3,0.06,rare?1600:1200);}
+function playLegend(){tone(660,'sine',0.15,0.08);setTimeout(function(){tone(880,'sine',0.15,0.08);},120);setTimeout(function(){tone(1320,'sine',0.3,0.1);},240);}
+function playVictory(){tone(523,'sine',0.1,0.08);setTimeout(function(){tone(659,'sine',0.1,0.08);},100);setTimeout(function(){tone(784,'sine',0.2,0.08);},200);}
+function playDefeat(){tone(300,'square',0.4,0.08,100);}
 
-  /* ===== 오디오 ===== */
-  var audioCtx = null;
-  function ensureAudio() {
-    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; } }
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  }
-  function tone(freq, type, duration, gain, freqEnd) {
-    if (window.gameState.sfxMuted) return;
-    if (!audioCtx) return;
-    try {
-      var osc = audioCtx.createOscillator();
-      var g = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      if (freqEnd !== undefined) osc.frequency.linearRampToValueAtTime(freqEnd, audioCtx.currentTime + duration);
-      g.gain.value = gain;
-      g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
-      osc.connect(g); g.connect(audioCtx.destination);
-      osc.start(); osc.stop(audioCtx.currentTime + duration);
-    } catch (e) {}
-  }
-  function playClick() { tone(800,'sine',0.06,0.05); }
-  function playHit() { tone(200,'square',0.1,0.06,120); }
-  function playGacha(rare) { tone(rare?800:400,'sine',0.3,0.06,rare?1600:1200); }
-  function playLegend() { tone(660,'sine',0.15,0.08); setTimeout(function(){tone(880,'sine',0.15,0.08);},120); setTimeout(function(){tone(1320,'sine',0.3,0.1);},240); }
-  function playVictory() { tone(523,'sine',0.1,0.08); setTimeout(function(){tone(659,'sine',0.1,0.08);},100); setTimeout(function(){tone(784,'sine',0.2,0.08);},200); }
-  function playDefeat() { tone(300,'square',0.4,0.08,100); }
+/* ===== 유틸 ===== */
+function log(text,cls){var d=document.createElement('div');d.className='log-line'+(cls?' '+cls:'');d.textContent=text;els.output.appendChild(d);while(els.output.children.length>200)els.output.removeChild(els.output.firstChild);els.output.scrollTop=els.output.scrollHeight;window.gameState.log.push(text);if(window.gameState.log.length>200)window.gameState.log.shift();}
+function flash(color){els.flash.className='';void els.flash.offsetWidth;els.flash.classList.add('active');if(color==='victory')els.flash.classList.add('victory');else if(color==='danger')els.flash.classList.add('danger');else if(color==='legend')els.flash.classList.add('legend');setTimeout(function(){els.flash.classList.remove('active');},200);}
+function screenShake(){els.app.classList.remove('shake');void els.app.offsetWidth;els.app.classList.add('shake');setTimeout(function(){els.app.classList.remove('shake');},320);}
+function popDamage(text,color,anchorEl){var p=document.createElement('div');p.className='dmg-popup'+(color?' '+color:'');p.textContent=text;if(anchorEl){var r=anchorEl.getBoundingClientRect();p.style.left=(r.left+r.width/2-20)+'px';p.style.top=(r.top+r.height/2-10)+'px';}else{p.style.left=(window.innerWidth/2-20)+'px';p.style.top=(window.innerHeight/2-10)+'px';}document.body.appendChild(p);setTimeout(function(){p.remove();},950);}
+function burstParticles(anchorEl,color,count){if(!anchorEl)return;count=count||8;var r=anchorEl.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/2;for(var i=0;i<count;i++){(function(idx){var ang=(Math.PI*2*idx)/count;var dist=40+Math.random()*40;var tx=Math.cos(ang)*dist,ty=Math.sin(ang)*dist;var p=document.createElement('div');p.className='particle';p.style.left=(cx-4)+'px';p.style.top=(cy-4)+'px';p.style.background=color;p.style.boxShadow='0 0 8px '+color;p.style.setProperty('--tx',tx+'px');p.style.setProperty('--ty',ty+'px');p.style.animationDelay=(idx*0.015)+'s';els.particleLayer.appendChild(p);setTimeout(function(){p.remove();},800);})(i);}}
+function showWaveTransition(n){els.waveTransitionTitle.textContent='WAVE '+n;els.waveTransition.classList.remove('show');void els.waveTransition.offsetWidth;els.waveTransition.classList.add('show');setTimeout(function(){els.waveTransition.classList.remove('show');},1000);}
+function updateCombo(perfect){var s=window.gameState;if(perfect)s.combo+=1;else{if(s.combo>0)log('[콤보] 콤보가 초기화되었습니다.','danger');s.combo=0;}if(s.combo>=2){els.comboBadge.textContent='PERFECT ×'+s.combo;els.comboBadge.classList.add('show');clearTimeout(els.comboBadge._timer);els.comboBadge._timer=setTimeout(function(){els.comboBadge.classList.remove('show');},3000);}else{els.comboBadge.classList.remove('show');}}
+function makeKeyboardActivate(el){el.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '||ev.keyCode===13||ev.keyCode===32){ev.preventDefault();el.click();}});}
+function aliveWarriorCount(){var n=0,w=window.gameState.warriors;for(var i=0;i<SLOT_COUNT;i++)if(w[i]&&w[i].hp>0)n++;return n;}
+function hasEmptySlot(){var w=window.gameState.warriors;for(var i=0;i<SLOT_COUNT;i++)if(!w[i]||w[i].hp<=0)return true;return false;}
+function announce(text){els.srAnnouncer.textContent='';setTimeout(function(){els.srAnnouncer.textContent=text;},50);}
 
-  /* ===== 유틸 ===== */
-  function log(text, cls) {
-    var div = document.createElement('div');
-    div.className = 'log-line' + (cls ? ' ' + cls : '');
-    div.textContent = text;
-    els.output.appendChild(div);
-    while (els.output.children.length > 200) els.output.removeChild(els.output.firstChild);
-    els.output.scrollTop = els.output.scrollHeight;
-    window.gameState.log.push(text);
-    if (window.gameState.log.length > 200) window.gameState.log.shift();
-  }
-  function flash(color) {
-    els.flash.className = ''; void els.flash.offsetWidth;
-    els.flash.classList.add('active');
-    if (color === 'victory') els.flash.classList.add('victory');
-    else if (color === 'danger') els.flash.classList.add('danger');
-    else if (color === 'legend') els.flash.classList.add('legend');
-    setTimeout(function () { els.flash.classList.remove('active'); }, 200);
-  }
-  function screenShake() {
-    els.app.classList.remove('shake'); void els.app.offsetWidth;
-    els.app.classList.add('shake');
-    setTimeout(function () { els.app.classList.remove('shake'); }, 320);
-  }
-  function popDamage(text, color, anchorEl) {
-    var pop = document.createElement('div');
-    pop.className = 'dmg-popup' + (color ? ' ' + color : '');
-    pop.textContent = text;
-    if (anchorEl) {
-      var rect = anchorEl.getBoundingClientRect();
-      pop.style.left = (rect.left + rect.width / 2 - 20) + 'px';
-      pop.style.top = (rect.top + rect.height / 2 - 10) + 'px';
-    } else {
-      pop.style.left = (window.innerWidth / 2 - 20) + 'px';
-      pop.style.top = (window.innerHeight / 2 - 10) + 'px';
-    }
-    document.body.appendChild(pop);
-    setTimeout(function () { pop.remove(); }, 950);
-  }
-  function burstParticles(anchorEl, color, count) {
-    if (!anchorEl) return;
-    count = count || 8;
-    var rect = anchorEl.getBoundingClientRect();
-    var cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
-    for (var i = 0; i < count; i++) {
-      (function (idx) {
-        var angle = (Math.PI * 2 * idx) / count;
-        var dist = 40 + Math.random() * 40;
-        var tx = Math.cos(angle) * dist, ty = Math.sin(angle) * dist;
-        var p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = (cx - 4) + 'px';
-        p.style.top = (cy - 4) + 'px';
-        p.style.background = color;
-        p.style.boxShadow = '0 0 8px ' + color;
-        p.style.setProperty('--tx', tx + 'px');
-        p.style.setProperty('--ty', ty + 'px');
-        p.style.animationDelay = (idx * 0.015) + 's';
-        els.particleLayer.appendChild(p);
-        setTimeout(function () { p.remove(); }, 800);
-      })(i);
-    }
-  }
-  function showWaveTransition(n) {
-    els.waveTransitionTitle.textContent = 'WAVE ' + n;
-    els.waveTransition.classList.remove('show'); void els.waveTransition.offsetWidth;
-    els.waveTransition.classList.add('show');
-    setTimeout(function () { els.waveTransition.classList.remove('show'); }, 1000);
-  }
-  function updateCombo(perfect) {
-    var s = window.gameState;
-    if (perfect) s.combo += 1;
-    else { if (s.combo > 0) log('[콤보 종료] 콤보가 초기화되었습니다.', 'danger'); s.combo = 0; }
-    if (s.combo >= 2) {
-      els.comboBadge.textContent = 'PERFECT ×' + s.combo;
-      els.comboBadge.classList.add('show');
-      clearTimeout(els.comboBadge._timer);
-      els.comboBadge._timer = setTimeout(function () { els.comboBadge.classList.remove('show'); }, 3000);
-    } else {
-      els.comboBadge.classList.remove('show');
-    }
-  }
-  function makeKeyboardActivate(el) {
-    el.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Enter' || ev.key === ' ' || ev.keyCode === 13 || ev.keyCode === 32) {
-        ev.preventDefault(); el.click();
-      }
-    });
-  }
-  function aliveWarriorCount() {
-    var n = 0, w = window.gameState.warriors;
-    for (var i = 0; i < SLOT_COUNT; i++) if (w[i] && w[i].hp > 0) n++;
-    return n;
-  }
-  function hasEmptySlot() {
-    var w = window.gameState.warriors;
-    for (var i = 0; i < SLOT_COUNT; i++) if (!w[i] || w[i].hp <= 0) return true;
-    return false;
-  }
+/* ===== 렌더 ===== */
+function renderCastle(){var s=window.gameState;var pct=Math.max(0,s.castleHp)/s.castleMaxHp*100;els.castleHpFill.style.width=pct+'%';els.castleHpFill.classList.remove('warn','danger');els.castleEmoji.classList.remove('warn','danger');els.castleStatusLabel.textContent='';els.castleStatusLabel.style.color='';if(pct<=20){els.castleHpFill.classList.add('danger');els.castleEmoji.classList.add('danger');els.castleStatusLabel.textContent='💀 함락 임박';els.castleStatusLabel.style.color='var(--red)';}else if(pct<=50){els.castleHpFill.classList.add('warn');els.castleEmoji.classList.add('warn');els.castleStatusLabel.textContent='⚠️ 위험';els.castleStatusLabel.style.color='var(--gold)';}els.statCastleHp.textContent=String(Math.max(0,s.castleHp));els.statCastleMaxHp.textContent=String(s.castleMaxHp);}
+function renderStats(){var s=window.gameState;if(s.isEndless||s.wave>s.maxWave){els.statWave.textContent=String(s.wave);els.statMaxWave.textContent='∞';}else{els.statWave.textContent=String(Math.min(s.wave,s.maxWave));els.statMaxWave.textContent=String(s.maxWave);}els.statGold.textContent=String(s.gold);els.shopGold.textContent=String(s.gold);renderCastle();}
+function renderEnemyPreview(){var s=window.gameState;if(s.isGameOver||s.isVictory||(s.wave>s.maxWave&&!s.isEndless)){els.enemyCount.textContent='—';els.enemyDetail.textContent='게임 종료';return;}var def=getWaveDef(s.wave);if(!def||!def.enemies.length){els.enemyCount.textContent='0 마리';els.enemyDetail.textContent='HP - / ATK -';return;}var hps=def.enemies.map(function(e){return e.hp;});var atks=def.enemies.map(function(e){return e.atk;});var minHp=Math.min.apply(null,hps),maxHp=Math.max.apply(null,hps);var minAtk=Math.min.apply(null,atks),maxAtk=Math.max.apply(null,atks);var hpStr=minHp===maxHp?String(minHp):minHp+'~'+maxHp;var atkStr=minAtk===maxAtk?String(minAtk):minAtk+'~'+maxAtk;els.enemyCount.textContent=def.enemies.length+' 마리';els.enemyDetail.textContent='HP '+hpStr+' / ATK '+atkStr;}
+function renderEnemyLane(){var s=window.gameState;if(s.isResolvingCombat)return;els.enemyLane.innerHTML='';if(s.isGameOver||s.isVictory){els.enemyLane.innerHTML='<span class="lane-text">게임 종료</span>';return;}if(s.wave>s.maxWave&&!s.isEndless){els.enemyLane.innerHTML='<span class="lane-text">게임 종료</span>';return;}var def=getWaveDef(s.wave);if(!def)return;var counts={};for(var i=0;i<def.enemies.length;i++){counts[def.enemies[i].type]=(counts[def.enemies[i].type]||0)+1;}var parts=[];for(var k in counts)if(counts.hasOwnProperty(k))parts.push(k+' '+counts[k]);els.enemyLane.innerHTML='<span class="lane-text">다음 웨이브: '+parts.join(' · ')+'</span>';}
+function renderBattlefield(){var s=window.gameState;var pos=['전열','중열','후열'];var isShop=s.shopMode==='SHOP_UPGRADE_TARGET';for(var i=0;i<SLOT_COUNT;i++){var el=slotEls[i];var content=el.querySelector('.slot-content');var w=s.warriors[i];var cls='slot';if(w){cls+=' filled';el.querySelector('.slot-pos').textContent=pos[i];content.innerHTML='<div class="warrior-emoji">'+w.emoji+'</div><div class="warrior-name">'+w.name+'</div><div class="warrior-stats">HP'+Math.max(0,w.hp)+'/'+w.maxHp+' ATK'+w.atk+'</div>';}else{cls+=' empty';content.innerHTML='';}if(isShop&&w&&w.hp>0)cls+=' shop-target';else if(s.phase==='DEPLOY'&&!w&&!s.isResolvingCombat)cls+=' deploy-target';el.className=cls;var focusable=false;if(s.phase==='DEPLOY'&&!w&&!s.isResolvingCombat)focusable=true;if(isShop&&w&&w.hp>0)focusable=true;if(focusable){el.setAttribute('tabindex','0');el.setAttribute('role','button');}else{el.removeAttribute('tabindex');el.removeAttribute('role');}if(w)el.setAttribute('aria-label',pos[i]+' 슬롯, '+w.name+', HP '+Math.max(0,w.hp)+'/'+w.maxHp+', ATK '+w.atk);else el.setAttribute('aria-label',pos[i]+' 슬롯, 비어있음');}}
+function renderCards(){var s=window.gameState;var cards=s.availableCards;if(!cards||cards.length===0){els.cardsArea.innerHTML='<div class="card placeholder">카드</div><div class="card placeholder">카드를</div><div class="card placeholder">뽑으세요</div>';return;}els.cardsArea.innerHTML='';for(var i=0;i<cards.length;i++){(function(idx){var c=cards[idx];var el=document.createElement('div');var cls='card rarity-'+c.rarity;if(s.cardsJustDrawn)cls+=' appear';var canSelect=(s.phase==='SELECT'&&!s.isResolvingCombat&&s.shopMode!=='SHOP_UPGRADE_TARGET');var ariaDisabled=!canSelect;if(idx===s.selectedCardIndex)cls+=' selected';else if(s.phase==='DEPLOY'||s.phase==='END'||s.shopMode==='SHOP_UPGRADE_TARGET'||s.isResolvingCombat)cls+=' fade-out';else if(!canSelect)cls+=' locked';el.className=cls;el.id='card-choice-'+idx;if(canSelect){el.setAttribute('tabindex','0');el.setAttribute('role','button');}else{el.setAttribute('tabindex','-1');el.setAttribute('role','button');el.setAttribute('aria-disabled','true');}el.setAttribute('aria-label',c.name+' 카드, '+c.rarity+' 등급, '+c.desc+(canSelect?', 선택 가능':', 선택 불가'));el.innerHTML='<div class="card-banner">'+c.rarity+'</div><div class="card-inner"><div class="card-emoji">'+c.emoji+'</div><div class="card-name">'+c.name+'</div><div class="card-desc">'+c.desc+'</div></div><div class="card-shine"></div>';el.addEventListener('click',function(){onCardClick(idx);});makeKeyboardActivate(el);els.cardsArea.appendChild(el);})(i);}s.cardsJustDrawn=false;}
+function renderStatusHint(){var s=window.gameState;var hint='',cls='';if(s.isResolvingCombat){hint='⚔️ 전투 진행 중... (Space 또는 탭하여 빨리 감기)';cls='combat';}else if(s.shopMode==='SHOP_UPGRADE_TARGET'){hint='강화할 전사를 선택하거나 강화 버튼을 다시 눌러 취소하세요.';cls='shop';}else if(s.phase==='DRAW')hint='카드 뽑기 버튼을 누르세요';else if(s.phase==='SELECT')hint='카드를 선택하거나 턴 넘기기를 누르세요';else if(s.phase==='DEPLOY')hint='배치할 슬롯을 누르세요 (선택 취소 가능)';else if(s.phase==='END'){hint='게임 종료 — 결과창을 확인하세요';cls='end';}els.statusHint.textContent=hint;els.statusHint.className=cls;}
+function renderShop(){var s=window.gameState;var anyW=s.warriors.some(function(w){return w&&w.hp>0;});var noCombat=!s.isResolvingCombat;var inUp=s.shopMode==='SHOP_UPGRADE_TARGET';els.btnShopReroll.disabled=!(s.phase==='SELECT'&&s.selectedCardIndex===-1&&!s.rerollUsedThisWave&&s.gold>=10&&noCombat&&!inUp);els.btnShopUpgrade.disabled=!(((s.phase==='DRAW'&&!inUp&&s.gold>=15&&noCombat)||inUp)&&anyW);els.btnShopRepair.disabled=!(s.phase==='DRAW'&&!inUp&&s.gold>=8&&s.castleHp<s.castleMaxHp&&noCombat);if(inUp)els.btnShopUpgrade.classList.add('active');else els.btnShopUpgrade.classList.remove('active');[els.btnShopReroll,els.btnShopUpgrade,els.btnShopRepair].forEach(function(b){if(b.disabled)b.setAttribute('aria-disabled','true');else b.removeAttribute('aria-disabled');});}
+function renderButtons(){var s=window.gameState;var combat=s.isResolvingCombat;var inUp=s.shopMode==='SHOP_UPGRADE_TARGET';els.btnDraw.disabled=(s.phase!=='DRAW'||inUp||combat);els.btnCancelPick.disabled=(s.phase!=='DEPLOY'||combat);els.btnSkipTurn.disabled=(s.phase!=='SELECT'||combat);for(var i=0;i<SLOT_COUNT;i++){var empty=!s.warriors[i]||s.warriors[i].hp<=0;btnDeploy[i].disabled=!(s.phase==='DEPLOY'&&empty&&!combat);}renderShop();}
+function render(){renderStats();renderEnemyPreview();renderBattlefield();renderCards();renderStatusHint();renderButtons();renderEnemyLane();saveState();}
+function renderViewFromSnapshot(snap){for(var i=0;i<SLOT_COUNT;i++){var el=slotEls[i];var content=el.querySelector('.slot-content');var w=snap.warriors[i];if(w){el.className='slot filled';el.querySelector('.slot-pos').textContent=['전열','중열','후열'][i];content.innerHTML='<div class="warrior-emoji">'+w.emoji+'</div><div class="warrior-name">'+w.name+'</div><div class="warrior-stats">HP'+Math.max(0,w.hp)+'/'+w.maxHp+' ATK'+w.atk+'</div>';}else{el.className='slot empty';content.innerHTML='';}}els.statWave.textContent=String(Math.min(snap.wave,window.gameState.maxWave));els.statGold.textContent=String(snap.gold);var pct=Math.max(0,snap.castleHp)/window.gameState.castleMaxHp*100;els.castleHpFill.style.width=pct+'%';els.statCastleHp.textContent=String(Math.max(0,snap.castleHp));}
 
-  /* ===== 렌더 ===== */
-  function renderCastle() {
-    var s = window.gameState;
-    var pct = Math.max(0, s.castleHp) / s.castleMaxHp * 100;
-    els.castleHpFill.style.width = pct + '%';
-    els.castleHpFill.classList.remove('warn','danger');
-    els.castleEmoji.classList.remove('warn','danger');
-    els.castleStatusLabel.textContent = '';
-    els.castleStatusLabel.style.color = '';
-    if (pct <= 20) { els.castleHpFill.classList.add('danger'); els.castleEmoji.classList.add('danger'); els.castleStatusLabel.textContent = '💀 함락 임박'; els.castleStatusLabel.style.color = 'var(--red)'; }
-    else if (pct <= 50) { els.castleHpFill.classList.add('warn'); els.castleEmoji.classList.add('warn'); els.castleStatusLabel.textContent = '⚠️ 위험'; els.castleStatusLabel.style.color = 'var(--gold)'; }
-    els.statCastleHp.textContent = String(Math.max(0, s.castleHp));
-    els.statCastleMaxHp.textContent = String(s.castleMaxHp);
+/* ===== 저장 ===== */
+function saveState(force){var s=window.gameState;if(s.isResolvingCombat&&!force)return;try{var save={phase:s.phase,wave:s.wave,maxWaveReached:s.maxWaveReached,isEndless:s.isEndless,castleHp:s.castleHp,castleMaxHp:s.castleMaxHp,gold:s.gold,warriors:s.warriors,combo:s.combo,rerollUsedThisWave:s.rerollUsedThisWave,isGameOver:s.isGameOver,isVictory:s.isVictory,availableCards:s.availableCards.map(function(c){return c.id;}),selectedCardIndex:s.selectedCardIndex,log:s.log.slice(-100)};localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
+function validateAndNormalize(save){if(!save||typeof save!=='object')return null;var out={};var phases=['DRAW','SELECT','DEPLOY','END'];out.phase=phases.indexOf(save.phase)>=0?save.phase:'DRAW';out.wave=Math.max(1,Math.floor(Number(save.wave))||1);out.maxWaveReached=Math.max(1,Math.floor(Number(save.maxWaveReached))||1);out.isEndless=!!save.isEndless;out.castleMaxHp=Math.max(1,Math.floor(Number(save.castleMaxHp))||CASTLE_MAX_HP);out.castleHp=Math.max(0,Math.min(out.castleMaxHp,Math.floor(Number(save.castleHp))||0));out.gold=Math.max(0,Math.floor(Number(save.gold))||0);out.warriors=[null,null,null];if(Array.isArray(save.warriors)){for(var i=0;i<3;i++){var w=save.warriors[i];if(w&&typeof w==='object'){var maxHp=Math.floor(Number(w.maxHp));var atk=Math.floor(Number(w.atk));var hp=Math.floor(Number(w.hp));if(isFinite(maxHp)&&maxHp>=1&&isFinite(atk)&&atk>=1&&isFinite(hp)&&hp>0){out.warriors[i]={name:String(w.name||'전사').slice(0,12),emoji:String(w.emoji||'⚔️').slice(0,4),hp:Math.min(hp,maxHp),maxHp:maxHp,atk:atk};}}}}out.combo=Math.max(0,Math.floor(Number(save.combo))||0);out.rerollUsedThisWave=!!save.rerollUsedThisWave;out.isGameOver=!!save.isGameOver;out.isVictory=!!save.isVictory;out.availableCards=[];if(Array.isArray(save.availableCards)){for(var j=0;j<save.availableCards.length&&out.availableCards.length<3;j++){var cid=save.availableCards[j];if(ALL_CARDS[cid])out.availableCards.push(ALL_CARDS[cid]);}}var sci=Number(save.selectedCardIndex);out.selectedCardIndex=(isFinite(sci)&&sci>=0&&sci<out.availableCards.length)?Math.floor(sci):-1;out.log=Array.isArray(save.log)?save.log.slice(-100).map(function(x){return String(x);}):[];return out;}
+function loadState(){try{var raw=localStorage.getItem(SAVE_KEY);if(!raw)return false;var save=JSON.parse(raw);var n=validateAndNormalize(save);if(!n){localStorage.removeItem(SAVE_KEY);return false;}var s=window.gameState;s.phase=n.phase;s.wave=n.wave;s.maxWaveReached=n.maxWaveReached;s.isEndless=n.isEndless;s.castleHp=n.castleHp;s.castleMaxHp=n.castleMaxHp;s.gold=n.gold;s.warriors=n.warriors;s.combo=n.combo;s.rerollUsedThisWave=n.rerollUsedThisWave;s.isGameOver=n.isGameOver;s.isVictory=n.isVictory;s.availableCards=n.availableCards;s.selectedCardIndex=n.selectedCardIndex;s.shopMode=null;s.isResolvingCombat=false;if(s.isGameOver||s.isVictory)s.phase='END';if(s.phase==='DEPLOY'){if(s.selectedCardIndex<0||!s.availableCards[s.selectedCardIndex]||s.availableCards[s.selectedCardIndex].type!=='SUMMON')s.phase='SELECT';}if(s.phase==='SELECT'&&s.availableCards.length===0)s.phase='DRAW';return{ok:true,log:n.log};}catch(e){try{localStorage.removeItem(SAVE_KEY);}catch(ee){}return false;}}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+
+/* ===== 카드 풀 ===== */
+function getEligibleCards(){var s=window.gameState;var empty=hasEmptySlot(),alive=aliveWarriorCount()>0,damaged=s.castleHp<s.castleMaxHp;var pool=[];if(empty){pool.push(CARD_TANKER);pool.push(CARD_HERO);}if(alive)pool.push(CARD_ATK);if(damaged)pool.push(CARD_HEAL);if(!empty&&!damaged&&alive)pool.push(CARD_SCOUT);if(pool.length===0)pool.push(CARD_SCOUT);return pool;}
+function drawRandomCard(rv){if(rv===undefined)rv=Math.random()*100;var eligible=getEligibleCards();if(eligible.length===0)return CARD_SCOUT;var target=(rv>=95)?'LEGEND':(rv>=65)?'RARE':'COMMON';var priorities;if(target==='LEGEND')priorities=['LEGEND','RARE','COMMON'];else if(target==='RARE')priorities=['RARE','COMMON','LEGEND'];else priorities=['COMMON','RARE','LEGEND'];for(var p=0;p<priorities.length;p++){var cands=eligible.filter(function(c){return c.rarity===priorities[p];});if(cands.length>0){var idx=Math.floor(rv)%cands.length;return cands[idx];}}return CARD_SCOUT;}
+function drawThreeCards(){var c=[];for(var i=0;i<3;i++)c.push(drawRandomCard());return c;}
+
+/* ===== 순수 전투 계산 ===== */
+function computeCombat(snapshot,waveDef){var warriors=JSON.parse(JSON.stringify(snapshot.warriors));var castleHp=snapshot.castleHp;var events=[];var enemies=waveDef.enemies.map(function(e,i){return{id:i+1,type:e.type,hp:e.hp,maxHp:e.hp,atk:e.atk};});var killedEnemyIds=[];var perfect=false;var breakthroughDamage=0;var r,slot,t,ei,s2,k;for(r=1;r<=3;r++){events.push({kind:'round',round:r});for(slot=2;slot>=0;slot--){if(!warriors[slot]||warriors[slot].hp<=0)continue;var remaining=warriors[slot].atk;while(remaining>0){var target=null;for(t=0;t<enemies.length;t++)if(enemies[t].hp>0){target=enemies[t];break;}if(!target)break;var applied=Math.min(remaining,target.hp);var over=remaining-applied;target.hp=Math.max(0,target.hp-remaining);events.push({kind:'warriorAttack',slot:slot,enemyId:target.id,enemyType:target.type,dmg:applied,enemyHpAfter:target.hp,enemyMaxHp:target.maxHp});if(target.hp<=0){events.push({kind:'enemyKilled',enemyId:target.id,enemyType:target.type});if(killedEnemyIds.indexOf(target.id)<0)killedEnemyIds.push(target.id);}remaining=(over>0)?over:0;}}var anyAlive=false;for(k=0;k<enemies.length;k++)if(enemies[k].hp>0){anyAlive=true;break;}if(!anyAlive){perfect=true;break;}for(ei=0;ei<enemies.length;ei++){if(enemies[ei].hp<=0)continue;var tSlot=-1;for(s2=0;s2<SLOT_COUNT;s2++)if(warriors[s2]&&warriors[s2].hp>0){tSlot=s2;break;}if(tSlot<0){castleHp=Math.max(0,castleHp-enemies[ei].atk);events.push({kind:'enemyAttackCastle',enemyId:enemies[ei].id,dmg:enemies[ei].atk,castleHpAfter:castleHp});}else{var tw=warriors[tSlot];tw.hp-=enemies[ei].atk;var hpAfter=Math.max(0,tw.hp);events.push({kind:'enemyAttackWarrior',enemyId:enemies[ei].id,slot:tSlot,dmg:enemies[ei].atk,warriorHpAfter:hpAfter,warriorMaxHp:tw.maxHp,warriorAtk:tw.atk});if(tw.hp<=0){events.push({kind:'warriorDied',slot:tSlot,name:tw.name});warriors[tSlot]=null;}}if(castleHp<=0)break;}if(castleHp<=0)break;}var remaining2=[];for(var ri=0;ri<enemies.length;ri++)if(enemies[ri].hp>0)remaining2.push(enemies[ri]);if(!perfect&&remaining2.length>0){var total=0;for(var bi=0;bi<remaining2.length;bi++)total+=remaining2[bi].atk;breakthroughDamage=total;castleHp=Math.max(0,castleHp-total);events.push({kind:'breakthrough',totalDmg:total,castleHpAfter:castleHp});}return{events:events,resultWarriors:warriors,resultCastleHp:castleHp,perfect:perfect,killedEnemyIds:killedEnemyIds,breakthroughDamage:breakthroughDamage};}
+function computeReward(def,perfect,resultCastleHp,prevCombo){var clutch=resultCastleHp>0&&resultCastleHp<=5;var base=def.gold;if(perfect)base+=5;if(clutch)base*=2;var comboBonus=perfect?Math.min(20,prevCombo*2):0;return{base:base,comboBonus:comboBonus,totalGold:base+comboBonus,perfect:perfect,clutch:clutch};}
+
+/* ===== Commit-then-Animate ===== */
+function commitWave(){var s=window.gameState;var preSnapshot={warriors:JSON.parse(JSON.stringify(s.warriors)),castleHp:s.castleHp,combo:s.combo,wave:s.wave,gold:s.gold};var def=getWaveDef(s.wave);var result=computeCombat(preSnapshot,def);var reward=computeReward(def,result.perfect,result.resultCastleHp,preSnapshot.combo);s.warriors=result.resultWarriors;s.castleHp=result.resultCastleHp;s.gold+=reward.totalGold;s.combo=result.perfect?(preSnapshot.combo+1):0;s.rerollUsedThisWave=false;s.shopMode=null;var clearedWave=preSnapshot.wave;s.wave+=1;if(clearedWave>s.maxWaveReached)s.maxWaveReached=clearedWave;var outcome='CONTINUE';if(s.castleHp<=0){s.isGameOver=true;s.phase='END';outcome='GAME_OVER';}else if(s.wave>s.maxWave&&!s.isEndless){s.isVictory=true;s.phase='END';outcome='VICTORY';}else{s.phase='DRAW';}saveState(true);return{preSnapshot:preSnapshot,def:def,result:result,reward:reward,outcome:outcome,clearedWave:clearedWave};}
+
+/* ===== 비동기 재생 ===== */
+var playToken=0;
+function playCombat(events,onComplete){var myToken=++playToken;var reduced=false;try{reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){reduced=false;}var interval=reduced?0:180;var i=0;var finished=false;function onFF(){if(!finished)interval=20;}function ffKey(e){if((e.key===' '||e.code==='Space')&&!finished){e.preventDefault();onFF();}}document.addEventListener('keydown',ffKey);els.battlefield.addEventListener('click',onFF);els.statusHint.addEventListener('click',onFF);function cleanup(){document.removeEventListener('keydown',ffKey);els.battlefield.removeEventListener('click',onFF);els.statusHint.removeEventListener('click',onFF);}
+  function apply(ev){
+    if(ev.kind==='round'){log('[라운드 '+ev.round+']','round');}
+    else if(ev.kind==='warriorAttack'){var w=window.gameState.warriors[ev.slot];var wn=w?w.name:'전사';log('[전투] '+wn+' → 적 '+ev.enemyId+'('+ev.enemyType+') '+ev.dmg+' 피해 (HP '+ev.enemyHpAfter+'/'+ev.enemyMaxHp+')','combat');var se=slotEls[ev.slot];if(se){se.classList.add('hit-anim');setTimeout(function(){se.classList.remove('hit-anim');},200);}updateEnemyToken(ev.enemyId,ev.enemyHpAfter,ev.enemyMaxHp);playHit();}
+    else if(ev.kind==='enemyKilled'){log('[처치] 적 '+ev.enemyId+'('+ev.enemyType+') 처치!','highlight');markEnemyDead(ev.enemyId);}
+    else if(ev.kind==='enemyAttackWarrior'){var w2=window.gameState.warriors[ev.slot];var wn2=w2?w2.name:'전사';log('[전투] 적 '+ev.enemyId+' → '+wn2+' '+ev.dmg+' 피해 (HP '+ev.warriorHpAfter+'/'+ev.warriorMaxHp+')','combat');var se2=slotEls[ev.slot];if(se2){se2.classList.add('damage-anim');setTimeout(function(){se2.classList.remove('damage-anim');},320);var statsEl=se2.querySelector('.warrior-stats');if(statsEl)statsEl.textContent='HP'+ev.warriorHpAfter+'/'+ev.warriorMaxHp+' ATK'+ev.warriorAtk;}playHit();}
+    else if(ev.kind==='warriorDied'){log('[전사자] '+ev.name+'이(가) 전사했습니다.','danger');var de=slotEls[ev.slot];if(de){de.classList.add('death-anim');(function(sl,mt){setTimeout(function(){if(mt!==playToken)return;var el2=slotEls[sl];if(el2){el2.classList.remove('death-anim');el2.className='slot empty';var c=el2.querySelector('.slot-content');if(c)c.innerHTML='';}},500);})(ev.slot,myToken);}}
+    else if(ev.kind==='enemyAttackCastle'){log('[피해] 적 '+ev.enemyId+' → 성 '+ev.dmg+' 피해 (성 HP '+ev.castleHpAfter+'/'+window.gameState.castleMaxHp+')','danger');flash('danger');screenShake();popDamage('-'+ev.dmg,'',document.querySelector('.castle-panel'));var pct=Math.max(0,ev.castleHpAfter)/window.gameState.castleMaxHp*100;els.castleHpFill.style.width=pct+'%';els.statCastleHp.textContent=String(Math.max(0,ev.castleHpAfter));}
+    else if(ev.kind==='breakthrough'){log('[피해] 적 돌파! 성에 '+ev.totalDmg+' 피해 (성 HP '+ev.castleHpAfter+'/'+window.gameState.castleMaxHp+')','danger');flash('danger');screenShake();popDamage('-'+ev.totalDmg,'',document.querySelector('.castle-panel'));var pct2=Math.max(0,ev.castleHpAfter)/window.gameState.castleMaxHp*100;els.castleHpFill.style.width=pct2+'%';els.statCastleHp.textContent=String(Math.max(0,ev.castleHpAfter));}
   }
-  function renderStats() {
-    var s = window.gameState;
-    if (s.isEndless || s.wave > s.maxWave) { els.statWave.textContent = String(s.wave); els.statMaxWave.textContent = '∞'; }
-    else { els.statWave.textContent = String(Math.min(s.wave, s.maxWave)); els.statMaxWave.textContent = String(s.maxWave); }
-    els.statGold.textContent = String(s.gold);
-    els.shopGold.textContent = String(s.gold);
-    renderCastle();
-  }
-  function renderEnemyPreview() {
-    var s = window.gameState;
-    if (s.isGameOver || s.isVictory || (s.wave > s.maxWave && !s.isEndless)) { els.enemyCount.textContent = '—'; els.enemyDetail.textContent = '게임 종료'; return; }
-    var def = getWaveDef(s.wave);
-    if (!def || !def.enemies.length) { els.enemyCount.textContent = '0 마리'; els.enemyDetail.textContent = 'HP - / ATK -'; return; }
-    var hps = def.enemies.map(function(e){return e.hp;});
-    var atks = def.enemies.map(function(e){return e.atk;});
-    var minHp = Math.min.apply(null,hps), maxHp = Math.max.apply(null,hps);
-    var minAtk = Math.min.apply(null,atks), maxAtk = Math.max.apply(null,atks);
-    var hpStr = minHp === maxHp ? String(minHp) : minHp + '~' + maxHp;
-    var atkStr = minAtk === maxAtk ? String(minAtk) : minAtk + '~' + maxAtk;
-    els.enemyCount.textContent = def.enemies.length + ' 마리';
-    els.enemyDetail.textContent = 'HP ' + hpStr + ' / ATK ' + atkStr;
-  }
-  function renderBattlefield() {
-    var s = window.gameState;
-    var positions = ['전열','중열','후열'];
-    var isShopTarget = s.shopMode === 'SHOP_UPGRADE_TARGET';
-    for (var i = 0; i < SLOT_COUNT; i++) {
-      var slotEl = slotEls[i];
-      var contentEl = slotEl.querySelector('.slot-content');
-      var w = s.warriors[i];
-      var cls = 'slot';
-      if (w) {
-        cls += ' filled';
-        slotEl.querySelector('.slot-pos').textContent = positions[i];
-        contentEl.innerHTML =
-          '<div class="warrior-emoji">' + w.emoji + '</div>' +
-          '<div class="warrior-name">' + w.name + '</div>' +
-          '<div class="warrior-stats">HP' + Math.max(0,w.hp) + '/' + w.maxHp + ' ATK' + w.atk + '</div>';
-      } else {
-        cls += ' empty';
-        contentEl.innerHTML = '';
-      }
-      if (isShopTarget && w && w.hp > 0) cls += ' shop-target';
-      slotEl.className = cls;
-      var focusable = false;
-      if (s.phase === 'DEPLOY' && !w && !s.isResolvingCombat) focusable = true;
-      if (isShopTarget && w && w.hp > 0) focusable = true;
-      if (focusable) { slotEl.setAttribute('tabindex','0'); slotEl.setAttribute('role','button'); }
-      else { slotEl.removeAttribute('tabindex'); slotEl.removeAttribute('role'); }
-      if (w) slotEl.setAttribute('aria-label', positions[i] + ' 슬롯, ' + w.name + ', HP ' + Math.max(0,w.hp) + '/' + w.maxHp + ', ATK ' + w.atk);
-      else slotEl.setAttribute('aria-label', positions[i] + ' 슬롯, 비어있음');
-    }
-  }
-  function renderCards() {
-    var s = window.gameState;
-    var cards = s.availableCards;
-    if (!cards || cards.length === 0) {
-      els.cardsArea.innerHTML = '<div class="card placeholder">카드</div><div class="card placeholder">카드를</div><div class="card placeholder">뽑으세요</div>';
-      return;
-    }
-    els.cardsArea.innerHTML = '';
-    for (var i = 0; i < cards.length; i++) {
-      (function (idx) {
-        var c = cards[idx];
-        var cardEl = document.createElement('div');
-        var cls = 'card appear rarity-' + c.rarity;
-        var ariaDisabled = false;
-        if (s.selectedCard === c) cardEl.classList.add('selected');
-        else if (s.phase === 'DEPLOY' || s.phase === 'END' || s.shopMode === 'SHOP_UPGRADE_TARGET' || s.isResolvingCombat) cls += ' fade-out';
-        else if (s.phase !== 'SELECT') cls += ' locked';
-        if (s.phase !== 'SELECT' || s.isResolvingCombat) ariaDisabled = true;
-        cardEl.className = cls;
-        cardEl.id = 'card-choice-' + idx;
-        cardEl.setAttribute('tabindex','0');
-        cardEl.setAttribute('role','button');
-        if (ariaDisabled) cardEl.setAttribute('aria-disabled','true');
-        cardEl.setAttribute('aria-label', c.name + ' 카드, ' + c.rarity + ' 등급, ' + c.desc + (s.phase === 'SELECT' && !s.isResolvingCombat ? ', 선택 가능' : ', 선택 불가'));
-        cardEl.innerHTML =
-          '<div class="card-banner">' + c.rarity + '</div>' +
-          '<div class="card-inner">' +
-            '<div class="card-emoji">' + c.emoji + '</div>' +
-            '<div class="card-name">' + c.name + '</div>' +
-            '<div class="card-desc">' + c.desc + '</div>' +
-          '</div>' +
-          '<div class="card-shine"></div>';
-        cardEl.addEventListener('click', function () { onCardClick(idx); });
-        makeKeyboardActivate(cardEl);
-        els.cardsArea.appendChild(cardEl);
-      })(i);
-    }
-  }
-  function renderStatusHint() {
-    var s = window.gameState;
-    var hint = '', cls = '';
-    if (s.isResolvingCombat) { hint = '⚔️ 전투 진행 중...'; cls = 'combat'; }
-    else if (s.shopMode === 'SHOP_UPGRADE_TARGET') { hint = '강화할 전사를 선택하거나 강화 버튼을 다시 눌러 취소하세요.'; cls = 'shop'; }
-    else if (s.phase === 'DRAW') hint = '카드 뽑기 버튼을 누르세요';
-    else if (s.phase === 'SELECT') hint = '카드를 선택하거나 턴 넘기기를 누르세요';
-    else if (s.phase === 'DEPLOY') hint = '배치할 슬롯을 누르세요 (선택 취소 가능)';
-    else if (s.phase === 'END') { hint = '게임 종료 — 결과창을 확인하세요'; cls = 'end'; }
-    els.statusHint.textContent = hint;
-    els.statusHint.className = cls;
-  }
-  function renderShop() {
-    var s = window.gameState;
-    var anyW = s.warriors.some(function(w){ return w && w.hp > 0; });
-    var noCombat = !s.isResolvingCombat;
-    var inUpgrade = s.shopMode === 'SHOP_UPGRADE_TARGET';
-    // 재뽑기: SELECT 전용, 카드 미선택, 이번 웨이브 미사용, 10G+
-    els.btnShopReroll.disabled = !(s.phase === 'SELECT' && !s.selectedCard && !s.rerollUsedThisWave && s.gold >= 10 && noCombat && !inUpgrade);
-    // 강화: DRAW 전용 or 업그레이드 모드
-    els.btnShopUpgrade.disabled = !(((s.phase === 'DRAW' && !inUpgrade && s.gold >= 15 && noCombat) || inUpgrade) && anyW);
-    // 보수: DRAW 전용
-    els.btnShopRepair.disabled = !(s.phase === 'DRAW' && !inUpgrade && s.gold >= 8 && s.castleHp < s.castleMaxHp && noCombat);
-    if (inUpgrade) els.btnShopUpgrade.classList.add('active'); else els.btnShopUpgrade.classList.remove('active');
-    [els.btnShopReroll, els.btnShopUpgrade, els.btnShopRepair].forEach(function(b){
-      if (b.disabled) b.setAttribute('aria-disabled','true'); else b.removeAttribute('aria-disabled');
-    });
-  }
-  function renderButtons() {
-    var s = window.gameState;
-    var combat = s.isResolvingCombat;
-    var inUpgrade = s.shopMode === 'SHOP_UPGRADE_TARGET';
-    els.btnDraw.disabled = (s.phase !== 'DRAW' || inUpgrade || combat);
-    els.btnCancelPick.disabled = (s.phase !== 'DEPLOY' || combat);
-    els.btnSkipTurn.disabled = (s.phase !== 'SELECT' || combat);
-    for (var i = 0; i < SLOT_COUNT; i++) {
-      var emptySlot = !s.warriors[i] || s.warriors[i].hp <= 0;
-      btnDeploy[i].disabled = !(s.phase === 'DEPLOY' && emptySlot && !combat);
-    }
+  function step(){if(myToken!==playToken){cleanup();return;}if(i>=events.length){finished=true;cleanup();onComplete();return;}apply(events[i]);i++;setTimeout(step,interval);}step();}
+
+/* ===== 적 레인 ===== */
+function showEnemyLane(enemies){els.enemyLane.innerHTML='';for(var i=0;i<enemies.length;i++){var e=enemies[i];var t=document.createElement('div');t.className='enemy-token'+(e.type==='정예'?' elite':'');t.setAttribute('data-enemy-id',String(e.id));var em=e.type==='정예'?'👹':'👺';t.innerHTML='<div class="enemy-id">#'+e.id+'</div><div class="enemy-emoji">'+em+'</div><div class="enemy-mini-hp"><div class="enemy-mini-hp-fill" style="width:100%"></div></div>';els.enemyLane.appendChild(t);}}
+function clearEnemyLane(){els.enemyLane.innerHTML='';}
+function updateEnemyToken(id,hpAfter,maxHp){var t=els.enemyLane.querySelector('[data-enemy-id="'+id+'"]');if(!t)return;var f=t.querySelector('.enemy-mini-hp-fill');if(f)f.style.width=Math.max(0,hpAfter/maxHp*100)+'%';t.classList.add('damaged');setTimeout(function(){t.classList.remove('damaged');},260);}
+function markEnemyDead(id){var t=els.enemyLane.querySelector('[data-enemy-id="'+id+'"]');if(t)t.classList.add('dead');}
+
+/* ===== 웨이브 해석 ===== */
+function resolveWave(){var s=window.gameState;if(s.isResolvingCombat)return;if(s.isGameOver||s.isVictory){s.phase='END';render();return;}var def=getWaveDef(s.wave);if(!def){s.phase='END';render();return;}s.isResolvingCombat=true;var commit=commitWave();renderViewFromSnapshot(commit.preSnapshot);renderStatusHint();renderButtons();showEnemyLane(commit.def.enemies.map(function(e,i){return{id:i+1,type:e.type};}));log('[전투] 웨이브 '+commit.clearedWave+' 시작. 아군 '+aliveWarriorCount()+'명 vs 적 '+commit.def.enemies.length+'마리');
+  playCombat(commit.result.events,function(){if(!window.gameState.isResolvingCombat)return;var r=commit.reward;if(r.perfect){log('[웨이브] 웨이브 '+commit.clearedWave+' PERFECT 클리어! (+'+r.totalGold+'골드'+(r.comboBonus>0?' 콤보+'+r.comboBonus:'')+')','highlight');flash('victory');popDamage('PERFECT! +'+r.totalGold+'💰','gold');}else if(r.clutch){log('[웨이브] 웨이브 '+commit.clearedWave+' 클리치 클리어 (2배). (+'+r.totalGold+'골드)','highlight');}else{log('[웨이브] 웨이브 '+commit.clearedWave+' 클리어. (+'+r.totalGold+'골드)');}updateCombo(commit.result.perfect);announce('웨이브 '+commit.clearedWave+(commit.result.perfect?' 퍼펙트':'')+' 클리어. 골드 '+r.totalGold+' 획득. 성 HP '+Math.max(0,window.gameState.castleHp)+'.');setTimeout(function(){if(playToken!==undefined){clearEnemyLane();window.gameState.isResolvingCombat=false;if(commit.outcome==='GAME_OVER'){log('[게임오버] '+(window.gameState.isEndless?'무한 모드 종료. 웨이브 ':'성 함락. 웨이브 ')+commit.clearedWave+'에서 패배.','danger');playDefeat();showResult(false);}else if(commit.outcome==='VICTORY'){var score=calculateScore();log('[승리] 모든 웨이브 클리어! 점수: '+score,'highlight');playVictory();showResult(true);}else{if(window.gameState.isEndless)log('[웨이브] 무한 모드 다음 웨이브: '+window.gameState.wave);log('[턴] 웨이브 '+window.gameState.wave+' 시작.');showWaveTransition(window.gameState.wave);}render();}},reducedMotion()?0:700);});}
+function reducedMotion(){try{return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}}
+
+function calculateScore(){var s=window.gameState;var wa=0;for(var i=0;i<s.warriors.length;i++)if(s.warriors[i])wa++;return s.gold*10+s.castleHp*2+wa*20+s.maxWaveReached*30;}
+
+/* ===== 카드/배치/스킵 액션 ===== */
+function onDrawClick(){ensureAudio();playClick();var s=window.gameState;if(s.isResolvingCombat)return;if(s.phase!=='DRAW'||s.shopMode==='SHOP_UPGRADE_TARGET')return;s.availableCards=drawThreeCards();s.selectedCardIndex=-1;s.phase='SELECT';s.cardsJustDrawn=true;s.lastActionStatus='DRAW_SUCCESS';var names=[],hasRare=false,hasLegend=false;for(var i=0;i<s.availableCards.length;i++){names.push(s.availableCards[i].name);if(s.availableCards[i].rarity==='RARE')hasRare=true;if(s.availableCards[i].rarity==='LEGEND')hasLegend=true;}log('[뽑기] 카드 3장: '+names.join(', '));playGacha(hasRare||hasLegend);if(hasLegend){playLegend();flash('legend');var c=document.createElement('div');c.style.position='fixed';c.style.left='50%';c.style.top='40%';document.body.appendChild(c);burstParticles(c,'#ffcc00',20);setTimeout(function(){c.remove();},100);log('[뽑기] 전설 카드가 등장했습니다!','highlight');}render();}
+function onCardClick(idx){ensureAudio();var s=window.gameState;if(s.isResolvingCombat)return;if(s.phase!=='SELECT'||s.shopMode==='SHOP_UPGRADE_TARGET')return;if(!s.availableCards||s.availableCards.length===0)return;if(s.selectedCardIndex!==-1)return;var card=s.availableCards[idx];if(!card)return;playClick();s.selectedCardIndex=idx;log('[선택] '+card.name+' — '+card.desc);var el=document.getElementById('card-choice-'+idx);burstParticles(el,card.rarity==='RARE'?'#4a90e2':(card.rarity==='LEGEND'?'#ffcc00':'#8888a0'),8);if(card.type==='SUMMON'){if(!hasEmptySlot()){log('[선택] 빈 슬롯이 없어 소환 카드를 사용할 수 없습니다. 자동 취소.','danger');s.selectedCardIndex=-1;render();return;}s.phase='DEPLOY';s.lastActionStatus='PICK_SUCCESS';flash('default');render();}else if(card.type==='INSTANT'){applyInstant(card);s.availableCards=[];s.selectedCardIndex=-1;s.lastActionStatus='INSTANT_SUCCESS';renderButtons();renderStatusHint();resolveWave();}}
+function applyInstant(card){var s=window.gameState;if(card.id==='ATK_BOOST'){var cnt=0;for(var i=0;i<s.warriors.length;i++)if(s.warriors[i]&&s.warriors[i].hp>0){s.warriors[i].atk+=2;cnt++;}log('[선택] 모든 전사 ATK +2 (대상 '+cnt+'명)');if(cnt>0)popDamage('+2 ATK','gold');}else if(card.id==='HEAL'){var b=s.castleHp;s.castleHp=Math.min(s.castleMaxHp,s.castleHp+7);var g=s.castleHp-b;log('[선택] 성 HP +'+g+' (HP: '+s.castleHp+'/'+s.castleMaxHp+')');popDamage('+'+g+' HP','green');}else if(card.id==='SCOUT_SUPPLY'){s.gold+=4;log('[선택] 정찰 보급 +4 골드 (총 '+s.gold+')');popDamage('+4💰','gold');}}
+function onDeployClick(slotIdx){ensureAudio();playClick();var s=window.gameState;if(s.isResolvingCombat)return;if(s.phase!=='DEPLOY')return;if(s.warriors[slotIdx]&&s.warriors[slotIdx].hp>0)return;if(s.selectedCardIndex<0)return;var card=s.availableCards[s.selectedCardIndex];if(!card||!card.warrior)return;var w=card.warrior;s.warriors[slotIdx]={name:w.name,emoji:w.emoji,hp:w.hp,maxHp:w.maxHp,atk:w.atk};s.lastActionStatus='DEPLOY_SUCCESS';log('[배치] '+w.name+' → 슬롯 '+(slotIdx+1));s.availableCards=[];s.selectedCardIndex=-1;flash('default');var el=slotEls[slotIdx];el.classList.add('deploy-anim');burstParticles(el,'#4a90e2',8);setTimeout(function(){el.classList.remove('deploy-anim');},520);renderButtons();renderStatusHint();resolveWave();}
+function onCancelPick(){ensureAudio();playClick();var s=window.gameState;if(s.isResolvingCombat)return;if(s.phase!=='DEPLOY')return;s.selectedCardIndex=-1;s.phase='SELECT';s.lastActionStatus='IDLE';log('[취소] 선택을 취소했습니다. 카드를 다시 고르세요.');render();}
+function onSkipTurn(){ensureAudio();playClick();var s=window.gameState;if(s.isResolvingCombat)return;if(s.phase!=='SELECT')return;log('[스킵] 턴을 넘깁니다. 카드를 사용하지 않습니다.','danger');s.availableCards=[];s.selectedCardIndex=-1;s.lastActionStatus='SKIP_TURN';renderButtons();renderStatusHint();resolveWave();}
+
+/* ===== 상점 ===== */
+function onShopReroll(){ensureAudio();playClick();var s=window.gameState;if(s.isResolvingCombat)return;if(s.phase!=='SELECT')return;if(s.selectedCardIndex!==-1)return;if(s.rerollUsedThisWave)return;if(s.gold<10)return;s.gold-=10;s.rerollUsedThisWave=true;s.availableCards=drawThreeCards();s.selectedCardIndex=-1;s.cardsJustDrawn=true;log('[상점] 카드 재뽑기 (10G 소모). 골드: '+s.gold);render();}
+function onShopUpgradeToggle(){ensureAudio();playClick();var s=window.gameState;if(s.isResolvingCombat)return;var anyW=s.warriors.some(function(w){return w&&w.hp>0;});if(!anyW)return;if(s.shopMode==='SHOP_UPGRADE_TARGET'){s.shopMode=null;log('[상점] 강화 모드를 취소했습니다.');render();return;}if(s.phase!=='DRAW')return;if(s.gold<15)return;s.shopMode='SHOP_UPGRADE_TARGET';log('[상점] 강화할 전사를 선택하세요. (15G)');render();}
+function onShopRepair(){ensureAudio();playClick();var s=window.gameState;if(s.isResolvingCombat)return;if(s.phase!=='DRAW')return;if(s.shopMode==='SHOP_UPGRADE_TARGET')return;if(s.gold<8)return;if(s.castleHp>=s.castleMaxHp)return;s.gold-=8;var b=s.castleHp;s.castleHp=Math.min(s.castleMaxHp,s.castleHp+3);var g=s.castleHp-b;log('[상점] 성벽 보수 (8G). 성 HP +'+g+' → '+s.castleHp+'/'+s.castleMaxHp);popDamage('+'+g+' HP','green',document.querySelector('.castle-panel'));render();}
+function onSlotUpgradeClick(slotIdx){var s=window.gameState;if(s.isResolvingCombat)return;if(s.shopMode!=='SHOP_UPGRADE_TARGET')return;if(!s.warriors[slotIdx]||s.warriors[slotIdx].hp<=0)return;if(s.gold<15)return;ensureAudio();playClick();s.gold-=15;s.warriors[slotIdx].atk+=1;s.warriors[slotIdx].hp+=5;s.warriors[slotIdx].maxHp+=5;log('[상점] '+s.warriors[slotIdx].name+' 강화 완료! (ATK+1, HP+5, 15G)');burstParticles(slotEls[slotIdx],'#ffcc00',8);popDamage('+1 ATK','gold',slotEls[slotIdx]);s.shopMode=null;render();}
+
+/* ===== 결과 모달 ===== */
+var previousFocus=null;
+function trapFocus(e){if(e.key!=='Tab')return;var f=els.resultBox.querySelectorAll('button:not([disabled]):not(.hidden)');if(f.length===0)return;var first=f[0],last=f[f.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
+function showResult(isVictory){var s=window.gameState;if(isVictory){els.resultBox.className='result-box';els.resultTitle.textContent='🏆 VICTORY 🏆';els.resultWave.textContent='도달 웨이브: '+s.maxWave+' / '+s.maxWave;els.btnContinue.classList.remove('hidden');}else{els.resultBox.className='result-box defeat';els.resultTitle.textContent='💀 DEFEAT 💀';if(s.isEndless)els.resultWave.textContent='최고 도달 웨이브: '+(s.wave-1);else els.resultWave.textContent='도달 웨이브: '+(s.wave-1)+' / '+s.maxWave;els.btnContinue.classList.add('hidden');}els.resultScore.textContent=String(calculateScore());var wa=0;for(var i=0;i<s.warriors.length;i++)if(s.warriors[i])wa++;els.resultDetail.textContent='골드 '+s.gold+' · 성 HP '+Math.max(0,s.castleHp)+' · 생존 전사 '+wa;els.resultOverlay.classList.add('show');previousFocus=document.activeElement;document.addEventListener('keydown',trapFocus);setTimeout(function(){var f=els.btnContinue.classList.contains('hidden')?els.btnRestart:els.btnContinue;try{f.focus();}catch(e){}},100);}
+function hideResult(){els.resultOverlay.classList.remove('show');document.removeEventListener('keydown',trapFocus);if(previousFocus&&previousFocus.focus){try{previousFocus.focus();}catch(e){}}previousFocus=null;}
+function continueEndless(){var s=window.gameState;if(!s.isVictory)return;s.isVictory=false;s.isEndless=true;s.phase='DRAW';hideResult();log('[시스템] 무한 모드 시작. 웨이브 '+s.wave,'highlight');showWaveTransition(s.wave);render();}
+function resetGame(){playToken++;var s=window.gameState;clearSave();s.phase='DRAW';s.wave=1;s.maxWave=MAX_WAVE;s.maxWaveReached=1;s.isEndless=false;s.castleHp=CASTLE_MAX_HP;s.castleMaxHp=CASTLE_MAX_HP;s.gold=0;s.warriors=[null,null,null];s.availableCards=[];s.selectedCardIndex=-1;s.lastActionStatus='IDLE';s.isGameOver=false;s.isVictory=false;s.combo=0;s.rerollUsedThisWave=false;s.shopMode=null;s.isResolvingCombat=false;s.cardsJustDrawn=false;s.log=[];els.output.innerHTML='';hideResult();els.comboBadge.classList.remove('show');clearEnemyLane();log('[턴] 웨이브 1 시작.');render();}
+
+/* ===== 사운드 토글 ===== */
+function loadSfxMuted(){try{var v=localStorage.getItem(SFX_KEY);window.gameState.sfxMuted=(v==='1'||v==='true');}catch(e){window.gameState.sfxMuted=false;}}
+function saveSfxMuted(){try{localStorage.setItem(SFX_KEY,window.gameState.sfxMuted?'1':'0');}catch(e){}}
+function updateSfxButton(){els.btnSoundToggle.textContent=window.gameState.sfxMuted?'🔇':'🔊';els.btnSoundToggle.setAttribute('aria-label',window.gameState.sfxMuted?'음소거 해제':'음소거');}
+function onSoundToggle(){window.gameState.sfxMuted=!window.gameState.sfxMuted;saveSfxMuted();updateSfxButton();if(!window.gameState.sfxMuted){ensureAudio();playClick();}}
+
+/* ===== 이벤트 바인딩 ===== */
+els.btnDraw.addEventListener('click',onDrawClick);
+els.btnCancelPick.addEventListener('click',onCancelPick);
+els.btnSkipTurn.addEventListener('click',onSkipTurn);
+els.btnContinue.addEventListener('click',function(){ensureAudio();playClick();continueEndless();});
+els.btnRestart.addEventListener('click',function(){ensureAudio();playClick();resetGame();});
+els.btnSoundToggle.addEventListener('click',onSoundToggle);
+els.btnShopReroll.addEventListener('click',onShopReroll);
+els.btnShopUpgrade.addEventListener('click',onShopUpgradeToggle);
+els.btnShopRepair.addEventListener('click',onShopRepair);
+for(var bi=0;bi<SLOT_COUNT;bi++){(function(idx){btnDeploy[idx].addEventListener('click',function(){onDeployClick(idx);});slotEls[idx].addEventListener('click',function(){var s=window.gameState;if(s.isResolvingCombat)return;if(s.shopMode==='SHOP_UPGRADE_TARGET')onSlotUpgradeClick(idx);else if(s.phase==='DEPLOY')onDeployClick(idx);});makeKeyboardActivate(slotEls[idx]);})(bi);}
+
+/* ===== 회귀 테스트 ===== */
+window.runRegressionSuite=function(){
+  var results=[],errors=[];
+  function record(name,pass,detail){results.push({name:name,pass:!!pass,detail:detail||''});if(!pass)errors.push(name+(detail?' :: '+detail:''));}
+  // 백업
+  var backupSave=null,backupSfx=null,backupLogHTML=els.output.innerHTML;
+  try{backupSave=localStorage.getItem(SAVE_KEY);}catch(e){}
+  try{backupSfx=localStorage.getItem(SFX_KEY);}catch(e){}
+  var backupState=JSON.parse(JSON.stringify({phase:window.gameState.phase,wave:window.gameState.wave,maxWaveReached:window.gameState.maxWaveReached,isEndless:window.gameState.isEndless,castleHp:window.gameState.castleHp,castleMaxHp:window.gameState.castleMaxHp,gold:window.gameState.gold,warriors:window.gameState.warriors,combo:window.gameState.combo,rerollUsedThisWave:window.gameState.rerollUsedThisWave,isGameOver:window.gameState.isGameOver,isVictory:window.gameState.isVictory,availableCards:window.gameState.availableCards.map(function(c){return c.id;}),selectedCardIndex:window.gameState.selectedCardIndex,shopMode:window.gameState.shopMode,log:window.gameState.log.slice()}));
+  try{
+    // T1 초기 상태
+    resetGame();
+    record('T1 phase DRAW',window.gameState.phase==='DRAW');
+    record('T1 wave 1',window.gameState.wave===1);
+    record('T1 castleHp 50',window.gameState.castleHp===50);
+    record('T1 gold 0',window.gameState.gold===0);
+    record('T1 combo 0',window.gameState.combo===0);
+
+    // T2 슬롯 3/3 → SUMMON 0회
+    window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5}];
+    window.gameState.castleHp=30;
+    var summonCnt=0;
+    for(var i2=0;i2<100;i2++){var c2=drawRandomCard(i2);if(c2.type==='SUMMON')summonCnt++;}
+    record('T2 슬롯3/3 SUMMON 0회',summonCnt===0,'cnt='+summonCnt);
+
+    // T3 전사 0명 → ATK_BOOST 0회
+    window.gameState.warriors=[null,null,null];window.gameState.castleHp=30;
+    var atkCnt=0;
+    for(var i3=0;i3<100;i3++){var c3=drawRandomCard(i3);if(c3.id==='ATK_BOOST')atkCnt++;}
+    record('T3 전사0 ATK_BOOST 0회',atkCnt===0,'cnt='+atkCnt);
+
+    // T4 성 만피 → HEAL 0회
+    window.gameState.castleHp=window.gameState.castleMaxHp;window.gameState.warriors=[null,null,null];
+    var healCnt=0;
+    for(var i4=0;i4<100;i4++){var c4=drawRandomCard(i4);if(c4.id==='HEAL')healCnt++;}
+    record('T4 성만피 HEAL 0회',healCnt===0,'cnt='+healCnt);
+
+    // T5 상황 X = {ATK_BOOST, SCOUT}
+    window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5}];
+    window.gameState.castleHp=window.gameState.castleMaxHp;
+    var eligX=getEligibleCards();
+    var idsX=eligX.map(function(c){return c.id;}).sort();
+    record('T5 상황X = [ATK_BOOST, SCOUT_SUPPLY]',idsX.length===2&&idsX[0]==='ATK_BOOST'&&idsX[1]==='SCOUT_SUPPLY','got='+JSON.stringify(idsX));
+
+    // T6 rv=99→LEGEND, rv=10→COMMON, 슬롯만석+성손상 rv=95≠rv=96
+    window.gameState.warriors=[null,null,null];window.gameState.castleHp=window.gameState.castleMaxHp;
+    var cHero=drawRandomCard(99);
+    record('T6 rv=99 LEGEND',cHero.rarity==='LEGEND','got='+cHero.id);
+    var cCommon=drawRandomCard(10);
+    record('T6 rv=10 COMMON',cCommon.rarity==='COMMON','got='+cCommon.rarity);
+    window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5}];
+    window.gameState.castleHp=30;
+    var rv95=drawRandomCard(95),rv96=drawRandomCard(96);
+    record('T6 rv95≠rv96',rv95.id!==rv96.id,'95='+rv95.id+' 96='+rv96.id);
+
+    // T7 관통
+    var snap7={warriors:[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},null,null],castleHp:50,combo:0};
+    var def7={enemies:[{type:'잡병',hp:1,atk:2},{type:'잡병',hp:8,atk:2}],gold:5};
+    var r7=computeCombat(snap7,def7);
+    var wAtks7=r7.events.filter(function(e){return e.kind==='warriorAttack';});
+    var firstRound7=r7.events.filter(function(e){return e.kind==='warriorAttack'&&e.slot===0;});
+    var kills7=r7.events.filter(function(e){return e.kind==='enemyKilled';});
+    record('T7 첫 라운드 warriorAttack 2건',firstRound7.length>=2,'cnt='+firstRound7.length);
+    record('T7 첫 공격 dmg=1',firstRound7[0]&&firstRound7[0].dmg===1,'dmg='+firstRound7[0].dmg);
+    record('T7 두번째 dmg=4',firstRound7[1]&&firstRound7[1].dmg===4,'dmg='+firstRound7[1].dmg);
+    record('T7 enemyKilled 1건 이상',kills7.length>=1,'cnt='+kills7.length);
+
+    // T8 밸런스 실현성
+    function testPerfect(warriors,waveNum){var snap={warriors:warriors,castleHp:50,combo:0};var d=getWaveDef(waveNum);return computeCombat(snap,d).perfect;}
+    function tanker(atk){return{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:atk};}
+    function hero(){return{name:'용사',emoji:'👑',hp:52,maxHp:52,atk:10};}
+    record('T8 W1 탱커1 true',testPerfect([tanker(5),null,null],1)===true);
+    record('T8 W2 탱커1 false',testPerfect([tanker(5),null,null],2)===false);
+    record('T8 W2 탱커2 true',testPerfect([tanker(5),tanker(5),null],2)===true);
+    record('T8 W3 탱커3 true',testPerfect([tanker(5),tanker(5),tanker(5)],3)===true);
+    record('T8 W4 탱커3 false',testPerfect([tanker(5),tanker(5),tanker(5)],4)===false);
+    record('T8 W4 탱커3 ATK7 true',testPerfect([tanker(7),tanker(7),tanker(7)],4)===true);
+    record('T8 W4 용사+탱커2 true',testPerfect([tanker(5),tanker(5),hero()],4)===true);
+    record('T8 W5 탱커3 ATK7 false',testPerfect([tanker(7),tanker(7),tanker(7)],5)===false);
+    record('T8 W5 탱커3 ATK9 true',testPerfect([tanker(9),tanker(9),tanker(9)],5)===true);
+
+    // T9 warriorDied
+    var snap9={warriors:[{name:'탱커',emoji:'🛡️',hp:2,maxHp:32,atk:1},null,null],castleHp:50,combo:0};
+    var def9={enemies:[{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:3},{type:'정예',hp:15,atk:4}],gold:7};
+    var r9=computeCombat(snap9,def9);
+    var hasDied=r9.events.some(function(e){return e.kind==='warriorDied';});
+    record('T9 warriorDied 이벤트',hasDied);
+    record('T9 resultWarriors[0]===null',r9.resultWarriors[0]===null);
+
+    // T10 전사0 → 성 피해
+    var snap10={warriors:[null,null,null],castleHp:50,combo:0};
+    var def10={enemies:[{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:5}],gold:5};
+    var r10=computeCombat(snap10,def10);
+    var hasCastleDmg=r10.events.some(function(e){return e.kind==='enemyAttackCastle';});
+    record('T10 enemyAttackCastle 발생',hasCastleDmg);
+    record('T10 breakthroughDamage=8',r10.breakthroughDamage===8,'got='+r10.breakthroughDamage);
+
+    // T11 commitWave 보상
+    resetGame();
+    window.gameState.wave=1;window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:20},null,null];window.gameState.combo=3;window.gameState.castleHp=50;window.gameState.gold=0;
+    var commit11=commitWave();
+    record('T11 totalGold=16',commit11.reward.totalGold===16,'got='+commit11.reward.totalGold);
+    record('T11 gold 16',window.gameState.gold===16,'gold='+window.gameState.gold);
+    record('T11 combo 4',window.gameState.combo===4,'combo='+window.gameState.combo);
+    record('T11 wave 2',window.gameState.wave===2,'wave='+window.gameState.wave);
+    var saved11=null;try{saved11=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){}
+    record('T11 saved.wave===2',saved11&&saved11.wave===2,'saved='+(saved11?saved11.wave:'null'));
+
+    // T12 clutch
+    var def12={gold:5,enemies:[]};
+    var rew12=computeReward(def12,false,4,0);
+    record('T12 clutch base*2: totalGold=10',rew12.totalGold===10,'got='+rew12.totalGold);
+    record('T12 clutch comboBonus=0',rew12.comboBonus===0);
+    record('T12 clutch=true',rew12.clutch===true);
+
+    // T13 콤보 초기화
+    resetGame();
+    window.gameState.wave=3;window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:1,maxHp:32,atk:1},null,null];window.gameState.combo=3;
+    commitWave();
+    record('T13 non-perfect 시 combo=0',window.gameState.combo===0,'combo='+window.gameState.combo);
+
+    // T14 세이브 악용 차단
+    resetGame();
+    window.gameState.wave=1;window.gameState.phase='SELECT';
+    window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:20},null,null];
+    window.gameState.availableCards=[CARD_ATK,CARD_HEAL,CARD_ATK];
+    window.gameState.selectedCardIndex=-1;
+    try{localStorage.removeItem(SAVE_KEY);}catch(e){}
+    onCardClick(0);
+    var saved14=null;try{saved14=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){}
+    record('T14 저장 발생',saved14!==null);
+    record('T14 saved.wave===2',saved14&&saved14.wave===2,'wave='+(saved14?saved14.wave:'null'));
+    record('T14 saved.phase DRAW/END',saved14&&(saved14.phase==='DRAW'||saved14.phase==='END'),'phase='+(saved14?saved14.phase:'null'));
+
+    // T15 재뽑기
+    resetGame();
+    window.gameState.gold=100;window.gameState.phase='SELECT';window.gameState.selectedCardIndex=-1;window.gameState.rerollUsedThisWave=false;
+    window.gameState.availableCards=drawThreeCards();
+    var g15=window.gameState.gold;
+    onShopReroll();
+    record('T15 재뽑기 10G 차감',window.gameState.gold===g15-10,'gold='+window.gameState.gold);
+    record('T15 rerollUsed=true',window.gameState.rerollUsedThisWave===true);
+    record('T15 phase SELECT',window.gameState.phase==='SELECT');
+    var g15b=window.gameState.gold;
+    onShopReroll();
+    record('T15 웨이브당 1회 제한',window.gameState.gold===g15b);
+    window.gameState.phase='DRAW';window.gameState.rerollUsedThisWave=false;
     renderShop();
-  }
-  function render() {
-    renderStats();
-    renderEnemyPreview();
-    renderBattlefield();
+    record('T15 DRAW에서 비활성',els.btnShopReroll.disabled===true);
+
+    // T16 강화
+    resetGame();
+    window.gameState.gold=100;window.gameState.phase='DRAW';
+    window.gameState.warriors[0]={name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5};
+    var g16=window.gameState.gold;var a16=window.gameState.warriors[0].atk;var h16=window.gameState.warriors[0].hp;var m16=window.gameState.warriors[0].maxHp;
+    onShopUpgradeToggle();
+    record('T16 강화 진입',window.gameState.shopMode==='SHOP_UPGRADE_TARGET');
+    onSlotUpgradeClick(0);
+    record('T16 15G 차감',window.gameState.gold===g16-15);
+    record('T16 ATK+1',window.gameState.warriors[0].atk===a16+1);
+    record('T16 HP+5',window.gameState.warriors[0].hp===h16+5);
+    record('T16 maxHp+5',window.gameState.warriors[0].maxHp===m16+5);
+    window.gameState.gold=100;
+    onShopUpgradeToggle();
+    var g16b=window.gameState.gold;
+    onShopUpgradeToggle();
+    record('T16 토글 취소 시 미차감',window.gameState.shopMode===null&&window.gameState.gold===g16b);
+
+    // T17 보수
+    resetGame();
+    window.gameState.gold=100;window.gameState.phase='DRAW';window.gameState.castleHp=30;
+    var g17=window.gameState.gold;
+    onShopRepair();
+    record('T17 8G 차감',window.gameState.gold===g17-8);
+    record('T17 성 HP 30→33',window.gameState.castleHp===33);
+    window.gameState.castleHp=window.gameState.castleMaxHp-1;window.gameState.gold=100;
+    onShopRepair();
+    record('T17 최대치 제한',window.gameState.castleHp===window.gameState.castleMaxHp);
+
+    // T18 selectedCardIndex
+    resetGame();
+    window.gameState.phase='SELECT';window.gameState.cardsJustDrawn=false;
+    window.gameState.availableCards=[CARD_TANKER,CARD_TANKER,CARD_HEAL];
+    window.gameState.selectedCardIndex=1;
     renderCards();
-    renderStatusHint();
-    renderButtons();
-    saveState();
-  }
+    var selCards=els.cardsArea.querySelectorAll('.card.selected');
+    record('T18 중복 카드 중 1장만 selected',selCards.length===1,'cnt='+selCards.length);
 
-  /* ===== 저장/복원 ===== */
-  function saveState() {
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    try {
-      var save = {
-        phase: s.phase, wave: s.wave, maxWaveReached: s.maxWaveReached, isEndless: s.isEndless,
-        castleHp: s.castleHp, castleMaxHp: s.castleMaxHp, gold: s.gold, warriors: s.warriors,
-        combo: s.combo, rerollUsedThisWave: s.rerollUsedThisWave,
-        isGameOver: s.isGameOver, isVictory: s.isVictory,
-        availableCards: s.availableCards.map(function(c){ return c.id; }),
-        selectedCardId: s.selectedCard ? s.selectedCard.id : null,
-        log: s.log.slice(-100)
-      };
-      localStorage.setItem(SAVE_KEY, JSON.stringify(save));
-    } catch (e) {}
-  }
-  function validateAndNormalize(save) {
-    if (!save || typeof save !== 'object') return null;
-    var out = {};
-    out.phase = (typeof save.phase === 'string') ? save.phase : 'DRAW';
-    out.wave = Math.max(1, Math.floor(Number(save.wave)) || 1);
-    out.maxWaveReached = Math.max(1, Math.floor(Number(save.maxWaveReached)) || 1);
-    out.isEndless = !!save.isEndless;
-    out.castleMaxHp = Number(save.castleMaxHp) > 0 ? Number(save.castleMaxHp) : CASTLE_MAX_HP;
-    out.castleHp = Math.max(0, Math.min(out.castleMaxHp, Number(save.castleHp) || 0));
-    out.gold = Math.max(0, Math.floor(Number(save.gold)) || 0);
-    out.warriors = [null, null, null];
-    if (Array.isArray(save.warriors)) {
-      for (var i = 0; i < 3; i++) {
-        var w = save.warriors[i];
-        if (w && typeof w === 'object' && isFinite(w.hp) && isFinite(w.maxHp) && isFinite(w.atk) && w.maxHp > 0 && w.atk >= 1) {
-          out.warriors[i] = {
-            name: String(w.name || '전사'), emoji: String(w.emoji || '⚔️'),
-            hp: Math.max(0, Math.min(w.maxHp, w.hp)), maxHp: w.maxHp, atk: w.atk
-          };
-        }
-      }
-    }
-    out.combo = Math.max(0, Math.floor(Number(save.combo)) || 0);
-    out.rerollUsedThisWave = !!save.rerollUsedThisWave;
-    out.isGameOver = !!save.isGameOver;
-    out.isVictory = !!save.isVictory;
-    out.availableCards = [];
-    if (Array.isArray(save.availableCards)) {
-      for (var j = 0; j < save.availableCards.length; j++) {
-        var cid = save.availableCards[j];
-        if (ALL_CARDS[cid]) out.availableCards.push(ALL_CARDS[cid]);
-      }
-    }
-    out.selectedCard = (save.selectedCardId && ALL_CARDS[save.selectedCardId]) ? ALL_CARDS[save.selectedCardId] : null;
-    out.log = Array.isArray(save.log) ? save.log.slice(-100) : [];
-    return out;
-  }
-  function loadState() {
-    try {
-      var raw = localStorage.getItem(SAVE_KEY);
-      if (!raw) return false;
-      var save = JSON.parse(raw);
-      var norm = validateAndNormalize(save);
-      if (!norm) { localStorage.removeItem(SAVE_KEY); return false; }
-      var s = window.gameState;
-      s.phase = norm.phase;
-      s.wave = norm.wave; s.maxWaveReached = norm.maxWaveReached; s.isEndless = norm.isEndless;
-      s.castleHp = norm.castleHp; s.castleMaxHp = norm.castleMaxHp; s.gold = norm.gold;
-      s.warriors = norm.warriors; s.combo = norm.combo;
-      s.rerollUsedThisWave = norm.rerollUsedThisWave;
-      s.isGameOver = norm.isGameOver; s.isVictory = norm.isVictory;
-      s.availableCards = norm.availableCards; s.selectedCard = norm.selectedCard;
-      s.shopMode = null; s.isResolvingCombat = false;
-      if (s.isGameOver || s.isVictory) s.phase = 'END';
-      // 정합성 검사
-      if (s.phase === 'DEPLOY' && (!s.selectedCard || !s.selectedCard.warrior)) s.phase = 'SELECT';
-      if (s.phase === 'SELECT' && s.availableCards.length === 0) s.phase = 'DRAW';
-      return { ok: true, log: norm.log };
-    } catch (e) {
-      try { localStorage.removeItem(SAVE_KEY); } catch (ee) {}
-      return false;
-    }
-  }
-  function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
+    // T19 저장→복원
+    resetGame();
+    window.gameState.wave=3;window.gameState.gold=55;window.gameState.castleHp=33;window.gameState.combo=2;
+    window.gameState.availableCards=[CARD_TANKER,CARD_ATK,CARD_HEAL];
+    window.gameState.phase='SELECT';window.gameState.selectedCardIndex=1;
+    window.gameState.rerollUsedThisWave=true;
+    saveState(true);
+    window.gameState.wave=1;window.gameState.gold=0;window.gameState.castleHp=50;window.gameState.combo=0;
+    window.gameState.availableCards=[];window.gameState.selectedCardIndex=-1;window.gameState.phase='DRAW';window.gameState.rerollUsedThisWave=false;
+    var lr19=loadState();
+    record('T19 복원 성공',!!lr19);
+    record('T19 wave 3',window.gameState.wave===3);
+    record('T19 gold 55',window.gameState.gold===55);
+    record('T19 castleHp 33',window.gameState.castleHp===33);
+    record('T19 combo 2',window.gameState.combo===2);
+    record('T19 availableCards 3장',window.gameState.availableCards.length===3);
+    record('T19 selectedCardIndex 1',window.gameState.selectedCardIndex===1);
 
-  /* ===== 카드 풀 ===== */
-  function getEligibleCards() {
-    var s = window.gameState;
-    var emptySlot = hasEmptySlot();
-    var aliveW = aliveWarriorCount() > 0;
-    var damagedCastle = s.castleHp < s.castleMaxHp;
-    var pool = [];
-    if (emptySlot) { pool.push(CARD_TANKER); pool.push(CARD_HERO); }
-    if (aliveW) pool.push(CARD_ATK);
-    if (damagedCastle) pool.push(CARD_HEAL);
-    // 상황 X: 빈 슬롯 없음 + 성 만피 + 전사 생존 → [ATK_BOOST]만 남음 → 무한 스택 방지용 SCOUT 추가
-    if (!emptySlot && !damagedCastle && aliveW) pool.push(CARD_SCOUT);
-    // 최종 폴백
-    if (pool.length === 0) pool.push(CARD_SCOUT);
-    return pool;
-  }
-  function drawRandomCard(rv) {
-    if (rv === undefined) rv = Math.random() * 100;
-    var eligible = getEligibleCards();
-    if (eligible.length === 0) return CARD_SCOUT;
-    if (rv >= 95) {
-      var legends = eligible.filter(function(c){ return c.rarity === 'LEGEND'; });
-      if (legends.length) return legends[0];
-      var raresF = eligible.filter(function(c){ return c.rarity === 'RARE'; });
-      if (raresF.length) return raresF[0];
-      var commonsF = eligible.filter(function(c){ return c.rarity === 'COMMON'; });
-      if (commonsF.length) return commonsF[0];
-      return CARD_SCOUT;
-    }
-    if (rv >= 65) {
-      var rares = eligible.filter(function(c){ return c.rarity === 'RARE'; });
-      if (rares.length) return rares[Math.floor(Math.random() * rares.length)];
-      var commonsR = eligible.filter(function(c){ return c.rarity === 'COMMON'; });
-      if (commonsR.length) return commonsR[Math.floor(Math.random() * commonsR.length)];
-      return CARD_SCOUT;
-    }
-    var commons = eligible.filter(function(c){ return c.rarity === 'COMMON'; });
-    if (commons.length) return commons[Math.floor(Math.random() * commons.length)];
-    var rares2 = eligible.filter(function(c){ return c.rarity === 'RARE'; });
-    if (rares2.length) return rares2[Math.floor(Math.random() * rares2.length)];
-    return CARD_SCOUT;
-  }
-  function drawThreeCards() {
-    var cards = [];
-    for (var i = 0; i < 3; i++) cards.push(drawRandomCard());
-    return cards;
-  }
+    // T20 손상 데이터
+    try{localStorage.setItem(SAVE_KEY,JSON.stringify({phase:'FOO',wave:'3',maxWaveReached:'2',castleHp:'30',castleMaxHp:'50',gold:'42',warriors:[{name:'A',emoji:'A',hp:0,maxHp:'32',atk:'5'},null,null],combo:'1',availableCards:['TANKER','UNKNOWN','HEAL','HERO','SCOUT_SUPPLY'],selectedCardIndex:'99',log:[]}));}catch(e){}
+    var lr20=loadState();
+    record('T20 손상 데이터 정규화',lr20&&lr20.ok===true);
+    record('T20 phase FOO→DRAW',window.gameState.phase==='DRAW');
+    record('T20 wave 숫자 3',window.gameState.wave===3);
+    record('T20 hp 0 → null',window.gameState.warriors[0]===null);
+    record('T20 availableCards 최대 3장',window.gameState.availableCards.length<=3);
+    record('T20 selectedCardIndex -1',window.gameState.selectedCardIndex===-1);
+    try{localStorage.setItem(SAVE_KEY,'{invalid');}catch(e){}
+    var lr20b=loadState();
+    record('T20 잘못된 JSON → false',lr20b===false);
+    var stor=null;try{stor=localStorage.getItem(SAVE_KEY);}catch(e){}
+    record('T20 잘못된 JSON 삭제',stor===null);
 
-  /* ===== 액션 ===== */
-  function onDrawClick() {
-    ensureAudio(); playClick();
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.phase !== 'DRAW' || s.shopMode === 'SHOP_UPGRADE_TARGET') return;
-    s.availableCards = drawThreeCards();
-    s.selectedCard = null;
-    s.phase = 'SELECT';
-    s.lastActionStatus = 'DRAW_SUCCESS';
-    var names = [], hasRare = false, hasLegend = false;
-    for (var i = 0; i < s.availableCards.length; i++) {
-      names.push(s.availableCards[i].name);
-      if (s.availableCards[i].rarity === 'RARE') hasRare = true;
-      if (s.availableCards[i].rarity === 'LEGEND') hasLegend = true;
-    }
-    log('[DRAW] Drew 3 cards: ' + names.join(', ') + '.');
-    playGacha(hasRare || hasLegend);
-    if (hasLegend) {
-      playLegend(); flash('legend');
-      var center = document.createElement('div');
-      center.style.position = 'fixed'; center.style.left = '50%'; center.style.top = '40%';
-      document.body.appendChild(center);
-      burstParticles(center, '#ffcc00', 20);
-      setTimeout(function () { center.remove(); }, 100);
-      log('[LEGEND] 전설 카드가 등장했습니다!', 'highlight');
-    }
+    // T21 무한 모드 골드
+    var w5=getWaveDef(5),w6=getWaveDef(6),w7=getWaveDef(7);
+    record('T21 w6.gold>=w5.gold',w6.gold>=w5.gold,'w5='+w5.gold+' w6='+w6.gold);
+    record('T21 w7.gold>w6.gold',w7.gold>w6.gold,'w6='+w6.gold+' w7='+w7.gold);
+
+    // T22 접근성
+    resetGame();
+    window.gameState.phase='DEPLOY';window.gameState.availableCards=[CARD_TANKER,CARD_ATK,CARD_HEAL];window.gameState.selectedCardIndex=0;
     render();
-  }
-  function onCardClick(idx) {
-    ensureAudio();
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.phase !== 'SELECT' || s.shopMode === 'SHOP_UPGRADE_TARGET') return;
-    if (!s.availableCards || s.availableCards.length === 0) return;
-    if (s.selectedCard) return;
-    var card = s.availableCards[idx];
-    if (!card) return;
-    playClick();
-    s.selectedCard = card;
-    log('[PICK] Picked ' + card.name + '. Effect: ' + card.desc);
-    var cardEl = document.getElementById('card-choice-' + idx);
-    burstParticles(cardEl, card.rarity === 'RARE' ? '#4a90e2' : (card.rarity === 'LEGEND' ? '#ffcc00' : '#8888a0'), 8);
-    if (card.type === 'SUMMON') {
-      if (!hasEmptySlot()) {
-        log('[경고] 빈 슬롯이 없어 SUMMON 카드를 사용할 수 없습니다. 자동 취소.', 'danger');
-        s.selectedCard = null;
-        render();
-        return;
-      }
-      s.phase = 'DEPLOY';
-      s.lastActionStatus = 'PICK_SUCCESS';
-      flash('default');
-      render();
-    } else if (card.type === 'INSTANT') {
-      applyInstant(card);
-      s.availableCards = [];
-      s.selectedCard = null;
-      s.lastActionStatus = 'INSTANT_SUCCESS';
-      render();
-      resolveWave();
-    }
-  }
-  function applyInstant(card) {
-    var s = window.gameState;
-    if (card.id === 'ATK_BOOST') {
-      var count = 0;
-      for (var i = 0; i < s.warriors.length; i++) {
-        if (s.warriors[i] && s.warriors[i].hp > 0) { s.warriors[i].atk += 2; count++; }
-      }
-      log('[EFFECT] 모든 전사 ATK +2 (대상 ' + count + '명)');
-      if (count > 0) popDamage('+2 ATK', 'gold');
-    } else if (card.id === 'HEAL') {
-      var before = s.castleHp;
-      s.castleHp = Math.min(s.castleMaxHp, s.castleHp + 7);
-      var gained = s.castleHp - before;
-      log('[EFFECT] 성 HP +' + gained + ' (HP: ' + s.castleHp + '/' + s.castleMaxHp + ')');
-      popDamage('+' + gained + ' HP', 'green');
-    } else if (card.id === 'SCOUT_SUPPLY') {
-      s.gold += 4;
-      log('[EFFECT] 정찰 보급 +4 골드 (총 ' + s.gold + ')');
-      popDamage('+4💰', 'gold');
-    }
-  }
-  function onDeployClick(slotIdx) {
-    ensureAudio(); playClick();
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.phase !== 'DEPLOY') return;
-    if (s.warriors[slotIdx] && s.warriors[slotIdx].hp > 0) return;
-    if (!s.selectedCard || !s.selectedCard.warrior) return;
-    var w = s.selectedCard.warrior;
-    s.warriors[slotIdx] = { name:w.name, emoji:w.emoji, hp:w.hp, maxHp:w.maxHp, atk:w.atk };
-    s.lastActionStatus = 'DEPLOY_SUCCESS';
-    log('[DEPLOY] Deployed ' + w.name + ' at slot ' + (slotIdx + 1) + '.');
-    s.availableCards = [];
-    s.selectedCard = null;
-    flash('default');
-    render();
-    var slotEl = slotEls[slotIdx];
-    slotEl.classList.add('deploy-anim');
-    burstParticles(slotEl, '#4a90e2', 8);
-    setTimeout(function () { slotEl.classList.remove('deploy-anim'); }, 520);
-    resolveWave();
-  }
-  function onCancelPick() {
-    ensureAudio(); playClick();
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.phase !== 'DEPLOY') return;
-    s.selectedCard = null;
-    s.phase = 'SELECT';
-    s.lastActionStatus = 'IDLE';
-    log('[CANCEL] 선택을 취소했습니다. 카드를 다시 고르세요.');
-    render();
-  }
-  function onSkipTurn() {
-    ensureAudio(); playClick();
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.phase !== 'SELECT') return;
-    log('[SKIP] 턴을 넘깁니다. 카드를 사용하지 않습니다.', 'danger');
-    s.availableCards = [];
-    s.selectedCard = null;
-    s.lastActionStatus = 'SKIP_TURN';
-    render();
-    resolveWave();
-  }
+    var preWarriors=window.gameState.warriors.slice();
+    var emptySlotIdx=-1;
+    for(var si=0;si<3;si++)if(!window.gameState.warriors[si]){emptySlotIdx=si;break;}
+    if(emptySlotIdx>=0){slotEls[emptySlotIdx].click();record('T22 빈 슬롯 click → 배치',window.gameState.warriors[emptySlotIdx]!==null);}
+    // 잠긴 카드 tabindex
+    resetGame();
+    window.gameState.phase='DEPLOY';window.gameState.availableCards=[CARD_TANKER,CARD_ATK,CARD_HEAL];window.gameState.selectedCardIndex=0;
+    renderCards();
+    var card0=document.getElementById('card-choice-0');
+    record('T22 잠긴 카드 tabindex=-1',card0&&card0.getAttribute('tabindex')==='-1','got='+(card0?card0.getAttribute('tabindex'):'null'));
+    // sr-announcer
+    resetGame();
+    window.gameState.wave=1;window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:20},null,null];
+    commitWave();
+    announce('테스트 안내');
+    record('T22 sr-announcer 존재',!!els.srAnnouncer);
 
-  /* ===== 상점 ===== */
-  function onShopReroll() {
-    ensureAudio(); playClick();
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.phase !== 'SELECT') return;
-    if (s.selectedCard) return;
-    if (s.rerollUsedThisWave) return;
-    if (s.gold < 10) return;
-    s.gold -= 10;
-    s.rerollUsedThisWave = true;
-    s.availableCards = drawThreeCards();
-    s.selectedCard = null;
-    log('[SHOP] 카드 재뽑기 성공 (10G 소모). 골드: ' + s.gold);
-    render();
-  }
-  function onShopUpgradeToggle() {
-    ensureAudio(); playClick();
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    var anyW = s.warriors.some(function(w){ return w && w.hp > 0; });
-    if (!anyW) return;
-    if (s.shopMode === 'SHOP_UPGRADE_TARGET') {
-      s.shopMode = null;
-      log('[SHOP] 강화 모드를 취소했습니다.');
-      render();
-      return;
-    }
-    if (s.phase !== 'DRAW') return;
-    if (s.gold < 15) return;
-    s.shopMode = 'SHOP_UPGRADE_TARGET';
-    log('[SHOP] 강화할 전사를 선택하세요. (15G)');
-    render();
-  }
-  function onShopRepair() {
-    ensureAudio(); playClick();
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.phase !== 'DRAW') return;
-    if (s.shopMode === 'SHOP_UPGRADE_TARGET') return;
-    if (s.gold < 8) return;
-    if (s.castleHp >= s.castleMaxHp) return;
-    s.gold -= 8;
-    var before = s.castleHp;
-    s.castleHp = Math.min(s.castleMaxHp, s.castleHp + 3);
-    var gained = s.castleHp - before;
-    log('[SHOP] 성벽 보수 성공 (8G). 성 HP +' + gained + ' → ' + s.castleHp + '/' + s.castleMaxHp);
-    popDamage('+' + gained + ' HP', 'green', document.querySelector('.castle-panel'));
-    render();
-  }
-  function onSlotUpgradeClick(slotIdx) {
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.shopMode !== 'SHOP_UPGRADE_TARGET') return;
-    if (!s.warriors[slotIdx] || s.warriors[slotIdx].hp <= 0) return;
-    if (s.gold < 15) return;
-    ensureAudio(); playClick();
-    s.gold -= 15;
-    s.warriors[slotIdx].atk += 1;
-    s.warriors[slotIdx].hp += 5;
-    s.warriors[slotIdx].maxHp += 5;
-    log('[SHOP] ' + s.warriors[slotIdx].name + ' 강화 완료! (ATK+1, HP+5, 15G)');
-    burstParticles(slotEls[slotIdx], '#ffcc00', 8);
-    popDamage('+1 ATK', 'gold', slotEls[slotIdx]);
-    s.shopMode = null;
-    render();
-  }
-
-  /* ===== 적 오버레이 ===== */
-  function showEnemyRow(enemies) {
-    els.enemyRowOverlay.innerHTML = '';
-    for (var i = 0; i < enemies.length; i++) {
-      var e = enemies[i];
-      var token = document.createElement('div');
-      token.className = 'enemy-token' + (e.type === '정예' ? ' elite' : '');
-      token.setAttribute('data-enemy-id', String(e.id));
-      var emoji = e.type === '정예' ? '👹' : '👺';
-      token.innerHTML =
-        '<div class="enemy-id">#' + e.id + '</div>' +
-        '<div class="enemy-emoji">' + emoji + '</div>' +
-        '<div class="enemy-mini-hp"><div class="enemy-mini-hp-fill" style="width:100%"></div></div>';
-      els.enemyRowOverlay.appendChild(token);
-    }
-    els.enemyRowOverlay.classList.add('show');
-  }
-  function hideEnemyRow() { els.enemyRowOverlay.classList.remove('show'); }
-  function clearEnemyRow() { els.enemyRowOverlay.innerHTML = ''; }
-  function updateEnemyToken(id, hpAfter, maxHp) {
-    var token = els.enemyRowOverlay.querySelector('[data-enemy-id="' + id + '"]');
-    if (!token) return;
-    var fill = token.querySelector('.enemy-mini-hp-fill');
-    if (fill) fill.style.width = Math.max(0, hpAfter / maxHp * 100) + '%';
-    token.classList.add('damaged');
-    setTimeout(function () { token.classList.remove('damaged'); }, 260);
-  }
-  function markEnemyDead(id) {
-    var token = els.enemyRowOverlay.querySelector('[data-enemy-id="' + id + '"]');
-    if (token) token.classList.add('dead');
-  }
-
-  /* ===== 순수 전투 계산 ===== */
-  function computeCombat(snapshot, waveDef) {
-    var warriors = JSON.parse(JSON.stringify(snapshot.warriors));
-    var castleHp = snapshot.castleHp;
-    var events = [];
-    var enemies = waveDef.enemies.map(function (e, i) {
-      return { id: i+1, type: e.type, hp: e.hp, maxHp: e.hp, atk: e.atk };
-    });
-    var killedEnemyIds = [];
-    var perfect = false;
-    var breakthroughDamage = 0;
-    var r, slot, s2, ei, k, t;
-
-    for (r = 1; r <= 3; r++) {
-      events.push({ kind:'round', round:r });
-
-      for (slot = 2; slot >= 0; slot--) {
-        if (!warriors[slot] || warriors[slot].hp <= 0) continue;
-        var target = null;
-        for (t = 0; t < enemies.length; t++) {
-          if (enemies[t].hp > 0) { target = enemies[t]; break; }
-        }
-        if (!target) break;
-        var dmg = warriors[slot].atk;
-        target.hp -= dmg;
-        events.push({ kind:'warriorAttack', slot:slot, enemyId:target.id, enemyType:target.type, dmg:dmg, enemyHpAfter:Math.max(0,target.hp), enemyMaxHp:target.maxHp });
-        if (target.hp <= 0) {
-          events.push({ kind:'enemyKilled', enemyId:target.id, enemyType:target.type });
-          if (killedEnemyIds.indexOf(target.id) < 0) killedEnemyIds.push(target.id);
-        }
-      }
-
-      var anyAlive = false;
-      for (k = 0; k < enemies.length; k++) if (enemies[k].hp > 0) { anyAlive = true; break; }
-      if (!anyAlive) { perfect = true; break; }
-
-      for (ei = 0; ei < enemies.length; ei++) {
-        if (enemies[ei].hp <= 0) continue;
-        var targetSlot = -1;
-        for (s2 = 0; s2 < SLOT_COUNT; s2++) {
-          if (warriors[s2] && warriors[s2].hp > 0) { targetSlot = s2; break; }
-        }
-        if (targetSlot < 0) {
-          castleHp = Math.max(0, castleHp - enemies[ei].atk);
-          events.push({ kind:'enemyAttackCastle', enemyId:enemies[ei].id, dmg:enemies[ei].atk, castleHpAfter:castleHp });
-        } else {
-          var tw = warriors[targetSlot];
-          tw.hp -= enemies[ei].atk;
-          events.push({ kind:'enemyAttackWarrior', enemyId:enemies[ei].id, slot:targetSlot, dmg:enemies[ei].atk, warriorHpAfter:Math.max(0,tw.hp), warriorMaxHp:tw.maxHp });
-          if (tw.hp <= 0) {
-            events.push({ kind:'warriorDied', slot:targetSlot, name:tw.name });
-            warriors[targetSlot] = null;
-          }
-        }
-        if (castleHp <= 0) break;
-      }
-      if (castleHp <= 0) break;
-    }
-
-    var remaining = [];
-    for (var ri = 0; ri < enemies.length; ri++) if (enemies[ri].hp > 0) remaining.push(enemies[ri]);
-    if (!perfect && remaining.length > 0) {
-      var total = 0;
-      for (var bi = 0; bi < remaining.length; bi++) total += remaining[bi].atk;
-      breakthroughDamage = total;
-      castleHp = Math.max(0, castleHp - total);
-      events.push({ kind:'breakthrough', totalDmg: total, castleHpAfter: castleHp });
-    }
-
-    return { events: events, resultWarriors: warriors, resultCastleHp: castleHp, perfect: perfect, killedEnemyIds: killedEnemyIds, breakthroughDamage: breakthroughDamage };
-  }
-
-  /* ===== 비동기 전투 재생 ===== */
-  var playToken = 0;
-  function playCombat(events, onComplete) {
-    var myToken = ++playToken;
-    var reduced = false;
-    try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { reduced = false; }
-    var interval = reduced ? 0 : 220;
-    var i = 0;
-
-    function applyEvent(ev) {
-      if (myToken !== playToken) return;
-      if (ev.kind === 'round') {
-        log('[ROUND ' + ev.round + ']', 'round');
-      } else if (ev.kind === 'warriorAttack') {
-        log('[COMBAT] ' + (window.gameState.warriors[ev.slot] ? window.gameState.warriors[ev.slot].name : '전사') + ' → Enemy ' + ev.enemyId + '(' + ev.enemyType + ') ' + ev.dmg + ' 데미지 (HP ' + ev.enemyHpAfter + '/' + ev.enemyMaxHp + ')', 'combat');
-        var slotEl = slotEls[ev.slot];
-        if (slotEl) {
-          slotEl.classList.add('hit-anim');
-          setTimeout(function () { slotEl.classList.remove('hit-anim'); }, 200);
-        }
-        updateEnemyToken(ev.enemyId, ev.enemyHpAfter, ev.enemyMaxHp);
-        playHit();
-      } else if (ev.kind === 'enemyKilled') {
-        log('[KILL] Enemy ' + ev.enemyId + '(' + ev.enemyType + ') 처치!', 'highlight');
-        markEnemyDead(ev.enemyId);
-      } else if (ev.kind === 'enemyAttackWarrior') {
-        var wname = window.gameState.warriors[ev.slot] ? window.gameState.warriors[ev.slot].name : '전사';
-        log('[COMBAT] Enemy ' + ev.enemyId + ' → ' + wname + ' ' + ev.dmg + ' 데미지 (HP ' + ev.warriorHpAfter + '/' + ev.warriorMaxHp + ')', 'combat');
-        var sEl = slotEls[ev.slot];
-        if (sEl) {
-          sEl.classList.add('damage-anim');
-          setTimeout(function () { sEl.classList.remove('damage-anim'); }, 320);
-        }
-        playHit();
-      } else if (ev.kind === 'warriorDied') {
-        log('[전사자] ' + ev.name + '이(가) 전사했습니다.', 'danger');
-        var dEl = slotEls[ev.slot];
-        if (dEl) {
-          dEl.classList.add('death-anim');
-          (function (slotI, myT) {
-            setTimeout(function () {
-              if (myT !== playToken) return;
-              if (window.gameState.warriors[slotI]) window.gameState.warriors[slotI] = null;
-              var el = slotEls[slotI];
-              if (el) el.classList.remove('death-anim');
-            }, 500);
-          })(ev.slot, myToken);
-        }
-      } else if (ev.kind === 'enemyAttackCastle') {
-        window.gameState.castleHp = ev.castleHpAfter;
-        log('[COMBAT] Enemy ' + ev.enemyId + ' → 성 ' + ev.dmg + ' 데미지 (성 HP ' + ev.castleHpAfter + '/' + window.gameState.castleMaxHp + ')', 'danger');
-        flash('danger'); screenShake();
-        popDamage('-' + ev.dmg, '', document.querySelector('.castle-panel'));
-        renderCastle();
-      } else if (ev.kind === 'breakthrough') {
-        window.gameState.castleHp = ev.castleHpAfter;
-        log('[DAMAGE] 적 돌파! 성에 ' + ev.totalDmg + ' 데미지 (성 HP ' + ev.castleHpAfter + '/' + window.gameState.castleMaxHp + ')', 'danger');
-        flash('danger'); screenShake();
-        popDamage('-' + ev.totalDmg, '', document.querySelector('.castle-panel'));
-        renderCastle();
-      }
-    }
-
-    function step() {
-      if (myToken !== playToken) return;
-      if (i >= events.length) {
-        onComplete();
-        return;
-      }
-      applyEvent(events[i]);
-      i++;
-      setTimeout(step, interval);
-    }
-    step();
-  }
-
-  /* ===== 웨이브 해석 ===== */
-  function resolveWave() {
-    var s = window.gameState;
-    if (s.isResolvingCombat) return;
-    if (s.isGameOver || s.isVictory) { s.phase = 'END'; render(); return; }
-    var def = getWaveDef(s.wave);
-    if (!def) { s.phase = 'END'; render(); return; }
-
-    s.isResolvingCombat = true;
-    var currentWave = s.wave;
-    var enemiesForDisplay = def.enemies.map(function(e, i){ return { id: i+1, type: e.type }; });
-    showEnemyRow(enemiesForDisplay);
-    renderStatusHint();
-    renderButtons();
-
-    var snapshot = {
-      warriors: JSON.parse(JSON.stringify(s.warriors)),
-      castleHp: s.castleHp,
-      combo: s.combo
-    };
-
-    var result = computeCombat(snapshot, def);
-
-    log('[COMBAT] Wave ' + currentWave + ' 전투 시작. 아군 ' + aliveWarriorCount() + '명 vs 적 ' + def.enemies.length + '마리');
-
-    playCombat(result.events, function () {
-      if (!window.gameState.isResolvingCombat) return;
-
-      // 결과 반영
-      s.warriors = result.resultWarriors;
-      s.castleHp = result.resultCastleHp;
-
-      var perfect = result.perfect;
-      var clutch = s.castleHp > 0 && s.castleHp <= 5;
-
-      // 보상 계산 (콤보 보너스는 updateCombo 이전 값 기준)
-      var prevCombo = s.combo;
-      var base = def.gold;
-      if (perfect) base += 5;
-      if (clutch) base *= 2;
-      var comboBonus = perfect ? Math.min(20, prevCombo * 2) : 0;
-      var totalGold = base + comboBonus;
-      s.gold += totalGold;
-
-      if (perfect) {
-        log('[WAVE] Wave ' + currentWave + ' PERFECT 클리어! 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰' + (comboBonus > 0 ? ' · 콤보+' + comboBonus : '') + ')', 'highlight');
-        flash('victory');
-        popDamage('PERFECT! +' + totalGold + '💰', 'gold');
-        s.lastActionStatus = 'WAVE_PERFECT';
-        els.statusHint.textContent = '웨이브 ' + currentWave + ' 퍼펙트 클리어! 골드 +' + totalGold;
-      } else if (clutch) {
-        log('[WAVE] Wave ' + currentWave + ' 클리어 (CLUTCH ×2). 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰)', 'highlight');
-        s.lastActionStatus = 'WAVE_CLEAR';
-        els.statusHint.textContent = '웨이브 ' + currentWave + ' 클러치 클리어! 골드 +' + totalGold;
-      } else {
-        log('[WAVE] Wave ' + currentWave + ' 클리어. 성 HP ' + s.castleHp + '/' + s.castleMaxHp + ' (+' + totalGold + '💰)');
-        s.lastActionStatus = 'WAVE_CLEAR';
-        els.statusHint.textContent = '웨이브 ' + currentWave + ' 클리어. 골드 +' + totalGold;
-      }
-
-      updateCombo(perfect);
-      s.rerollUsedThisWave = false;
-      s.shopMode = null;
-      s.wave += 1;
-      if (s.wave > s.maxWaveReached) s.maxWaveReached = s.wave;
-
-      // 종료 판정
-      if (s.castleHp <= 0) {
-        s.isGameOver = true; s.phase = 'END'; s.lastActionStatus = 'GAME_OVER';
-        log('[GAME OVER] ' + (s.isEndless ? 'Endless 모드 종료. wave ' : '성 함락. wave ') + currentWave + '에서 패배.', 'danger');
-        playDefeat();
-        clearEnemyRow(); hideEnemyRow();
-        s.isResolvingCombat = false;
-        showResult(false);
-        render();
-      } else if (s.wave > s.maxWave && !s.isEndless) {
-        s.isVictory = true; s.phase = 'END'; s.lastActionStatus = 'VICTORY';
-        var score = calculateScore();
-        log('[VICTORY] All ' + s.maxWave + ' waves cleared. Score: ' + score, 'highlight');
-        playVictory();
-        clearEnemyRow(); hideEnemyRow();
-        s.isResolvingCombat = false;
-        showResult(true);
-        render();
-      } else {
-        s.phase = 'DRAW';
-        if (s.isEndless) log('[ENDLESS] 다음 웨이브: ' + s.wave);
-        log('[TURN] Wave ' + s.wave + ' begins.');
-        clearEnemyRow(); hideEnemyRow();
-        s.isResolvingCombat = false;
-        showWaveTransition(s.wave);
-        render();
-      }
-    });
-  }
-
-  function calculateScore() {
-    var s = window.gameState;
-    var warriorsAlive = 0;
-    for (var i = 0; i < s.warriors.length; i++) if (s.warriors[i]) warriorsAlive++;
-    return s.gold * 10 + s.castleHp * 2 + warriorsAlive * 20 + (s.maxWaveReached - 1) * 30;
-  }
-
-  /* ===== 결과창 ===== */
-  var previousFocus = null;
-  function trapFocus(e) {
-    if (e.key !== 'Tab') return;
-    var focusables = els.resultBox.querySelectorAll('button:not([disabled]):not(.hidden)');
-    if (focusables.length === 0) return;
-    var first = focusables[0], last = focusables[focusables.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-  }
-  function showResult(isVictory) {
-    var s = window.gameState;
-    if (isVictory) {
-      els.resultBox.className = 'result-box';
-      els.resultTitle.textContent = '🏆 VICTORY 🏆';
-      els.resultWave.textContent = '도달 웨이브: ' + s.maxWave + ' / ' + s.maxWave;
-      els.btnContinue.classList.remove('hidden');
-    } else {
-      els.resultBox.className = 'result-box defeat';
-      els.resultTitle.textContent = '💀 DEFEAT 💀';
-      if (s.isEndless) els.resultWave.textContent = '최고 도달 웨이브: ' + (s.wave - 1);
-      else els.resultWave.textContent = '도달 웨이브: ' + (s.wave - 1) + ' / ' + s.maxWave;
-      els.btnContinue.classList.add('hidden');
-    }
-    els.resultScore.textContent = String(calculateScore());
-    var warriorsAlive = 0;
-    for (var i = 0; i < s.warriors.length; i++) if (s.warriors[i]) warriorsAlive++;
-    els.resultDetail.textContent = '골드 ' + s.gold + ' · 성 HP ' + Math.max(0, s.castleHp) + ' · 생존 전사 ' + warriorsAlive;
-    els.resultOverlay.classList.add('show');
-    previousFocus = document.activeElement;
-    document.addEventListener('keydown', trapFocus);
-    setTimeout(function () {
-      var f = els.btnContinue.classList.contains('hidden') ? els.btnRestart : els.btnContinue;
-      try { f.focus(); } catch (e) {}
-    }, 100);
-  }
-  function hideResult() {
-    els.resultOverlay.classList.remove('show');
-    document.removeEventListener('keydown', trapFocus);
-    if (previousFocus && previousFocus.focus) { try { previousFocus.focus(); } catch (e) {} }
-    previousFocus = null;
-  }
-  function continueEndless() {
-    var s = window.gameState;
-    if (!s.isVictory) return;
-    s.isVictory = false; s.isEndless = true; s.phase = 'DRAW';
+    // T23 결과 모달
+    showResult(true);
+    record('T23 결과 모달 .show',els.resultOverlay.classList.contains('show'));
+    var trapBtns1=els.resultBox.querySelectorAll('button:not([disabled]):not(.hidden)');
+    record('T23 victory 시 트랩 버튼 2개',trapBtns1.length===2,'cnt='+trapBtns1.length);
     hideResult();
-    log('[ENDLESS] Endless 모드 시작. wave ' + s.wave, 'highlight');
-    showWaveTransition(s.wave);
-    render();
-  }
-  function resetGame() {
-    playToken++;
-    var s = window.gameState;
-    clearSave();
-    s.phase = 'DRAW'; s.wave = 1; s.maxWave = MAX_WAVE; s.maxWaveReached = 1; s.isEndless = false;
-    s.castleHp = CASTLE_MAX_HP; s.castleMaxHp = CASTLE_MAX_HP; s.gold = 0;
-    s.warriors = [null, null, null]; s.availableCards = []; s.selectedCard = null;
-    s.lastActionStatus = 'IDLE'; s.isGameOver = false; s.isVictory = false;
-    s.combo = 0; s.rerollUsedThisWave = false; s.shopMode = null; s.isResolvingCombat = false;
-    s.log = [];
-    els.output.innerHTML = '';
+    showResult(false);
+    var trapBtns2=els.resultBox.querySelectorAll('button:not([disabled]):not(.hidden)');
+    record('T23 defeat 시 트랩 버튼 1개',trapBtns2.length===1,'cnt='+trapBtns2.length);
     hideResult();
-    els.comboBadge.classList.remove('show');
-    clearEnemyRow(); hideEnemyRow();
-    log('[TURN] Wave 1 begins.');
+
+    // T24 음소거 / viewport
+    var prevMuted=window.gameState.sfxMuted;window.gameState.sfxMuted=true;
+    var prevCtx=audioCtx;audioCtx=null;
+    var threw=false;try{tone(800,'sine',0.1,0.1);}catch(e){threw=true;}
+    record('T24 음소거 tone() 예외 없음',!threw);
+    window.gameState.sfxMuted=prevMuted;audioCtx=prevCtx;
+    var meta=document.querySelector('meta[name="viewport"]');
+    record('T24 maximum-scale 없음',meta&&meta.content.indexOf('maximum-scale')===-1);
+    record('T24 user-scalable 없음',meta&&meta.content.indexOf('user-scalable')===-1);
+
+    // T25 죽은 자산
+    var src=playCombat.toString();
+    record('T25 playCombat에 updateEnemyToken',src.indexOf('updateEnemyToken')!==-1);
+    record('T25 playCombat에 markEnemyDead',src.indexOf('markEnemyDead')!==-1);
+    record('T25 playCombat에 death-anim',src.indexOf('death-anim')!==-1);
+    record('T25 playCombat에 warrior-stats',src.indexOf('warrior-stats')!==-1);
+
+    // T26 복구 (아래 finally에서 처리 후 비교)
+    record('T26 백업 저장값 보존',backupSave!==undefined);
+  }catch(ex){errors.push('EXCEPTION :: '+ex.message);}
+  // 복구
+  try{if(backupSave!==null)localStorage.setItem(SAVE_KEY,backupSave);else localStorage.removeItem(SAVE_KEY);}catch(e){}
+  try{if(backupSfx!==null)localStorage.setItem(SFX_KEY,backupSfx);else localStorage.removeItem(SFX_KEY);}catch(e){}
+  try{
+    var s=window.gameState;
+    s.phase=backupState.phase;s.wave=backupState.wave;s.maxWaveReached=backupState.maxWaveReached;s.isEndless=backupState.isEndless;
+    s.castleHp=backupState.castleHp;s.castleMaxHp=backupState.castleMaxHp;s.gold=backupState.gold;s.warriors=backupState.warriors;
+    s.combo=backupState.combo;s.rerollUsedThisWave=backupState.rerollUsedThisWave;s.isGameOver=backupState.isGameOver;s.isVictory=backupState.isVictory;
+    s.availableCards=backupState.availableCards.map(function(id){return ALL_CARDS[id];}).filter(function(x){return !!x;});
+    s.selectedCardIndex=backupState.selectedCardIndex;
+    s.shopMode=backupState.shopMode;
+    s.isResolvingCombat=false;s.cardsJustDrawn=false;
+    s.log=backupState.log.slice();
+    hideResult();loadSfxMuted();updateSfxButton();
+    els.output.innerHTML=backupLogHTML;
+    // phase 정합성
+    if(s.isGameOver||s.isVictory)s.phase='END';
+    if(s.phase==='DEPLOY'&&(s.selectedCardIndex<0||!s.availableCards[s.selectedCardIndex]||s.availableCards[s.selectedCardIndex].type!=='SUMMON'))s.phase='SELECT';
+    if(s.phase==='SELECT'&&s.availableCards.length===0)s.phase='DRAW';
     render();
-  }
+  }catch(e){}
+  // T26 검증
+  try{
+    var afterSave=localStorage.getItem(SAVE_KEY);
+    record('T26 복구: 저장 문자열 동일',afterSave===backupSave,'before='+(backupSave?backupSave.length:0)+' after='+(afterSave?afterSave.length:0));
+    record('T26 복구: wave 동일',window.gameState.wave===backupState.wave);
+    record('T26 복구: gold 동일',window.gameState.gold===backupState.gold);
+    record('T26 복구: 로그 DOM 자식 수 동일',els.output.innerHTML===backupLogHTML);
+  }catch(e){errors.push('T26 EXCEPTION :: '+e.message);}
+  var pass=errors.length===0;
+  var report={result:pass?'PASS':'FAIL',totalTests:results.length,passed:results.filter(function(r){return r.pass;}).length,failed:results.filter(function(r){return !r.pass;}).length,tests:results,errors:errors};
+  if(pass)console.log('[REGRESSION TEST PASS]');else console.log('[REGRESSION TEST FAIL]');
+  console.log('Regression report:',report);
+  log('[테스트] ================================');
+  log('[테스트] 회귀 스위트: '+report.result,pass?'highlight':'danger');
+  log('[테스트] 통과: '+report.passed+' / '+report.totalTests);
+  if(!pass)for(var ei=0;ei<errors.length;ei++)log('[테스트] 실패: '+errors[ei],'danger');
+  else log('[테스트] 모든 검증 통과.','highlight');
+  log('[테스트] ================================');
+  return report;
+};
+window.runPhase1SelfTest=window.runRegressionSuite;
 
-  /* ===== 사운드 토글 ===== */
-  function loadSfxMuted() {
-    try { var v = localStorage.getItem(SFX_KEY); window.gameState.sfxMuted = (v === '1' || v === 'true'); }
-    catch (e) { window.gameState.sfxMuted = false; }
-  }
-  function saveSfxMuted() { try { localStorage.setItem(SFX_KEY, window.gameState.sfxMuted ? '1' : '0'); } catch (e) {} }
-  function updateSfxButton() {
-    els.btnSoundToggle.textContent = window.gameState.sfxMuted ? '🔇' : '🔊';
-    els.btnSoundToggle.setAttribute('aria-label', window.gameState.sfxMuted ? '음소거 해제' : '음소거');
-  }
-  function onSoundToggle() {
-    window.gameState.sfxMuted = !window.gameState.sfxMuted;
-    saveSfxMuted(); updateSfxButton();
-    if (!window.gameState.sfxMuted) { ensureAudio(); playClick(); }
-  }
-
-  /* ===== 이벤트 바인딩 ===== */
-  els.btnDraw.addEventListener('click', onDrawClick);
-  els.btnCancelPick.addEventListener('click', onCancelPick);
-  els.btnSkipTurn.addEventListener('click', onSkipTurn);
-  els.btnContinue.addEventListener('click', function () { ensureAudio(); playClick(); continueEndless(); });
-  els.btnRestart.addEventListener('click', function () { ensureAudio(); playClick(); resetGame(); });
-  els.btnSoundToggle.addEventListener('click', onSoundToggle);
-  els.btnShopReroll.addEventListener('click', onShopReroll);
-  els.btnShopUpgrade.addEventListener('click', onShopUpgradeToggle);
-  els.btnShopRepair.addEventListener('click', onShopRepair);
-  for (var bi = 0; bi < SLOT_COUNT; bi++) {
-    (function (idx) {
-      btnDeploy[idx].addEventListener('click', function () { onDeployClick(idx); });
-      slotEls[idx].addEventListener('click', function () {
-        if (window.gameState.shopMode === 'SHOP_UPGRADE_TARGET') onSlotUpgradeClick(idx);
-      });
-      makeKeyboardActivate(slotEls[idx]);
-    })(bi);
-  }
-
-  /* ===== 회귀 테스트 ===== */
-  window.runRegressionSuite = function () {
-    var results = [];
-    var errors = [];
-    function record(name, pass, detail) {
-      results.push({ name: name, pass: !!pass, detail: detail || '' });
-      if (!pass) errors.push(name + (detail ? ' :: ' + detail : ''));
-    }
-
-    // 백업
-    var backupSave = null, backupSfx = null;
-    try { backupSave = localStorage.getItem(SAVE_KEY); } catch (e) {}
-    try { backupSfx = localStorage.getItem(SFX_KEY); } catch (e) {}
-    var backupState = JSON.parse(JSON.stringify({
-      phase: window.gameState.phase, wave: window.gameState.wave, gold: window.gameState.gold,
-      castleHp: window.gameState.castleHp, warriors: window.gameState.warriors,
-      maxWaveReached: window.gameState.maxWaveReached, isEndless: window.gameState.isEndless,
-      combo: window.gameState.combo, isGameOver: window.gameState.isGameOver,
-      isVictory: window.gameState.isVictory, rerollUsedThisWave: window.gameState.rerollUsedThisWave
-    }));
-
-    try {
-      // 1) 초기 상태
-      resetGame();
-      record('T1. 초기 phase === DRAW', window.gameState.phase === 'DRAW');
-      record('T1. 초기 wave === 1', window.gameState.wave === 1);
-      record('T1. 초기 maxWave === 5', window.gameState.maxWave === 5);
-      record('T1. 초기 castleHp === 50', window.gameState.castleHp === 50);
-      record('T1. 초기 gold === 0', window.gameState.gold === 0);
-
-      // 2) 슬롯 3/3 → SUMMON 미등장
-      window.gameState.warriors = [
-        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 },
-        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 },
-        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 }
-      ];
-      window.gameState.castleHp = 30;
-      var summonSeen = 0;
-      for (var i = 0; i < 300; i++) {
-        var c = drawRandomCard((i * 13) % 100);
-        if (c.type === 'SUMMON') summonSeen++;
-      }
-      record('T2. 슬롯 3/3 상태 SUMMON 0회', summonSeen === 0, 'count=' + summonSeen);
-
-      // 3) 전사 0명 → ATK_BOOST 미등장
-      window.gameState.warriors = [null, null, null];
-      window.gameState.castleHp = 30;
-      var atkSeen = 0;
-      for (var i2 = 0; i2 < 300; i2++) {
-        var c2 = drawRandomCard((i2 * 17) % 100);
-        if (c2.id === 'ATK_BOOST') atkSeen++;
-      }
-      record('T3. 전사 0명 ATK_BOOST 0회', atkSeen === 0, 'count=' + atkSeen);
-
-      // 4) 성 HP 최대 → HEAL 미등장
-      window.gameState.castleHp = window.gameState.castleMaxHp;
-      window.gameState.warriors = [null, null, null];
-      var healSeen = 0;
-      for (var i3 = 0; i3 < 300; i3++) {
-        var c3 = drawRandomCard((i3 * 19) % 100);
-        if (c3.id === 'HEAL') healSeen++;
-      }
-      record('T4. 성 HP 최대 HEAL 0회', healSeen === 0, 'count=' + healSeen);
-
-      // 5) 상황 X: 슬롯 만석 + 성 만피 + 전사 생존 → SCOUT 후보 포함
-      window.gameState.warriors = [
-        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 },
-        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 },
-        { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 }
-      ];
-      window.gameState.castleHp = window.gameState.castleMaxHp;
-      var eligibleX = getEligibleCards();
-      var hasScout = eligibleX.some(function(c){ return c.id === 'SCOUT_SUPPLY'; });
-      var hasAtk = eligibleX.some(function(c){ return c.id === 'ATK_BOOST'; });
-      record('T5. 상황 X 후보에 SCOUT 포함', hasScout);
-      record('T5. 상황 X 후보에 ATK_BOOST 유지', hasAtk);
-
-      // 6) rv=99 → LEGEND, rv=10 → COMMON
-      window.gameState.warriors = [null, null, null];
-      window.gameState.castleHp = window.gameState.castleMaxHp;
-      var cHero = drawRandomCard(99);
-      record('T6. rv=99 → LEGEND', cHero.rarity === 'LEGEND', 'got=' + cHero.id);
-      var cCommon = drawRandomCard(10);
-      record('T6. rv=10 → COMMON', cCommon.rarity === 'COMMON', 'got=' + cCommon.rarity);
-
-      // 7) computeCombat: 전멸 → perfect
-      var snap1 = { warriors: [{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:20}, null, null], castleHp:50, combo:0 };
-      var def1 = { enemies:[{type:'잡병',hp:6,atk:2},{type:'잡병',hp:6,atk:2}], gold:5 };
-      var r1 = computeCombat(snap1, def1);
-      record('T7. computeCombat perfect === true', r1.perfect === true);
-      record('T7. killedEnemyIds 채워짐', r1.killedEnemyIds.length === 2, 'ids=' + JSON.stringify(r1.killedEnemyIds));
-      record('T7. resultCastleHp 변동 없음', r1.resultCastleHp === 50);
-
-      // 8) warriorDied 이벤트
-      var snap2 = { warriors: [{name:'탱커',emoji:'🛡️',hp:2,maxHp:32,atk:1}, null, null], castleHp:50, combo:0 };
-      var def2 = { enemies:[{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:3},{type:'정예',hp:18,atk:4}], gold:7 };
-      var r2 = computeCombat(snap2, def2);
-      var died = r2.events.some(function(e){ return e.kind === 'warriorDied'; });
-      record('T8. warriorDied 이벤트 발생', died);
-
-      // 9) 전사 0명 → 성 피해 이벤트
-      var snap3 = { warriors: [null, null, null], castleHp:50, combo:0 };
-      var def3 = { enemies:[{type:'잡병',hp:10,atk:3}], gold:5 };
-      var r3 = computeCombat(snap3, def3);
-      var castleDmg = r3.events.some(function(e){ return e.kind === 'enemyAttackCastle' || e.kind === 'breakthrough'; });
-      record('T9. 전사 0명 성 피해 이벤트', castleDmg);
-
-      // 10) breakthroughDamage = 잔존 적 ATK 합
-      var snap4 = { warriors: [null, null, null], castleHp:50, combo:0 };
-      var def4 = { enemies:[{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:5}], gold:5 };
-      var r4 = computeCombat(snap4, def4);
-      record('T10. breakthroughDamage = 8', r4.breakthroughDamage === 8, 'got=' + r4.breakthroughDamage);
-
-      // 11) 보상: 퍼펙트+콤보 → base+5+콤보, 클러치는 콤보에 미적용
-      resetGame();
-      window.gameState.wave = 1;
-      window.gameState.warriors = [{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:20}, null, null];
-      window.gameState.combo = 3;
-      window.gameState.castleHp = 50;
-      var goldBefore11 = window.gameState.gold;
-      // 직접 시뮬: perfect 시 prevCombo=3 → bonus=6, base=5+5=10 → 총 16
-      var expected11 = 5 + 5 + 6;
-      // resolveWave는 비동기이므로 직접 로직 검증
-      record('T11. 보상 공식: (5+5)+6 = 16', expected11 === 16);
-
-      // 12) 일반 클리어 → 콤보 0
-      resetGame();
-      window.gameState.wave = 3;
-      window.gameState.warriors = [{name:'탱커',emoji:'🛡️',hp:1,maxHp:32,atk:1}, null, null];
-      window.gameState.combo = 3;
-      var snapC = { warriors: JSON.parse(JSON.stringify(window.gameState.warriors)), castleHp: window.gameState.castleHp, combo: 3 };
-      var rC = computeCombat(snapC, getWaveDef(3));
-      record('T12. 일반 클리어 판정(perfect=false)', rC.perfect === false);
-      updateCombo(rC.perfect);
-      record('T12. 콤보 초기화', window.gameState.combo === 0);
-
-      // 13) 재뽑기: SELECT 10G 차감, 웨이브당 1회, DRAW 비활성
-      resetGame();
-      window.gameState.gold = 100;
-      window.gameState.phase = 'SELECT';
-      window.gameState.availableCards = drawThreeCards();
-      window.gameState.rerollUsedThisWave = false;
-      var goldBefore13 = window.gameState.gold;
-      onShopReroll();
-      record('T13. SELECT에서 10G 차감', window.gameState.gold === goldBefore13 - 10, 'gold=' + window.gameState.gold);
-      record('T13. rerollUsedThisWave=true', window.gameState.rerollUsedThisWave === true);
-      record('T13. phase SELECT 유지', window.gameState.phase === 'SELECT');
-      var goldBefore13b = window.gameState.gold;
-      onShopReroll();
-      record('T13. 웨이브당 1회 제한', window.gameState.gold === goldBefore13b);
-      // DRAW에서는 비활성
-      window.gameState.phase = 'DRAW';
-      window.gameState.rerollUsedThisWave = false;
-      renderShop();
-      record('T13. DRAW에서 재뽑기 비활성', els.btnShopReroll.disabled === true);
-
-      // 14) 강화: 15G, ATK+1, HP+5, maxHp+5, 토글 취소 시 골드 미차감
-      resetGame();
-      window.gameState.gold = 100;
-      window.gameState.phase = 'DRAW';
-      window.gameState.warriors[0] = { name:'탱커', emoji:'🛡️', hp:32, maxHp:32, atk:4 };
-      var gB14 = window.gameState.gold;
-      var atkB = window.gameState.warriors[0].atk;
-      var hpB = window.gameState.warriors[0].hp;
-      var maxB = window.gameState.warriors[0].maxHp;
-      onShopUpgradeToggle();
-      record('T14. 강화 진입', window.gameState.shopMode === 'SHOP_UPGRADE_TARGET');
-      onSlotUpgradeClick(0);
-      record('T14. 15G 차감', window.gameState.gold === gB14 - 15);
-      record('T14. ATK+1', window.gameState.warriors[0].atk === atkB + 1);
-      record('T14. HP+5', window.gameState.warriors[0].hp === hpB + 5);
-      record('T14. maxHp+5', window.gameState.warriors[0].maxHp === maxB + 5);
-      window.gameState.gold = 100;
-      onShopUpgradeToggle();
-      var goldC = window.gameState.gold;
-      onShopUpgradeToggle();
-      record('T14. 토글 재클릭 시 골드 미차감 취소', window.gameState.shopMode === null && window.gameState.gold === goldC);
-
-      // 15) 보수: 8G, HP+3, 최대치 제한
-      resetGame();
-      window.gameState.gold = 100;
-      window.gameState.phase = 'DRAW';
-      window.gameState.castleHp = 30;
-      var gB15 = window.gameState.gold;
-      onShopRepair();
-      record('T15. 8G 차감', window.gameState.gold === gB15 - 8);
-      record('T15. 성 HP 30→33', window.gameState.castleHp === 33);
-      window.gameState.castleHp = window.gameState.castleMaxHp - 1;
-      window.gameState.gold = 100;
-      onShopRepair();
-      record('T15. 최대치 제한', window.gameState.castleHp === window.gameState.castleMaxHp);
-
-      // 16) 저장→복원
-      resetGame();
-      window.gameState.wave = 3;
-      window.gameState.gold = 55;
-      window.gameState.castleHp = 33;
-      window.gameState.combo = 2;
-      window.gameState.availableCards = [CARD_TANKER, CARD_ATK, CARD_HEAL];
-      window.gameState.phase = 'SELECT';
-      window.gameState.rerollUsedThisWave = true;
-      saveState();
-      window.gameState.wave = 1; window.gameState.gold = 0; window.gameState.castleHp = 50;
-      window.gameState.combo = 0; window.gameState.availableCards = [];
-      window.gameState.phase = 'DRAW'; window.gameState.rerollUsedThisWave = false;
-      var lr = loadState();
-      record('T16. 복원 성공', !!lr);
-      record('T16. wave === 3', window.gameState.wave === 3);
-      record('T16. gold === 55', window.gameState.gold === 55);
-      record('T16. castleHp === 33', window.gameState.castleHp === 33);
-      record('T16. combo === 2', window.gameState.combo === 2);
-      record('T16. availableCards 3장', window.gameState.availableCards.length === 3);
-      record('T16. phase SELECT', window.gameState.phase === 'SELECT');
-
-      // 17) 잘못된 JSON
-      try { localStorage.setItem(SAVE_KEY, '{invalid json'); } catch (e) {}
-      var badR = loadState();
-      record('T17. 잘못된 JSON → false', badR === false);
-      record('T17. 저장 삭제 확인', (function(){ try { return localStorage.getItem(SAVE_KEY) === null; } catch(e){ return false; } })());
-
-      // 18) 음소거
-      var prevMuted = window.gameState.sfxMuted;
-      window.gameState.sfxMuted = true;
-      var prevCtx = audioCtx;
-      audioCtx = null;
-      var threw18 = false;
-      try { tone(800, 'sine', 0.1, 0.1); } catch (e) { threw18 = true; }
-      record('T18. 음소거 상태 tone() 예외 없음', !threw18);
-      window.gameState.sfxMuted = prevMuted;
-      audioCtx = prevCtx;
-
-      // 19) viewport
-      var meta = document.querySelector('meta[name="viewport"]');
-      record('T19. maximum-scale 없음', meta && meta.content.indexOf('maximum-scale') === -1);
-      record('T19. user-scalable 없음', meta && meta.content.indexOf('user-scalable') === -1);
-
-      // 20) 결과 모달
-      showResult(true);
-      record('T20. 결과 모달 열림', els.resultOverlay.classList.contains('show'));
-      record('T20. 활성 버튼 존재', els.btnContinue.classList.contains('hidden') || !!els.btnContinue);
-      hideResult();
-
-      // 21) 죽은 자산 부재
-      var playCombatSrc = playCombat.toString();
-      record('T21. updateEnemyToken playCombat 경로 사용', playCombatSrc.indexOf('updateEnemyToken') !== -1);
-      record('T21. markEnemyDead playCombat 경로 사용', playCombatSrc.indexOf('markEnemyDead') !== -1);
-      record('T21. death-anim 부여', playCombatSrc.indexOf('death-anim') !== -1);
-
-      // 22) 상태/저장 복구는 아래 finally에서 처리
-      record('T22. 백업 저장값 존재', backupSave !== null || backupSave === null);
-    } catch (ex) {
-      errors.push('EXCEPTION :: ' + ex.message);
-    }
-
-    // 복구
-    try {
-      if (backupSave !== null) localStorage.setItem(SAVE_KEY, backupSave);
-      else localStorage.removeItem(SAVE_KEY);
-    } catch (e) {}
-    try {
-      if (backupSfx !== null) localStorage.setItem(SFX_KEY, backupSfx);
-      else localStorage.removeItem(SFX_KEY);
-    } catch (e) {}
-    try {
-      var s = window.gameState;
-      s.phase = backupState.phase; s.wave = backupState.wave; s.gold = backupState.gold;
-      s.castleHp = backupState.castleHp; s.warriors = backupState.warriors;
-      s.maxWaveReached = backupState.maxWaveReached; s.isEndless = backupState.isEndless;
-      s.combo = backupState.combo; s.isGameOver = backupState.isGameOver;
-      s.isVictory = backupState.isVictory; s.rerollUsedThisWave = backupState.rerollUsedThisWave;
-      s.isResolvingCombat = false; s.shopMode = null;
-      s.availableCards = []; s.selectedCard = null;
-      hideResult(); loadSfxMuted(); updateSfxButton();
-      render();
-    } catch (e) {}
-
-    var pass = errors.length === 0;
-    var report = {
-      result: pass ? 'PASS' : 'FAIL',
-      totalTests: results.length,
-      passed: results.filter(function (r) { return r.pass; }).length,
-      failed: results.filter(function (r) { return !r.pass; }).length,
-      tests: results,
-      errors: errors
-    };
-    if (pass) console.log('[REGRESSION TEST PASS]');
-    else console.log('[REGRESSION TEST FAIL]');
-    console.log('Regression report:', report);
-    log('[TEST] ================================');
-    log('[TEST] Regression Suite: ' + report.result, pass ? 'highlight' : 'danger');
-    log('[TEST] Passed: ' + report.passed + ' / ' + report.totalTests);
-    if (!pass) for (var ei = 0; ei < errors.length; ei++) log('[TEST FAIL] ' + errors[ei], 'danger');
-    else log('[TEST] All assertions passed.', 'highlight');
-    log('[TEST] ================================');
-    return report;
-  };
-
-  window.runPhase1SelfTest = window.runRegressionSuite;
-
-  /* ===== 초기화 ===== */
-  loadSfxMuted();
-  updateSfxButton();
-  var restored = loadState();
-  if (restored && restored.ok) {
-    for (var li = 0; li < restored.log.length; li++) {
-      var div = document.createElement('div');
-      div.className = 'log-line';
-      div.textContent = restored.log[li];
-      els.output.appendChild(div);
-    }
-    els.output.scrollTop = els.output.scrollHeight;
-    render();
-    log('[SYSTEM] 이전 게임을 이어서 불러왔습니다.');
-    if (window.gameState.phase === 'END') showResult(!!window.gameState.isVictory);
-  } else {
-    render();
-    log('[TURN] Wave 1 begins.');
-  }
+/* ===== 초기화 ===== */
+loadSfxMuted();
+updateSfxButton();
+var restored=loadState();
+if(restored&&restored.ok){
+  for(var li=0;li<restored.log.length;li++){var dv=document.createElement('div');dv.className='log-line';dv.textContent=restored.log[li];els.output.appendChild(dv);}
+  els.output.scrollTop=els.output.scrollHeight;
+  render();
+  log('[시스템] 이전 게임을 이어서 불러왔습니다.');
+  if(window.gameState.phase==='END')showResult(!!window.gameState.isVictory);
+}else{
+  render();
+  log('[턴] 웨이브 1 시작.');
+}
 })();
 </script>
 </body>
