@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>타이니 워리어 러시 v4.1</title>
+<title>타이니 워리어 러시 v4.2</title>
 <style>
 :root{
   --bg-deep:#0a0a0f;
@@ -31,6 +31,7 @@ button:focus-visible,.card:focus-visible,.slot:focus-visible{outline:2px solid v
 .header-row{display:flex;align-items:center;justify-content:space-between;gap:6px;height:48px;}
 .header-btn{background:var(--bg-panel);border:1px solid #2a2a3a;border-radius:8px;min-width:44px;min-height:44px;font-size:18px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;}
 h1{font-size:16px;font-weight:900;letter-spacing:2px;color:var(--gold);text-align:center;flex:1;}
+.wave-preview{background:var(--bg-panel);border:1px solid var(--crimson-deep);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;color:var(--crimson);text-align:center;letter-spacing:0.3px;}
 .enemy-lane{position:relative;min-height:72px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;background:var(--bg-panel);border:1px solid #2a2a3a;border-radius:10px;padding:8px 8px 6px;}
 .enemy-lane .lane-label{position:absolute;top:3px;left:8px;font-size:10px;font-weight:800;letter-spacing:1px;color:var(--neutral);}
 .enemy-token{display:flex;flex-direction:column;align-items:center;gap:2px;transition:opacity 0.25s,transform 0.25s;animation:enemyIn 0.35s ease backwards;}
@@ -47,19 +48,21 @@ h1{font-size:16px;font-weight:900;letter-spacing:2px;color:var(--gold);text-alig
 .invasion-arrow span:nth-child(3){animation-delay:0.4s;}
 @keyframes arrowPulse{0%,100%{opacity:0.3;transform:translateY(-2px)}50%{opacity:1;transform:translateY(2px)}}
 .battlefield{display:flex;flex-direction:column;gap:6px;}
-.slot{position:relative;display:grid;grid-template-columns:4px 48px 1fr auto;gap:8px;align-items:center;background:var(--bg-panel);border:1px solid #2a2a3a;border-radius:10px;padding:8px 10px 8px 0;min-height:64px;overflow:hidden;transition:transform 0.15s;}
+.slot{position:relative;display:grid;grid-template-columns:4px 48px minmax(0,1fr) 68px;gap:8px;align-items:center;background:var(--bg-panel);border:1px solid #2a2a3a;border-radius:10px;padding:8px 10px 8px 0;min-height:64px;overflow:hidden;transition:transform 0.15s,border-color 0.2s,box-shadow 0.2s;}
+.slot.team-full{border-color:var(--gold);box-shadow:0 0 8px rgba(255,210,74,0.35);}
 .slot-stripe{width:4px;height:100%;align-self:stretch;border-radius:0 2px 2px 0;}
 .slot-front .slot-stripe{background:var(--stripe-front);}
 .slot-mid .slot-stripe{background:var(--stripe-mid);}
 .slot-back .slot-stripe{background:var(--stripe-back);}
 .slot.empty .slot-stripe{opacity:0.4;}
-.slot-content{min-width:0;display:flex;flex-direction:column;gap:2px;}
-.slot-name{font-size:11px;font-weight:800;letter-spacing:1px;color:var(--neutral);}
-.slot-warrior-line{display:flex;align-items:center;gap:8px;}
-.slot-warrior-stats{font-size:12px;font-family:var(--font-mono);font-weight:800;color:var(--text);}
+.slot-avatar-slot{width:48px;height:48px;display:flex;align-items:center;justify-content:center;}
+.slot-text-stack{min-width:0;display:flex;flex-direction:column;gap:1px;overflow:hidden;}
+.slot-text-stack > *{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;word-break:keep-all;overflow-wrap:anywhere;}
+.slot-preview-slot{min-width:60px;text-align:right;font-family:var(--font-mono);font-size:10px;font-weight:800;white-space:nowrap;}
+.slot-pos-label{font-size:10px;font-weight:800;letter-spacing:0.3px;color:var(--neutral);}
 .slot-warrior-name{font-size:13px;font-weight:700;}
-.slot-empty-text{font-size:13px;color:var(--neutral);font-weight:600;}
-.slot-bonus{font-size:10px;font-weight:600;color:var(--neutral);font-family:var(--font-mono);text-align:right;line-height:1.3;}
+.slot-warrior-stats{font-size:11px;font-family:var(--font-mono);font-weight:800;color:var(--text);}
+.slot-empty-text{font-size:12px;color:var(--neutral);font-weight:600;}
 .slot.can-deploy{cursor:pointer;}
 .slot.deploy-target{border-color:var(--gold);animation:slotPulse 0.9s infinite alternate;}
 @keyframes slotPulse{from{box-shadow:0 0 0 0 rgba(255,210,74,0)}to{box-shadow:0 0 12px 2px rgba(255,210,74,0.5)}}
@@ -105,7 +108,7 @@ h1{font-size:16px;font-weight:900;letter-spacing:2px;color:var(--gold);text-alig
 .card.rarity-RARE .card-banner{background:var(--gold);color:#000;}
 .card.rarity-LEGEND{border-color:var(--gold);box-shadow:0 0 20px rgba(255,210,74,0.6);}
 .card.rarity-LEGEND .card-banner{background:var(--gold);color:#000;}
-.card-emoji{width:32px;height:32px;position:relative;}
+.card-emoji{width:32px;height:32px;position:relative;display:flex;align-items:center;justify-content:center;font-size:24px;}
 .card-name{font-size:13px;font-weight:700;color:var(--text);}
 .card-tag{font-size:10px;font-weight:600;color:var(--neutral);font-family:var(--font-mono);letter-spacing:0.5px;}
 .card-desc{font-size:10px;font-weight:600;color:var(--neutral);line-height:1.3;padding:0 4px;}
@@ -183,7 +186,6 @@ details[open] summary::after{transform:rotate(180deg);}
 .result-score{font-size:26px;font-weight:900;font-family:var(--font-mono);color:var(--gold);text-align:center;margin:12px 0;}
 .result-detail{font-size:12px;color:var(--neutral);text-align:center;margin-bottom:12px;}
 .result-btn-row{display:flex;flex-direction:column;gap:6px;}
-/* CSS 아바타 */
 .avatar{width:40px;height:40px;border-radius:8px;background:var(--bg-panel2);border:2px solid #3a3a4a;position:relative;flex-shrink:0;}
 .avatar.rarity-RARE{border-color:var(--gold);}
 .avatar.rarity-LEGEND{border-color:var(--gold);box-shadow:0 0 12px var(--gold);}
@@ -193,24 +195,24 @@ details[open] summary::after{transform:rotate(180deg);}
 .avatar.guard::before{content:'';position:absolute;top:8px;left:8px;right:8px;bottom:8px;border:3px solid #88a8c8;border-radius:50%;}
 .avatar.spear::before{content:'';position:absolute;top:6px;bottom:6px;left:50%;transform:translateX(-50%);width:3px;background:#c8a878;}
 .avatar.knight::before{content:'';position:absolute;top:50%;left:8px;right:8px;height:3px;background:#c8a878;transform:translateY(-50%) rotate(45deg);}
-.avatar.knight::after,.avatar.knight .knight-x{content:'';position:absolute;top:50%;left:8px;right:8px;height:3px;background:#c8a878;transform:translateY(-50%) rotate(-45deg);border-radius:0;top:-3px;right:-3px;width:8px;height:8px;}
+.avatar.knight::after{content:'';position:absolute;top:50%;left:8px;right:8px;height:3px;background:#c8a878;transform:translateY(-50%) rotate(-45deg);border-radius:0;top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.golem::before{content:'';position:absolute;top:10px;left:10px;right:10px;bottom:10px;background:repeating-linear-gradient(0deg,#5a5a70 0,#5a5a70 1px,transparent 1px,transparent 6px),repeating-linear-gradient(90deg,#5a5a70 0,#5a5a70 1px,transparent 1px,transparent 6px);}
 .avatar.swordsman::before{content:'';position:absolute;top:50%;left:6px;right:6px;height:3px;background:#e0e0e0;transform:translateY(-50%) rotate(-40deg);}
 .avatar.swordsman::after{content:'';position:absolute;top:50%;left:6px;right:6px;height:3px;background:#e0e0e0;transform:translateY(-50%) rotate(40deg);border-radius:0;top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.monk::before{content:'';position:absolute;top:10px;left:10px;right:10px;bottom:10px;border:2px solid #e8c880;border-radius:50%;}
-.avatar.monk::after{content:'';position:absolute;top:15px;left:15px;right:15px;bottom:15px;background:#e8c880;border-radius:50%;border-radius:50%;top:-3px;right:-3px;width:8px;height:8px;background:#4a4a5a;}
+.avatar.monk::after{content:'';position:absolute;top:15px;left:15px;right:15px;bottom:15px;background:#e8c880;border-radius:50%;top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.bard::before{content:'';position:absolute;top:8px;left:8px;right:8px;height:12px;border:2px solid #a080d0;border-radius:50% 50% 0 0;border-bottom:none;}
-.avatar.bard::after{content:'';position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:2px;height:12px;background:#a080d0;border-radius:0;top:-3px;right:-3px;width:8px;height:8px;background:#4a4a5a;}
+.avatar.bard::after{content:'';position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:2px;height:12px;background:#a080d0;top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.paladin::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:3px;height:24px;background:#ffe080;}
-.avatar.paladin::after{content:'';position:absolute;top:14px;left:8px;right:8px;height:3px;background:#ffe080;border-radius:0;top:-3px;right:-3px;width:8px;height:8px;background:#4a4a5a;}
+.avatar.paladin::after{content:'';position:absolute;top:14px;left:8px;right:8px;height:3px;background:#ffe080;top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.archer::before{content:'';position:absolute;top:8px;left:8px;right:8px;bottom:8px;border:2px solid #88c888;border-radius:50% 50% 0 0;border-bottom:none;}
-.avatar.archer::after{content:'';position:absolute;top:50%;left:6px;right:6px;height:2px;background:#88c888;border-radius:0;top:-3px;right:-3px;width:8px;height:8px;background:#4a4a5a;}
+.avatar.archer::after{content:'';position:absolute;top:50%;left:6px;right:6px;height:2px;background:#88c888;top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.mage::before{content:'';position:absolute;top:10px;left:10px;right:10px;bottom:10px;border:2px solid #a888e8;border-radius:50%;}
-.avatar.mage::after{content:'';position:absolute;top:16px;left:16px;right:16px;bottom:16px;background:#a888e8;border-radius:50%;border-radius:50%;top:-3px;right:-3px;width:8px;height:8px;background:#4a4a5a;}
+.avatar.mage::after{content:'';position:absolute;top:16px;left:16px;right:16px;bottom:16px;background:#a888e8;border-radius:50%;top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.sniper::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;border:2px solid #88d8d8;border-radius:50%;}
-.avatar.sniper::after{content:'';position:absolute;top:50%;left:6px;right:6px;height:1px;background:#88d8d8;transform:translateY(-50%);border-radius:0;top:-3px;right:-3px;width:8px;height:8px;background:#4a4a5a;}
+.avatar.sniper::after{content:'';position:absolute;top:50%;left:6px;right:6px;height:1px;background:#88d8d8;transform:translateY(-50%);top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.archmage::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:20px;background:#ffd24a;box-shadow:0 0 8px #ffd24a;}
-.avatar.archmage::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(90deg);width:4px;height:20px;background:#ffd24a;box-shadow:0 0 8px #ffd24a;border-radius:50%;top:-3px;right:-3px;width:8px;height:8px;background:#4a4a5a;}
+.avatar.archmage::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(90deg);width:4px;height:20px;background:#ffd24a;box-shadow:0 0 8px #ffd24a;top:-3px;right:-3px;width:8px;height:8px;}
 .avatar.unknown::before{content:'?';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#8a8a9e;font-weight:900;font-size:20px;}
 .enemy-avatar{width:36px;height:36px;background:#2a1015;border:2px solid var(--crimson);position:relative;flex-shrink:0;}
 .enemy-avatar.grunt{border-radius:50%;}
@@ -230,35 +232,36 @@ details[open] summary::after{transform:rotate(180deg);}
     <h1>⚔️ TINY WARRIORS RUSH ⚔️</h1>
     <button class="header-btn" id="btn-sound-toggle" aria-label="효과음 토글">🔊</button>
   </div>
+  <div class="wave-preview" id="wave-preview">▶ 다음 웨이브: -</div>
   <div class="enemy-lane" id="enemy-lane" aria-hidden="true"><span class="lane-label">적 진영</span></div>
   <div class="invasion-arrow"><span>▼</span><span>▼</span><span>▼</span></div>
   <div class="battlefield" id="battlefield">
     <div class="slot slot-back empty" id="slot-2" data-slot="2">
       <div class="slot-stripe"></div>
-      <div class="avatar unknown"></div>
-      <div class="slot-content">
-        <div class="slot-name">후열 · 공격+30%</div>
+      <div class="slot-avatar-slot"><div class="avatar unknown"></div></div>
+      <div class="slot-text-stack">
+        <div class="slot-warrior-name" style="color:var(--stripe-back)">후열 · 공격+30%</div>
         <div class="slot-empty-text">빈 슬롯</div>
       </div>
-      <div class="slot-bonus">최후 피격</div>
+      <div class="slot-preview-slot" style="color:var(--neutral)">최후 피격</div>
     </div>
     <div class="slot slot-mid empty" id="slot-1" data-slot="1">
       <div class="slot-stripe"></div>
-      <div class="avatar unknown"></div>
-      <div class="slot-content">
-        <div class="slot-name">중열 · 보정 없음</div>
+      <div class="slot-avatar-slot"><div class="avatar unknown"></div></div>
+      <div class="slot-text-stack">
+        <div class="slot-warrior-name" style="color:var(--stripe-mid)">중열 · 보정 없음</div>
         <div class="slot-empty-text">빈 슬롯</div>
       </div>
-      <div class="slot-bonus">지원 위치</div>
+      <div class="slot-preview-slot" style="color:var(--neutral)">지원 위치</div>
     </div>
     <div class="slot slot-front empty" id="slot-0" data-slot="0">
       <div class="slot-stripe"></div>
-      <div class="avatar unknown"></div>
-      <div class="slot-content">
-        <div class="slot-name">전열 · 피해-30%</div>
+      <div class="slot-avatar-slot"><div class="avatar unknown"></div></div>
+      <div class="slot-text-stack">
+        <div class="slot-warrior-name" style="color:var(--stripe-front)">전열 · 피해-30%</div>
         <div class="slot-empty-text">빈 슬롯</div>
       </div>
-      <div class="slot-bonus">공격-20%</div>
+      <div class="slot-preview-slot" style="color:var(--neutral)">공격-20%</div>
     </div>
   </div>
   <div class="castle-panel">
@@ -291,9 +294,9 @@ details[open] summary::after{transform:rotate(180deg);}
   <details class="shop-panel" id="shop-panel">
     <summary>🏪 상점 · 골드 <span id="shop-gold">0</span></summary>
     <div class="shop-body">
-      <button class="shop-btn" id="btn-shop-reroll" aria-label="카드 재뽑기 12골드">🎲 재뽑기<span class="price">12G</span></button>
-      <button class="shop-btn" id="btn-shop-upgrade" aria-label="전사 강화 18골드">⬆️ 강화<span class="price">18G</span></button>
-      <button class="shop-btn" id="btn-shop-repair" aria-label="성벽 보수 10골드">🛠️ 보수<span class="price">10G</span></button>
+      <button class="shop-btn" id="btn-shop-reroll" aria-label="카드 재뽑기 10골드">🎲 재뽑기<span class="price">10G</span></button>
+      <button class="shop-btn" id="btn-shop-upgrade" aria-label="전사 강화 15골드">⬆️ 강화<span class="price">15G</span></button>
+      <button class="shop-btn" id="btn-shop-repair" aria-label="성벽 보수 8골드">🛠️ 보수<span class="price">8G</span></button>
       <button class="shop-btn" id="btn-shop-remove" aria-label="슬롯 비우기 8골드">🗑️ 비우기<span class="price">8G</span></button>
     </div>
   </details>
@@ -320,6 +323,7 @@ details[open] summary::after{transform:rotate(180deg);}
       </tbody>
     </table>
     <ul class="help-tips">
+      <li>3열 모두 채우면 팀 시너지로 아군 ATK +1!</li>
       <li>후열 딜러는 강하지만 전열이 없으면 바로 죽습니다.</li>
       <li>성 HP를 한 점도 잃지 않으면 콤보가 쌓입니다.</li>
       <li>골드는 모으는 것보다 쓰는 쪽이 점수에 유리합니다.</li>
@@ -362,24 +366,24 @@ window.onerror = function (msg, url, line, col, err) {
   var TUT_KEY = 'tutorialSeen';
 
   var CARDS = [
-    {id:'SHIELD_GUARD',name:'방패병',emoji:'🛡️',rarity:'COMMON',type:'SUMMON',tags:['FRONT'],desc:'HP40/ATK4·전열피해-10%',avatar:'guard',warrior:{name:'방패병',hp:40,maxHp:40,atk:4},extraDefReduce:0.10},
-    {id:'SPEARMAN',name:'창병',emoji:'🔱',rarity:'COMMON',type:'SUMMON',tags:['FRONT'],desc:'HP30/ATK6·전열패널티무시',avatar:'spear',warrior:{name:'창병',hp:30,maxHp:30,atk:6},ignoreFrontPenalty:true},
-    {id:'KNIGHT',name:'기사',emoji:'🐎',rarity:'RARE',type:'SUMMON',tags:['FRONT'],desc:'HP45/ATK7·시작시성HP+2',avatar:'knight',warrior:{name:'기사',hp:45,maxHp:45,atk:7},battleStartCastleHeal:2},
-    {id:'GOLEM',name:'골렘',emoji:'🗿',rarity:'LEGEND',type:'SUMMON',tags:['FRONT'],desc:'HP70/ATK6·받는피해-20%추가',avatar:'golem',warrior:{name:'골렘',hp:70,maxHp:70,atk:6},extraDefReduce:0.20},
-    {id:'SWORDSMAN',name:'검사',emoji:'⚔️',rarity:'COMMON',type:'SUMMON',tags:['MID'],desc:'HP32/ATK7·밸런스',avatar:'swordsman',warrior:{name:'검사',hp:32,maxHp:32,atk:7}},
-    {id:'MONK',name:'수도승',emoji:'🧘',rarity:'RARE',type:'SUMMON',tags:['MID','SUPPORT'],desc:'HP28/ATK4·라운드종료시전열HP+3',avatar:'monk',warrior:{name:'수도승',hp:28,maxHp:28,atk:4},support:'MONK'},
-    {id:'BARD',name:'음유시인',emoji:'🎻',rarity:'RARE',type:'SUMMON',tags:['MID','SUPPORT'],desc:'HP24/ATK3·매라운드아군ATK+1',avatar:'bard',warrior:{name:'음유시인',hp:24,maxHp:24,atk:3},support:'BARD'},
-    {id:'PALADIN',name:'성기사',emoji:'✨',rarity:'LEGEND',type:'SUMMON',tags:['MID'],desc:'HP50/ATK9·아군사망시성피해절반',avatar:'paladin',warrior:{name:'성기사',hp:50,maxHp:50,atk:9},paladin:true},
-    {id:'ARCHER',name:'궁수',emoji:'🏹',rarity:'COMMON',type:'SUMMON',tags:['BACK'],desc:'HP22/ATK8·후열ATK+2',avatar:'archer',warrior:{name:'궁수',hp:22,maxHp:22,atk:8},backBonus:2},
-    {id:'MAGE',name:'마법사',emoji:'🔮',rarity:'RARE',type:'SUMMON',tags:['BACK'],desc:'HP20/ATK7·적2마리각각타격',avatar:'mage',warrior:{name:'마법사',hp:20,maxHp:20,atk:7},multiTarget:2},
-    {id:'SNIPER',name:'저격수',emoji:'🎯',rarity:'RARE',type:'SUMMON',tags:['BACK'],desc:'HP18/ATK12·최대HP적공격',avatar:'sniper',warrior:{name:'저격수',hp:18,maxHp:18,atk:12},sniper:true},
-    {id:'ARCHMAGE',name:'대마법사',emoji:'🌟',rarity:'LEGEND',type:'SUMMON',tags:['BACK'],desc:'HP26/ATK11·라운드첫전체적3피해',avatar:'archmage',warrior:{name:'대마법사',hp:26,maxHp:26,atk:11},archmage:true},
-    {id:'ATK_BOOST',name:'공격 강화',emoji:'⚔️',rarity:'COMMON',type:'INSTANT',tags:['ANY'],desc:'모든전사ATK+2',avatar:'swordsman'},
-    {id:'FRONT_WALL',name:'방벽 강화',emoji:'🧱',rarity:'COMMON',type:'INSTANT',tags:['FRONT'],desc:'전열전사HP+10',avatar:'guard'},
-    {id:'BACK_FOCUS',name:'정밀 사격',emoji:'🎯',rarity:'RARE',type:'INSTANT',tags:['BACK'],desc:'후열전사ATK+4',avatar:'sniper'},
-    {id:'HEAL',name:'성 회복',emoji:'💚',rarity:'COMMON',type:'INSTANT',tags:['ANY'],desc:'성HP+8(초과분골드2)',avatar:'monk'},
+    {id:'SHIELD_GUARD',name:'방패병',emoji:'🛡️',rarity:'COMMON',type:'SUMMON',tags:['FRONT'],desc:'HP40/ATK4·방어특화',avatar:'guard',warrior:{name:'방패병',hp:40,maxHp:40,atk:4},extraDefReduce:0.10},
+    {id:'SPEARMAN',name:'창병',emoji:'🔱',rarity:'COMMON',type:'SUMMON',tags:['FRONT'],desc:'HP30/ATK6·패널티무시',avatar:'spear',warrior:{name:'창병',hp:30,maxHp:30,atk:6},ignoreFrontPenalty:true},
+    {id:'KNIGHT',name:'기사',emoji:'🐎',rarity:'RARE',type:'SUMMON',tags:['FRONT'],desc:'HP45/ATK7·성HP+2',avatar:'knight',warrior:{name:'기사',hp:45,maxHp:45,atk:7},battleStartCastleHeal:2},
+    {id:'GOLEM',name:'골렘',emoji:'🗿',rarity:'LEGEND',type:'SUMMON',tags:['FRONT'],desc:'HP70/ATK6·방어-20%',avatar:'golem',warrior:{name:'골렘',hp:70,maxHp:70,atk:6},extraDefReduce:0.20},
+    {id:'SWORDSMAN',name:'검사',emoji:'⚔️',rarity:'COMMON',type:'SUMMON',tags:['MID'],desc:'HP32/ATK7·균형',avatar:'swordsman',warrior:{name:'검사',hp:32,maxHp:32,atk:7}},
+    {id:'MONK',name:'수도승',emoji:'🧘',rarity:'RARE',type:'SUMMON',tags:['MID','SUPPORT'],desc:'HP28/ATK4·매턴전열+3',avatar:'monk',warrior:{name:'수도승',hp:28,maxHp:28,atk:4},support:'MONK'},
+    {id:'BARD',name:'음유시인',emoji:'🎻',rarity:'RARE',type:'SUMMON',tags:['MID','SUPPORT'],desc:'HP24/ATK3·매턴ATK+1',avatar:'bard',warrior:{name:'음유시인',hp:24,maxHp:24,atk:3},support:'BARD'},
+    {id:'PALADIN',name:'성기사',emoji:'✨',rarity:'LEGEND',type:'SUMMON',tags:['MID'],desc:'HP50/ATK9·성피해절반',avatar:'paladin',warrior:{name:'성기사',hp:50,maxHp:50,atk:9},paladin:true},
+    {id:'ARCHER',name:'궁수',emoji:'🏹',rarity:'COMMON',type:'SUMMON',tags:['BACK'],desc:'HP22/ATK8·후열+2',avatar:'archer',warrior:{name:'궁수',hp:22,maxHp:22,atk:8},backBonus:2},
+    {id:'MAGE',name:'마법사',emoji:'🔮',rarity:'RARE',type:'SUMMON',tags:['BACK'],desc:'HP20/ATK7·2타겟',avatar:'mage',warrior:{name:'마법사',hp:20,maxHp:20,atk:7},multiTarget:2},
+    {id:'SNIPER',name:'저격수',emoji:'🎯',rarity:'RARE',type:'SUMMON',tags:['BACK'],desc:'HP18/ATK12·최고HP',avatar:'sniper',warrior:{name:'저격수',hp:18,maxHp:18,atk:12},sniper:true},
+    {id:'ARCHMAGE',name:'대마법사',emoji:'🌟',rarity:'LEGEND',type:'SUMMON',tags:['BACK'],desc:'HP26/ATK11·광역3',avatar:'archmage',warrior:{name:'대마법사',hp:26,maxHp:26,atk:11},archmage:true},
+    {id:'ATK_BOOST',name:'공격 강화',emoji:'⚔️',rarity:'COMMON',type:'INSTANT',tags:['ANY'],desc:'전사ATK+2',avatar:'swordsman'},
+    {id:'FRONT_WALL',name:'방벽 강화',emoji:'🧱',rarity:'COMMON',type:'INSTANT',tags:['FRONT'],desc:'전열HP+10',avatar:'guard'},
+    {id:'BACK_FOCUS',name:'정밀 사격',emoji:'🎯',rarity:'RARE',type:'INSTANT',tags:['BACK'],desc:'후열ATK+4',avatar:'sniper'},
+    {id:'HEAL',name:'성 회복',emoji:'💚',rarity:'COMMON',type:'INSTANT',tags:['ANY'],desc:'성HP+8(잉여2G)',avatar:'monk'},
     {id:'SCOUT_SUPPLY',name:'정찰 보급',emoji:'📦',rarity:'COMMON',type:'INSTANT',tags:['ECONOMY'],desc:'골드+6',avatar:'knight'},
-    {id:'REPOSITION',name:'재배치',emoji:'🔄',rarity:'RARE',type:'INSTANT',tags:['ANY'],desc:'전사2명슬롯교환(플레이어선택)',avatar:'golem'}
+    {id:'REPOSITION',name:'재배치',emoji:'🔄',rarity:'RARE',type:'INSTANT',tags:['ANY'],desc:'전사2교환',avatar:'golem'}
   ];
   var ALL_CARDS = {};
   for (var ci = 0; ci < CARDS.length; ci++) {
@@ -388,32 +392,43 @@ window.onerror = function (msg, url, line, col, err) {
 
   function getWaveDef(w) {
     if (w === 1) {
-      return { enemies: [{ type: '잡병', hp: 7, atk: 2 }, { type: '잡병', hp: 7, atk: 2 }], gold: 6 };
+      return { enemies: [{ type: '잡병', hp: 6, atk: 2 }, { type: '잡병', hp: 6, atk: 2 }], gold: 6 };
     }
     if (w === 2) {
-      return { enemies: [{ type: '잡병', hp: 9, atk: 3 }, { type: '잡병', hp: 9, atk: 3 }, { type: '잡병', hp: 9, atk: 3 }], gold: 7 };
+      return { enemies: [{ type: '잡병', hp: 8, atk: 2 }, { type: '잡병', hp: 8, atk: 2 }, { type: '잡병', hp: 8, atk: 2 }], gold: 8 };
     }
     if (w === 3) {
-      return { enemies: [{ type: '잡병', hp: 11, atk: 3 }, { type: '잡병', hp: 11, atk: 3 }, { type: '잡병', hp: 11, atk: 3 }, { type: '정예', hp: 18, atk: 5 }], gold: 9 };
+      return { enemies: [
+        { type: '잡병', hp: 10, atk: 3 },
+        { type: '잡병', hp: 10, atk: 3 },
+        { type: '잡병', hp: 10, atk: 3 },
+        { type: '정예', hp: 16, atk: 4 }
+      ], gold: 10 };
     }
     if (w === 4) {
-      return { enemies: [{ type: '잡병', hp: 13, atk: 4 }, { type: '잡병', hp: 13, atk: 4 }, { type: '잡병', hp: 13, atk: 4 }, { type: '잡병', hp: 13, atk: 4 }, { type: '정예', hp: 24, atk: 6 }], gold: 11 };
+      return { enemies: [
+        { type: '잡병', hp: 11, atk: 3 },
+        { type: '잡병', hp: 11, atk: 3 },
+        { type: '잡병', hp: 11, atk: 3 },
+        { type: '잡병', hp: 11, atk: 3 },
+        { type: '정예', hp: 20, atk: 5 }
+      ], gold: 13 };
     }
     if (w === 5) {
       return { enemies: [
-        { type: '잡병', hp: 15, atk: 4 },
-        { type: '잡병', hp: 15, atk: 4 },
-        { type: '잡병', hp: 15, atk: 4 },
-        { type: '잡병', hp: 15, atk: 4 },
-        { type: '정예', hp: 28, atk: 7 },
-        { type: '정예', hp: 28, atk: 7 }
-      ], gold: 14 };
+        { type: '잡병', hp: 12, atk: 4 },
+        { type: '잡병', hp: 12, atk: 4 },
+        { type: '잡병', hp: 12, atk: 4 },
+        { type: '잡병', hp: 12, atk: 4 },
+        { type: '정예', hp: 22, atk: 6 },
+        { type: '정예', hp: 22, atk: 6 }
+      ], gold: 17 };
     }
     var over = w - 5;
-    var gHp = 15 + 3 * over;
+    var gHp = 12 + 3 * over;
     var gAtk = 4 + Math.floor(over / 3);
-    var eHp = 28 + 5 * over;
-    var eAtk = 7 + Math.floor(over / 2);
+    var eHp = 22 + 5 * over;
+    var eAtk = 6 + Math.floor(over / 2);
     var total = Math.min(9, 6 + Math.floor(over / 2));
     var eC = Math.max(2, Math.floor(total * 0.25));
     var gC = total - eC;
@@ -425,7 +440,7 @@ window.onerror = function (msg, url, line, col, err) {
     for (i = 0; i < eC; i++) {
       arr.push({ type: '정예', hp: eHp, atk: eAtk });
     }
-    return { enemies: arr, gold: 14 + 2 * over };
+    return { enemies: arr, gold: 17 + 2 * over };
   }
 
   window.gameState = {
@@ -456,6 +471,7 @@ window.onerror = function (msg, url, line, col, err) {
 
   var els = {
     app: document.getElementById('app'),
+    wavePreview: document.getElementById('wave-preview'),
     statWave: document.getElementById('stat-wave'),
     statMaxWave: document.getElementById('stat-max-wave'),
     statGold: document.getElementById('stat-gold'),
@@ -522,10 +538,7 @@ window.onerror = function (msg, url, line, col, err) {
   }
 
   function tone(freq, type, dur, gain, fEnd) {
-    if (window.gameState.sfxMuted) {
-      return;
-    }
-    if (!audioCtx) {
+    if (window.gameState.sfxMuted || !audioCtx) {
       return;
     }
     try {
@@ -542,8 +555,7 @@ window.onerror = function (msg, url, line, col, err) {
       g.connect(audioCtx.destination);
       o.start();
       o.stop(audioCtx.currentTime + dur);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   function playClick() { tone(800, 'sine', 0.06, 0.05); }
@@ -580,23 +592,16 @@ window.onerror = function (msg, url, line, col, err) {
     els.flash.className = '';
     void els.flash.offsetWidth;
     els.flash.classList.add('active');
-    if (color === 'victory') {
-      els.flash.classList.add('victory');
-    } else if (color === 'danger') {
-      els.flash.classList.add('danger');
-    }
-    setTimeout(function () {
-      els.flash.classList.remove('active');
-    }, 200);
+    if (color === 'victory') { els.flash.classList.add('victory'); }
+    else if (color === 'danger') { els.flash.classList.add('danger'); }
+    setTimeout(function () { els.flash.classList.remove('active'); }, 200);
   }
 
   function screenShake() {
     els.app.classList.remove('shake');
     void els.app.offsetWidth;
     els.app.classList.add('shake');
-    setTimeout(function () {
-      els.app.classList.remove('shake');
-    }, 320);
+    setTimeout(function () { els.app.classList.remove('shake'); }, 320);
   }
 
   function popDamage(text, color, anchorEl) {
@@ -616,9 +621,7 @@ window.onerror = function (msg, url, line, col, err) {
   }
 
   function burstParticles(anchorEl, color, count) {
-    if (!anchorEl) {
-      return;
-    }
+    if (!anchorEl) { return; }
     count = count || 8;
     var r = anchorEl.getBoundingClientRect();
     var cx = r.left + r.width / 2;
@@ -651,16 +654,12 @@ window.onerror = function (msg, url, line, col, err) {
     els.waveTransition.classList.remove('show');
     void els.waveTransition.offsetWidth;
     els.waveTransition.classList.add('show');
-    setTimeout(function () {
-      els.waveTransition.classList.remove('show');
-    }, 1000);
+    setTimeout(function () { els.waveTransition.classList.remove('show'); }, 1000);
   }
 
   function announce(text) {
     els.srAnnouncer.textContent = '';
-    setTimeout(function () {
-      els.srAnnouncer.textContent = text;
-    }, 50);
+    setTimeout(function () { els.srAnnouncer.textContent = text; }, 50);
   }
 
   function makeKeyboardActivate(el) {
@@ -676,19 +675,19 @@ window.onerror = function (msg, url, line, col, err) {
     var n = 0;
     var w = window.gameState.warriors;
     for (var i = 0; i < SLOT_COUNT; i++) {
-      if (w[i] && w[i].hp > 0) {
-        n++;
-      }
+      if (w[i] && w[i].hp > 0) { n++; }
     }
     return n;
+  }
+
+  function hasFullTeam() {
+    return aliveWarriorCount() === SLOT_COUNT;
   }
 
   function hasEmptySlot() {
     var w = window.gameState.warriors;
     for (var i = 0; i < SLOT_COUNT; i++) {
-      if (!w[i] || w[i].hp <= 0) {
-        return true;
-      }
+      if (!w[i] || w[i].hp <= 0) { return true; }
     }
     return false;
   }
@@ -700,50 +699,32 @@ window.onerror = function (msg, url, line, col, err) {
 
   function getEffectiveAtk(baseAtk, slot, meta) {
     var atk = baseAtk;
-    if (slot === 2 && meta && meta.backBonus) {
-      atk += meta.backBonus;
-    }
+    if (slot === 2 && meta && meta.backBonus) { atk += meta.backBonus; }
     if (slot === 0) {
-      if (meta && meta.ignoreFrontPenalty) {
-        return atk;
-      }
+      if (meta && meta.ignoreFrontPenalty) { return atk; }
       return Math.ceil(atk * 0.8);
     }
-    if (slot === 2) {
-      return Math.ceil(atk * 1.3);
-    }
+    if (slot === 2) { return Math.ceil(atk * 1.3); }
     return atk;
   }
 
   function getEffectiveDef(dmg, slot, meta) {
     var mult = 1;
-    if (slot === 0) {
-      mult *= 0.7;
-    }
-    if (meta && meta.extraDefReduce) {
-      mult *= (1 - meta.extraDefReduce);
-    }
+    if (slot === 0) { mult *= 0.7; }
+    if (meta && meta.extraDefReduce) { mult *= (1 - meta.extraDefReduce); }
     return Math.max(1, Math.ceil(dmg * mult));
   }
 
   function avatarHTML(cardId, rarity) {
     var card = ALL_CARDS[cardId];
     var cls = 'avatar';
-    if (card) {
-      cls += ' ' + card.avatar;
-    } else {
-      cls += ' unknown';
-    }
-    if (rarity) {
-      cls += ' rarity-' + rarity;
-    }
+    if (card) { cls += ' ' + card.avatar; } else { cls += ' unknown'; }
+    if (rarity) { cls += ' rarity-' + rarity; }
     return '<div class="' + cls + '"></div>';
   }
 
   function enemyAvatarHTML(type) {
-    if (type === '정예') {
-      return '<div class="enemy-avatar elite"></div>';
-    }
+    if (type === '정예') { return '<div class="enemy-avatar elite"></div>'; }
     return '<div class="enemy-avatar grunt"></div>';
   }
 
@@ -784,79 +765,106 @@ window.onerror = function (msg, url, line, col, err) {
     renderCastle();
   }
 
-  function renderEnemyLane() {
+  function renderWavePreview() {
     var s = window.gameState;
-    els.enemyLane.innerHTML = '<span class="lane-label">적 진영</span>';
-    if (s.isResolvingCombat) {
-      return;
-    }
-    if (s.isGameOver || s.isVictory) {
+    if (s.isResolvingCombat || s.isGameOver || s.isVictory) {
+      els.wavePreview.textContent = '▶ 전투 중...';
       return;
     }
     if (s.wave > s.maxWave && !s.isEndless) {
+      els.wavePreview.textContent = '▶ 모든 웨이브 클리어';
       return;
     }
     var def = getWaveDef(s.wave);
-    if (!def) {
-      return;
+    if (!def) { return; }
+    var counts = {};
+    var totalHp = 0;
+    for (var i = 0; i < def.enemies.length; i++) {
+      var e = def.enemies[i];
+      counts[e.type] = (counts[e.type] || 0) + 1;
+      totalHp += e.hp;
     }
+    var parts = [];
+    for (var k in counts) {
+      if (counts.hasOwnProperty(k)) { parts.push(k + ' ×' + counts[k]); }
+    }
+    els.wavePreview.textContent = '▶ 다음 웨이브: ' + parts.join(' · ') + ' (총 HP ' + totalHp + ')';
+  }
+
+  function renderEnemyLane() {
+    var s = window.gameState;
+    els.enemyLane.innerHTML = '<span class="lane-label">적 진영</span>';
+    if (s.isResolvingCombat || s.isGameOver || s.isVictory) { return; }
+    if (s.wave > s.maxWave && !s.isEndless) { return; }
+    var def = getWaveDef(s.wave);
+    if (!def) { return; }
     for (var i = 0; i < def.enemies.length; i++) {
       var e = def.enemies[i];
       var t = document.createElement('div');
       t.className = 'enemy-token';
       t.style.animationDelay = (i * 0.06) + 's';
-      var hpText = '<div class="enemy-hp-text">HP' + e.hp + '</div>';
-      t.innerHTML = enemyAvatarHTML(e.type) + hpText;
+      t.innerHTML = enemyAvatarHTML(e.type) + '<div class="enemy-hp-text">HP' + e.hp + '</div>';
       els.enemyLane.appendChild(t);
     }
   }
 
-  function slotInnerHTML(i) {
+  function renderSlot(i) {
     var s = window.gameState;
     var w = s.warriors[i];
-    var posLabels = ['전열 · 피해-30%', '중열 · 보정 없음', '후열 · 공격+30%'];
-    var posBonuses = ['공격-20%', '지원 위치', '최후 피격'];
     var stripes = ['slot-front', 'slot-mid', 'slot-back'];
+    var posLabels = ['전열 · 피해-30%', '중열 · 보정 없음', '후열 · 공격+30%'];
     var cls = 'slot ' + stripes[i];
-    if (!w) {
-      cls += ' empty';
-    }
+    if (!w) { cls += ' empty'; }
+    if (hasFullTeam()) { cls += ' team-full'; }
     var isDeploy = s.phase === 'DEPLOY' && !w && !s.isResolvingCombat;
     var isUp = s.shopMode === 'SHOP_UPGRADE_TARGET' && w && w.hp > 0;
     var isRm = s.shopMode === 'SHOP_REMOVE_TARGET' && w && w.hp > 0;
-    var isRepo = s.phase === 'REPOSITION_SELECT' && w && w.hp > 0;
-    if (isDeploy || isUp || isRm) {
-      cls += ' can-deploy';
-    }
-    if (isDeploy) {
-      cls += ' deploy-target';
-    }
-    if (isUp || isRm) {
-      cls += ' shop-target';
-    }
+    if (isDeploy || isUp || isRm) { cls += ' can-deploy'; }
+    if (isDeploy) { cls += ' deploy-target'; }
+    if (isUp || isRm) { cls += ' shop-target'; }
     var slot = slotEls[i];
     slot.className = cls;
-    var previewHTML = '';
+    var previewText = '';
+    var previewColor = 'var(--neutral)';
     var selCard = s.selectedCardIndex >= 0 ? s.availableCards[s.selectedCardIndex] : null;
     if (isDeploy && selCard && selCard.warrior) {
-      var eff = getEffectiveAtk(selCard.warrior.atk, i, selCard);
-      previewHTML = '<div class="slot-bonus" style="color:var(--gold)">배치 ATK ' + eff + '</div>';
-    } else {
-      previewHTML = '<div class="slot-bonus">' + posBonuses[i] + '</div>';
-    }
-    var av;
-    var nameLine;
-    if (w) {
+      var cardMeta = {
+        backBonus: selCard.backBonus || 0,
+        ignoreFrontPenalty: !!selCard.ignoreFrontPenalty
+      };
+      var teamBonus = (hasFullTeam() || (aliveWarriorCount() === 2)) ? 1 : 0;
+      var eff = getEffectiveAtk(selCard.warrior.atk + teamBonus, i, cardMeta);
+      previewText = '예상 ' + eff + '/라운드';
+      previewColor = 'var(--gold)';
+    } else if (w) {
       var card = ALL_CARDS[w.cardId];
-      var rarity = card ? card.rarity : '';
-      av = avatarHTML(w.cardId, rarity);
-      nameLine = '<div class="slot-warrior-line">' + av + '<div><div class="slot-warrior-name">' + w.name + '</div><div class="slot-warrior-stats">HP' + Math.max(0, w.hp) + '/' + w.maxHp + ' · ATK' + w.atk + '</div></div></div>';
+      var teamB = hasFullTeam() ? 1 : 0;
+      var m2 = card ? { backBonus: card.backBonus || 0, ignoreFrontPenalty: !!card.ignoreFrontPenalty } : {};
+      var effective = getEffectiveAtk(w.atk + teamB, i, m2);
+      previewText = effective + '/라운드';
+      previewColor = 'var(--gold)';
     } else {
-      av = '<div class="avatar unknown"></div>';
-      nameLine = '<div class="slot-warrior-line">' + av + '<div class="slot-empty-text">빈 슬롯 · 탭하여 배치</div></div>';
+      var posBonuses = ['공격-20%', '지원 위치', '최후 피격'];
+      previewText = posBonuses[i];
     }
-    slot.innerHTML = '<div class="slot-stripe"></div>' + nameLine + '<div><div class="slot-name">' + posLabels[i] + '</div></div>' + previewHTML;
-    var focusable = isDeploy || isUp || isRm || isRepo;
+    var avatarHTMLStr = w ? avatarHTML(w.cardId, ALL_CARDS[w.cardId] ? ALL_CARDS[w.cardId].rarity : '') : '<div class="avatar unknown"></div>';
+    var stackHTML;
+    if (w) {
+      stackHTML =
+        '<div class="slot-warrior-name">' + w.name + '</div>' +
+        '<div class="slot-warrior-stats">HP' + Math.max(0, w.hp) + '/' + w.maxHp + ' · ATK' + w.atk + '</div>' +
+        '<div class="slot-pos-label">' + posLabels[i] + '</div>';
+    } else {
+      stackHTML =
+        '<div class="slot-warrior-name" style="color:' + (i === 0 ? 'var(--stripe-front)' : i === 1 ? 'var(--stripe-mid)' : 'var(--stripe-back)') + '">' + posLabels[i] + '</div>' +
+        '<div class="slot-empty-text">빈 슬롯 (탭하여 배치)</div>';
+    }
+    slot.innerHTML =
+      '<div class="slot-stripe"></div>' +
+      '<div class="slot-avatar-slot">' + avatarHTMLStr + '</div>' +
+      '<div class="slot-text-stack">' + stackHTML + '</div>' +
+      '<div class="slot-preview-slot" style="color:' + previewColor + '">' + previewText + '</div>';
+    var focusable = isDeploy || isUp || isRm || (s.phase === 'REPOSITION_SELECT' && w && w.hp > 0);
     if (focusable) {
       slot.setAttribute('tabindex', '0');
       slot.setAttribute('role', 'button');
@@ -865,17 +873,14 @@ window.onerror = function (msg, url, line, col, err) {
       slot.removeAttribute('role');
     }
     var aria = posLabels[i] + ' 슬롯, ';
-    if (w) {
-      aria += w.name + ', HP' + Math.max(0, w.hp) + '/' + w.maxHp + ', ATK' + w.atk;
-    } else {
-      aria += '비어있음';
-    }
+    if (w) { aria += w.name + ', HP' + Math.max(0, w.hp) + '/' + w.maxHp + ', ATK' + w.atk; }
+    else { aria += '비어있음'; }
     slot.setAttribute('aria-label', aria);
   }
 
   function renderBattlefield() {
     for (var i = 0; i < SLOT_COUNT; i++) {
-      slotInnerHTML(i);
+      renderSlot(i);
     }
   }
 
@@ -900,17 +905,12 @@ window.onerror = function (msg, url, line, col, err) {
     var s = window.gameState;
     var el = document.createElement('div');
     var cls = 'card rarity-' + card.rarity;
-    if (s.cardsJustDrawn) {
-      cls += ' appear';
-    }
+    if (s.cardsJustDrawn) { cls += ' appear'; }
     var canSelect = s.phase === 'SELECT' && !s.isResolvingCombat;
-    if (idx === s.selectedCardIndex) {
-      cls += ' selected';
-    } else if (s.phase === 'DEPLOY' || s.phase === 'END' || s.shopMode === 'SHOP_UPGRADE_TARGET' || s.shopMode === 'SHOP_REMOVE_TARGET' || s.phase === 'REPOSITION_SELECT' || s.isResolvingCombat) {
+    if (idx === s.selectedCardIndex) { cls += ' selected'; }
+    else if (s.phase === 'DEPLOY' || s.phase === 'END' || s.shopMode === 'SHOP_UPGRADE_TARGET' || s.shopMode === 'SHOP_REMOVE_TARGET' || s.phase === 'REPOSITION_SELECT' || s.isResolvingCombat) {
       cls += ' fade-out';
-    } else if (!canSelect) {
-      cls += ' locked';
-    }
+    } else if (!canSelect) { cls += ' locked'; }
     el.className = cls;
     el.id = 'card-choice-' + idx;
     if (canSelect) {
@@ -923,10 +923,9 @@ window.onerror = function (msg, url, line, col, err) {
     }
     var tagStr = card.tags.join('/');
     el.setAttribute('aria-label', card.name + ' 카드, ' + card.rarity + ', ' + card.desc + (canSelect ? ', 선택 가능' : ', 선택 불가'));
-    var emojiHTML = '<div class="card-emoji" style="display:flex;align-items:center;justify-content:center;font-size:24px">' + card.emoji + '</div>';
     el.innerHTML =
       '<div class="card-banner">' + card.rarity + '</div>' +
-      emojiHTML +
+      '<div class="card-emoji">' + card.emoji + '</div>' +
       '<div class="card-name">' + card.name + '</div>' +
       '<div class="card-tag">' + tagStr + '</div>' +
       '<div class="card-desc">' + card.desc + '</div>';
@@ -952,7 +951,7 @@ window.onerror = function (msg, url, line, col, err) {
       hint = '제거할 전사를 선택하거나 비우기 버튼을 다시 눌러 취소하세요.';
       cls = 'shop';
     } else if (s.phase === 'DRAW') {
-      hint = '카드 뽑기 버튼을 누르세요';
+      hint = hasFullTeam() ? '✅ 3열 완성! 시너지 ATK +1 활성. 카드를 뽑으세요' : '카드 뽑기 버튼을 누르세요';
     } else if (s.phase === 'SELECT') {
       hint = '카드를 선택하거나 턴 넘기기를 누르세요';
     } else if (s.phase === 'DEPLOY') {
@@ -973,20 +972,12 @@ window.onerror = function (msg, url, line, col, err) {
     var inRm = s.shopMode === 'SHOP_REMOVE_TARGET';
     var inAny = inUp || inRm;
     var isDRAW = s.phase === 'DRAW';
-    els.btnShopReroll.disabled = !(isDRAW && !inAny && !s.rerollUsedThisWave && s.gold >= 12 && noCombat);
-    els.btnShopUpgrade.disabled = !(((isDRAW && !inRm && s.gold >= 18 && noCombat) || inUp) && anyW);
-    els.btnShopRepair.disabled = !(isDRAW && !inAny && s.gold >= 10 && s.castleHp < s.castleMaxHp && noCombat);
+    els.btnShopReroll.disabled = !(isDRAW && !inAny && !s.rerollUsedThisWave && s.gold >= 10 && noCombat);
+    els.btnShopUpgrade.disabled = !(((isDRAW && !inRm && s.gold >= 15 && noCombat) || inUp) && anyW);
+    els.btnShopRepair.disabled = !(isDRAW && !inAny && s.gold >= 8 && s.castleHp < s.castleMaxHp && noCombat);
     els.btnShopRemove.disabled = !(((isDRAW && !inUp && s.gold >= 8 && noCombat) || inRm) && anyW);
-    if (inUp) {
-      els.btnShopUpgrade.classList.add('active');
-    } else {
-      els.btnShopUpgrade.classList.remove('active');
-    }
-    if (inRm) {
-      els.btnShopRemove.classList.add('active');
-    } else {
-      els.btnShopRemove.classList.remove('active');
-    }
+    if (inUp) { els.btnShopUpgrade.classList.add('active'); } else { els.btnShopUpgrade.classList.remove('active'); }
+    if (inRm) { els.btnShopRemove.classList.add('active'); } else { els.btnShopRemove.classList.remove('active'); }
   }
 
   function renderButtons() {
@@ -1001,6 +992,7 @@ window.onerror = function (msg, url, line, col, err) {
 
   function render() {
     renderStats();
+    renderWavePreview();
     renderBattlefield();
     renderCards();
     renderStatusHint();
@@ -1010,9 +1002,7 @@ window.onerror = function (msg, url, line, col, err) {
 
   function saveState(force) {
     var s = window.gameState;
-    if (s.isResolvingCombat && !force) {
-      return;
-    }
+    if (s.isResolvingCombat && !force) { return; }
     try {
       var save = {
         phase: s.phase,
@@ -1033,14 +1023,11 @@ window.onerror = function (msg, url, line, col, err) {
         log: s.log.slice(-100)
       };
       localStorage.setItem(SAVE_KEY, JSON.stringify(save));
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   function validateAndNormalize(save) {
-    if (!save || typeof save !== 'object') {
-      return null;
-    }
+    if (!save || typeof save !== 'object') { return null; }
     var out = {};
     var phases = ['DRAW', 'SELECT', 'DEPLOY', 'END'];
     out.phase = phases.indexOf(save.phase) >= 0 ? save.phase : 'DRAW';
@@ -1065,14 +1052,10 @@ window.onerror = function (msg, url, line, col, err) {
 
   function normalizeWarriors(arr) {
     var out = [null, null, null];
-    if (!Array.isArray(arr)) {
-      return out;
-    }
+    if (!Array.isArray(arr)) { return out; }
     for (var i = 0; i < 3; i++) {
       var w = arr[i];
-      if (!w || typeof w !== 'object') {
-        continue;
-      }
+      if (!w || typeof w !== 'object') { continue; }
       var maxHp = Math.floor(Number(w.maxHp));
       var atk = Math.floor(Number(w.atk));
       var hp = Math.floor(Number(w.hp));
@@ -1094,14 +1077,10 @@ window.onerror = function (msg, url, line, col, err) {
 
   function normalizeCards(arr) {
     var out = [];
-    if (!Array.isArray(arr)) {
-      return out;
-    }
+    if (!Array.isArray(arr)) { return out; }
     for (var j = 0; j < arr.length && out.length < 3; j++) {
       var cid = arr[j];
-      if (ALL_CARDS[cid]) {
-        out.push(ALL_CARDS[cid]);
-      }
+      if (ALL_CARDS[cid]) { out.push(ALL_CARDS[cid]); }
     }
     return out;
   }
@@ -1109,9 +1088,7 @@ window.onerror = function (msg, url, line, col, err) {
   function loadState() {
     try {
       var raw = localStorage.getItem(SAVE_KEY);
-      if (!raw) {
-        return false;
-      }
+      if (!raw) { return false; }
       var save = JSON.parse(raw);
       var n = validateAndNormalize(save);
       if (!n) {
@@ -1137,20 +1114,14 @@ window.onerror = function (msg, url, line, col, err) {
       s.shopMode = null;
       s.isResolvingCombat = false;
       s.repositionSlots = [];
-      if (s.isGameOver || s.isVictory) {
-        s.phase = 'END';
-      }
+      if (s.isGameOver || s.isVictory) { s.phase = 'END'; }
       if (s.phase === 'DEPLOY') {
         if (s.selectedCardIndex < 0 || !s.availableCards[s.selectedCardIndex] || s.availableCards[s.selectedCardIndex].type !== 'SUMMON') {
           s.phase = 'SELECT';
         }
       }
-      if (s.phase === 'REPOSITION_SELECT') {
-        s.phase = 'SELECT';
-      }
-      if (s.phase === 'SELECT' && s.availableCards.length === 0) {
-        s.phase = 'DRAW';
-      }
+      if (s.phase === 'REPOSITION_SELECT') { s.phase = 'SELECT'; }
+      if (s.phase === 'SELECT' && s.availableCards.length === 0) { s.phase = 'DRAW'; }
       return { ok: true, log: n.log };
     } catch (e) {
       try { localStorage.removeItem(SAVE_KEY); } catch (ee) {}
@@ -1183,9 +1154,7 @@ window.onerror = function (msg, url, line, col, err) {
         pool.push(c);
       }
     }
-    if (pool.length === 0) {
-      pool.push(ALL_CARDS.SCOUT_SUPPLY);
-    }
+    if (pool.length === 0) { pool.push(ALL_CARDS.SCOUT_SUPPLY); }
     return pool;
   }
 
@@ -1199,22 +1168,14 @@ window.onerror = function (msg, url, line, col, err) {
   }
 
   function drawRandomCard(rv) {
-    if (rv === undefined) {
-      rv = Math.random() * 100;
-    }
+    if (rv === undefined) { rv = Math.random() * 100; }
     var eligible = getEligibleCards();
-    if (eligible.length === 0) {
-      return ALL_CARDS.SCOUT_SUPPLY;
-    }
+    if (eligible.length === 0) { return ALL_CARDS.SCOUT_SUPPLY; }
     var target = (rv >= 92) ? 'LEGEND' : (rv >= 60) ? 'RARE' : 'COMMON';
     var priorities;
-    if (target === 'LEGEND') {
-      priorities = ['LEGEND', 'RARE', 'COMMON'];
-    } else if (target === 'RARE') {
-      priorities = ['RARE', 'COMMON', 'LEGEND'];
-    } else {
-      priorities = ['COMMON', 'RARE', 'LEGEND'];
-    }
+    if (target === 'LEGEND') { priorities = ['LEGEND', 'RARE', 'COMMON']; }
+    else if (target === 'RARE') { priorities = ['RARE', 'COMMON', 'LEGEND']; }
+    else { priorities = ['COMMON', 'RARE', 'LEGEND']; }
     for (var p = 0; p < priorities.length; p++) {
       var cands = eligible.filter(function (c) { return c.rarity === priorities[p]; });
       if (cands.length > 0) {
@@ -1227,9 +1188,7 @@ window.onerror = function (msg, url, line, col, err) {
 
   function drawThreeCards() {
     var c = [];
-    for (var i = 0; i < 3; i++) {
-      c.push(drawRandomCard());
-    }
+    for (var i = 0; i < 3; i++) { c.push(drawRandomCard()); }
     return c;
   }
 
@@ -1237,15 +1196,9 @@ window.onerror = function (msg, url, line, col, err) {
     var meta = [];
     for (var i = 0; i < SLOT_COUNT; i++) {
       var w = window.gameState.warriors[i];
-      if (!w) {
-        meta.push(null);
-        continue;
-      }
+      if (!w) { meta.push(null); continue; }
       var card = ALL_CARDS[w.cardId];
-      if (!card) {
-        meta.push(null);
-        continue;
-      }
+      if (!card) { meta.push(null); continue; }
       meta.push({
         cardId: card.id,
         backBonus: card.backBonus || 0,
@@ -1268,14 +1221,9 @@ window.onerror = function (msg, url, line, col, err) {
       ctx.events.push({ kind: 'round', round: r });
       applyArchmageAoe(ctx);
       applyAllWarriorAttacks(ctx);
-      if (checkAllEnemiesDead(ctx)) {
-        ctx.perfect = true;
-        break;
-      }
+      if (checkAllEnemiesDead(ctx)) { ctx.perfect = true; break; }
       applyAllEnemyAttacks(ctx);
-      if (ctx.castleHp <= 0) {
-        break;
-      }
+      if (ctx.castleHp <= 0) { break; }
       applyAllSupports(ctx);
     }
     finalizeCombat(ctx);
@@ -1307,7 +1255,8 @@ window.onerror = function (msg, url, line, col, err) {
       breakthroughDamage: 0,
       castleDamageTaken: 0,
       bardStack: 0,
-      paladinUsed: false
+      paladinUsed: false,
+      teamFull: snapshot.warriors.filter(function (w) { return w && w.hp > 0; }).length === SLOT_COUNT
     };
     for (var i = 0; i < SLOT_COUNT; i++) {
       if (ctx.warriors[i] && ctx.warriors[i].hp > 0 && ctx.meta[i] && ctx.meta[i].battleStartCastleHeal) {
@@ -1325,34 +1274,24 @@ window.onerror = function (msg, url, line, col, err) {
         break;
       }
     }
-    if (alive < 0) {
-      return;
-    }
+    if (alive < 0) { return; }
     for (var e = 0; e < ctx.enemies.length; e++) {
-      if (ctx.enemies[e].hp <= 0) {
-        continue;
-      }
+      if (ctx.enemies[e].hp <= 0) { continue; }
       ctx.enemies[e].hp -= 3;
-      if (ctx.enemies[e].hp < 0) {
-        ctx.enemies[e].hp = 0;
-      }
+      if (ctx.enemies[e].hp < 0) { ctx.enemies[e].hp = 0; }
       ctx.events.push({ kind: 'warriorAttack', slot: alive, enemyId: ctx.enemies[e].id, enemyType: ctx.enemies[e].type, dmg: 3, enemyHpAfter: ctx.enemies[e].hp, enemyMaxHp: ctx.enemies[e].maxHp, special: 'ARCHMAGE_AOE' });
       if (ctx.enemies[e].hp <= 0) {
         ctx.events.push({ kind: 'enemyKilled', enemyId: ctx.enemies[e].id, enemyType: ctx.enemies[e].type });
-        if (ctx.killedEnemyIds.indexOf(ctx.enemies[e].id) < 0) {
-          ctx.killedEnemyIds.push(ctx.enemies[e].id);
-        }
+        if (ctx.killedEnemyIds.indexOf(ctx.enemies[e].id) < 0) { ctx.killedEnemyIds.push(ctx.enemies[e].id); }
       }
     }
   }
 
   function applyAllWarriorAttacks(ctx) {
     for (var slot = 2; slot >= 0; slot--) {
-      if (!ctx.warriors[slot] || ctx.warriors[slot].hp <= 0) {
-        continue;
-      }
+      if (!ctx.warriors[slot] || ctx.warriors[slot].hp <= 0) { continue; }
       var m = ctx.meta[slot] || {};
-      var baseAtk = ctx.warriors[slot].atk + ctx.bardStack;
+      var baseAtk = ctx.warriors[slot].atk + ctx.bardStack + (ctx.teamFull ? 1 : 0);
       var eff = getEffectiveAtk(baseAtk, slot, m);
       if (m.multiTarget && m.multiTarget >= 2) {
         applyMultiTargetAttack(ctx, slot, eff, m.multiTarget);
@@ -1366,21 +1305,15 @@ window.onerror = function (msg, url, line, col, err) {
     var remaining = eff;
     while (remaining > 0) {
       var target = pickTarget(ctx.enemies, isSniper);
-      if (!target) {
-        break;
-      }
+      if (!target) { break; }
       var app = Math.min(remaining, target.hp);
       var over = remaining - app;
       target.hp -= app;
-      if (target.hp < 0) {
-        target.hp = 0;
-      }
+      if (target.hp < 0) { target.hp = 0; }
       ctx.events.push({ kind: 'warriorAttack', slot: slot, enemyId: target.id, enemyType: target.type, dmg: app, enemyHpAfter: target.hp, enemyMaxHp: target.maxHp });
       if (target.hp <= 0) {
         ctx.events.push({ kind: 'enemyKilled', enemyId: target.id, enemyType: target.type });
-        if (ctx.killedEnemyIds.indexOf(target.id) < 0) {
-          ctx.killedEnemyIds.push(target.id);
-        }
+        if (ctx.killedEnemyIds.indexOf(target.id) < 0) { ctx.killedEnemyIds.push(target.id); }
       }
       remaining = over > 0 ? over : 0;
     }
@@ -1392,20 +1325,14 @@ window.onerror = function (msg, url, line, col, err) {
     while (hits < count && i < ctx.enemies.length) {
       var t = ctx.enemies[i];
       i++;
-      if (t.hp <= 0) {
-        continue;
-      }
+      if (t.hp <= 0) { continue; }
       var app = Math.min(eff, t.hp);
       t.hp -= app;
-      if (t.hp < 0) {
-        t.hp = 0;
-      }
+      if (t.hp < 0) { t.hp = 0; }
       ctx.events.push({ kind: 'warriorAttack', slot: slot, enemyId: t.id, enemyType: t.type, dmg: app, enemyHpAfter: t.hp, enemyMaxHp: t.maxHp });
       if (t.hp <= 0) {
         ctx.events.push({ kind: 'enemyKilled', enemyId: t.id, enemyType: t.type });
-        if (ctx.killedEnemyIds.indexOf(t.id) < 0) {
-          ctx.killedEnemyIds.push(t.id);
-        }
+        if (ctx.killedEnemyIds.indexOf(t.id) < 0) { ctx.killedEnemyIds.push(t.id); }
       }
       hits++;
     }
@@ -1423,10 +1350,7 @@ window.onerror = function (msg, url, line, col, err) {
       }
     } else {
       for (var j = 0; j < enemies.length; j++) {
-        if (enemies[j].hp > 0) {
-          best = enemies[j];
-          break;
-        }
+        if (enemies[j].hp > 0) { best = enemies[j]; break; }
       }
     }
     return best;
@@ -1434,9 +1358,7 @@ window.onerror = function (msg, url, line, col, err) {
 
   function checkAllEnemiesDead(ctx) {
     for (var i = 0; i < ctx.enemies.length; i++) {
-      if (ctx.enemies[i].hp > 0) {
-        return false;
-      }
+      if (ctx.enemies[i].hp > 0) { return false; }
     }
     return true;
   }
@@ -1444,40 +1366,34 @@ window.onerror = function (msg, url, line, col, err) {
   function applyAllEnemyAttacks(ctx) {
     for (var e = 0; e < ctx.enemies.length; e++) {
       var en = ctx.enemies[e];
-      if (en.hp <= 0) {
-        continue;
-      }
+      if (en.hp <= 0) { continue; }
       var tSlot = -1;
       for (var s = 0; s < SLOT_COUNT; s++) {
-        if (ctx.warriors[s] && ctx.warriors[s].hp > 0) {
-          tSlot = s;
-          break;
-        }
+        if (ctx.warriors[s] && ctx.warriors[s].hp > 0) { tSlot = s; break; }
       }
-      if (tSlot < 0) {
-        applyCastleDamageFromEnemy(ctx, en);
-      } else {
-        applyWarriorDamageFromEnemy(ctx, tSlot, en);
-      }
-      if (ctx.castleHp <= 0) {
-        return;
-      }
+      if (tSlot < 0) { applyCastleDamageFromEnemy(ctx, en); }
+      else { applyWarriorDamageFromEnemy(ctx, tSlot, en); }
+      if (ctx.castleHp <= 0) { return; }
     }
   }
 
   function applyCastleDamageFromEnemy(ctx, en) {
     var dmg = en.atk;
-    if (ctx.meta.some(function (m, i) { return m && m.paladin; }) && !ctx.paladinUsed) {
-      var anyDead = ctx.warriors.some(function (w, i) { return !w || w.hp <= 0; });
-      if (anyDead || true) {
-        ctx.paladinUsed = true;
-        dmg = Math.ceil(dmg / 2);
-        ctx.events.push({ kind: 'paladinGuard', source: 'castle' });
-      }
+    if (hasPaladinAlive(ctx) && !ctx.paladinUsed) {
+      ctx.paladinUsed = true;
+      dmg = Math.ceil(dmg / 2);
+      ctx.events.push({ kind: 'paladinGuard', source: 'castle' });
     }
     ctx.castleHp = Math.max(0, ctx.castleHp - dmg);
     ctx.castleDamageTaken += dmg;
     ctx.events.push({ kind: 'enemyAttackCastle', enemyId: en.id, dmg: dmg, castleHpAfter: ctx.castleHp });
+  }
+
+  function hasPaladinAlive(ctx) {
+    for (var i = 0; i < SLOT_COUNT; i++) {
+      if (ctx.meta[i] && ctx.meta[i].paladin) { return true; }
+    }
+    return false;
   }
 
   function applyWarriorDamageFromEnemy(ctx, tSlot, en) {
@@ -1505,13 +1421,9 @@ window.onerror = function (msg, url, line, col, err) {
 
   function applyAllSupports(ctx) {
     for (var i = 0; i < SLOT_COUNT; i++) {
-      if (!ctx.warriors[i] || ctx.warriors[i].hp <= 0) {
-        continue;
-      }
+      if (!ctx.warriors[i] || ctx.warriors[i].hp <= 0) { continue; }
       var m = ctx.meta[i] || {};
-      if (m.support === 'MONK') {
-        applyMonkSupport(ctx, i);
-      }
+      if (m.support === 'MONK') { applyMonkSupport(ctx, i); }
       if (m.support === 'BARD') {
         ctx.bardStack += 1;
         ctx.events.push({ kind: 'supportBuff', stack: ctx.bardStack });
@@ -1521,9 +1433,7 @@ window.onerror = function (msg, url, line, col, err) {
 
   function applyMonkSupport(ctx, slot) {
     var f = ctx.warriors[0];
-    if (!f || f.hp <= 0) {
-      return;
-    }
+    if (!f || f.hp <= 0) { return; }
     var before = f.hp;
     f.hp = Math.min(f.maxHp, f.hp + 3);
     var gained = f.hp - before;
@@ -1533,23 +1443,15 @@ window.onerror = function (msg, url, line, col, err) {
   }
 
   function finalizeCombat(ctx) {
-    if (ctx.castleHp <= 0) {
-      return;
-    }
+    if (ctx.castleHp <= 0) { return; }
     var remaining = [];
     for (var i = 0; i < ctx.enemies.length; i++) {
-      if (ctx.enemies[i].hp > 0) {
-        remaining.push(ctx.enemies[i]);
-      }
+      if (ctx.enemies[i].hp > 0) { remaining.push(ctx.enemies[i]); }
     }
-    if (ctx.perfect || remaining.length === 0) {
-      return;
-    }
+    if (ctx.perfect || remaining.length === 0) { return; }
     var total = 0;
-    for (var j = 0; j < remaining.length; j++) {
-      total += remaining[j].atk;
-    }
-    if (ctx.meta.some(function (m) { return m && m.paladin; }) && !ctx.paladinUsed) {
+    for (var j = 0; j < remaining.length; j++) { total += remaining[j].atk; }
+    if (hasPaladinAlive(ctx) && !ctx.paladinUsed) {
       ctx.paladinUsed = true;
       total = Math.ceil(total / 2);
       ctx.events.push({ kind: 'paladinGuard', source: 'breakthrough' });
@@ -1563,12 +1465,8 @@ window.onerror = function (msg, url, line, col, err) {
   function computeReward(def, perfect, resultCastleHp, prevCombo) {
     var clutch = resultCastleHp > 0 && resultCastleHp <= 8;
     var base = def.gold;
-    if (perfect) {
-      base += 6;
-    }
-    if (clutch) {
-      base *= 2;
-    }
+    if (perfect) { base += 6; }
+    if (clutch) { base *= 2; }
     var comboBonus = Math.min(24, prevCombo * 3);
     return { base: base, comboBonus: comboBonus, totalGold: base + comboBonus, perfect: perfect, clutch: clutch };
   }
@@ -1595,17 +1493,13 @@ window.onerror = function (msg, url, line, col, err) {
     } else {
       s.combo = 0;
     }
-    if (s.combo > s.maxCombo) {
-      s.maxCombo = s.combo;
-    }
+    if (s.combo > s.maxCombo) { s.maxCombo = s.combo; }
     s.rerollUsedThisWave = false;
     s.shopMode = null;
     s.repositionSlots = [];
     var clearedWave = preSnapshot.wave;
     s.wave += 1;
-    if (clearedWave > s.maxWaveReached) {
-      s.maxWaveReached = clearedWave;
-    }
+    if (clearedWave > s.maxWaveReached) { s.maxWaveReached = clearedWave; }
     var outcome = 'CONTINUE';
     if (s.castleHp <= 0) {
       s.isGameOver = true;
@@ -1614,6 +1508,7 @@ window.onerror = function (msg, url, line, col, err) {
     } else if (s.wave > s.maxWave && !s.isEndless) {
       s.isVictory = true;
       s.phase = 'END';
+      s.gold += 20;
       outcome = 'VICTORY';
     } else {
       s.phase = 'DRAW';
@@ -1627,11 +1522,7 @@ window.onerror = function (msg, url, line, col, err) {
   function playCombat(events, onComplete) {
     var myToken = ++playToken;
     var reduced = false;
-    try {
-      reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch (e) {
-      reduced = false;
-    }
+    try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { reduced = false; }
     var interval = reduced ? 0 : 180;
     var state = { i: 0, interval: interval, finished: false, myToken: myToken, events: events, onComplete: onComplete };
     var handlers = makeCombatHandlers(state);
@@ -1643,11 +1534,7 @@ window.onerror = function (msg, url, line, col, err) {
 
   function makeCombatHandlers(state) {
     var handlers = {};
-    handlers.onFF = function () {
-      if (!state.finished) {
-        state.interval = 20;
-      }
-    };
+    handlers.onFF = function () { if (!state.finished) { state.interval = 20; } };
     handlers.ffKey = function (e) {
       if ((e.key === ' ' || e.code === 'Space') && !state.finished) {
         e.preventDefault();
@@ -1663,10 +1550,7 @@ window.onerror = function (msg, url, line, col, err) {
   }
 
   function stepCombat(state, handlers) {
-    if (state.myToken !== playToken) {
-      handlers.cleanup();
-      return;
-    }
+    if (state.myToken !== playToken) { handlers.cleanup(); return; }
     if (state.i >= state.events.length) {
       state.finished = true;
       handlers.cleanup();
@@ -1691,24 +1575,17 @@ window.onerror = function (msg, url, line, col, err) {
     else if (ev.kind === 'paladinGuard') { applyPaladinGuardEvent(ev); }
   }
 
-  function applyRoundEvent(ev) {
-    log('[라운드 ' + ev.round + ']', 'round');
-  }
+  function applyRoundEvent(ev) { log('[라운드 ' + ev.round + ']', 'round'); }
 
   function applyWarriorAttackEvent(ev) {
     var w = ev.slot !== undefined ? window.gameState.warriors[ev.slot] : null;
     var wn = w ? w.name : '전사';
-    if (ev.special === 'ARCHMAGE_AOE') {
-      wn = '대마법사';
-    }
+    if (ev.special === 'ARCHMAGE_AOE') { wn = '대마법사'; }
     var extra = ev.special === 'ARCHMAGE_AOE' ? ' [광역]' : '';
     log('[전투] ' + wn + ' → 적 ' + ev.enemyId + '(' + ev.enemyType + ') ' + ev.dmg + ' 피해' + extra + ' (HP ' + ev.enemyHpAfter + '/' + ev.enemyMaxHp + ')', 'combat');
     if (ev.slot !== undefined) {
       var se = slotEls[ev.slot];
-      if (se) {
-        se.classList.add('hit-anim');
-        setTimeout(function () { se.classList.remove('hit-anim'); }, 200);
-      }
+      if (se) { se.classList.add('hit-anim'); setTimeout(function () { se.classList.remove('hit-anim'); }, 200); }
     }
     updateEnemyToken(ev.enemyId, ev.enemyHpAfter, ev.enemyMaxHp);
     playHit();
@@ -1727,9 +1604,7 @@ window.onerror = function (msg, url, line, col, err) {
       se.classList.add('damage-anim');
       setTimeout(function () { se.classList.remove('damage-anim'); }, 320);
       var statsEl = se.querySelector('.slot-warrior-stats');
-      if (statsEl) {
-        statsEl.textContent = 'HP' + ev.warriorHpAfter + '/' + ev.warriorMaxHp + ' · ATK' + ev.warriorAtk;
-      }
+      if (statsEl) { statsEl.textContent = 'HP' + ev.warriorHpAfter + '/' + ev.warriorMaxHp + ' · ATK' + ev.warriorAtk; }
     }
     playHit();
   }
@@ -1737,23 +1612,15 @@ window.onerror = function (msg, url, line, col, err) {
   function applyWarriorDiedEvent(ev) {
     log('[전사자] ' + ev.name + '이(가) 전사했습니다.', 'danger');
     var slot = slotEls[ev.slot];
-    if (!slot) {
-      return;
-    }
+    if (!slot) { return; }
     slot.classList.add('death-anim');
     var deathToken = playToken;
     setTimeout(function () {
-      if (deathToken !== playToken) {
-        return;
-      }
+      if (deathToken !== playToken) { return; }
       var el = slotEls[ev.slot];
-      if (el) {
-        el.classList.remove('death-anim');
-      }
+      if (el) { el.classList.remove('death-anim'); }
       var s = window.gameState;
-      if (s.warriors[ev.slot]) {
-        s.warriors[ev.slot] = null;
-      }
+      if (s.warriors[ev.slot]) { s.warriors[ev.slot] = null; }
     }, 450);
   }
 
@@ -1772,17 +1639,9 @@ window.onerror = function (msg, url, line, col, err) {
     els.statCastleHp.textContent = String(Math.max(0, ev.castleHpAfter));
   }
 
-  function applySupportHealEvent(ev) {
-    log('[지원] 전열 HP +' + ev.amount + ' 회복', 'highlight');
-  }
-
-  function applySupportBuffEvent(ev) {
-    log('[지원] 아군 전체 ATK +1 (중첩 ' + ev.stack + ')', 'highlight');
-  }
-
-  function applyPaladinGuardEvent(ev) {
-    log('[지원] 성기사의 가호로 성 피해 절반 감소', 'highlight');
-  }
+  function applySupportHealEvent(ev) { log('[지원] 전열 HP +' + ev.amount + ' 회복', 'highlight'); }
+  function applySupportBuffEvent(ev) { log('[지원] 아군 전체 ATK +1 (중첩 ' + ev.stack + ')', 'highlight'); }
+  function applyPaladinGuardEvent(ev) { log('[지원] 성기사의 가호로 성 피해 절반 감소', 'highlight'); }
 
   function showEnemyLane(enemies) {
     els.enemyLane.innerHTML = '<span class="lane-label">적 진영</span>';
@@ -1798,77 +1657,47 @@ window.onerror = function (msg, url, line, col, err) {
     }
   }
 
-  function clearEnemyLane() {
-    els.enemyLane.innerHTML = '<span class="lane-label">적 진영</span>';
-  }
+  function clearEnemyLane() { els.enemyLane.innerHTML = '<span class="lane-label">적 진영</span>'; }
 
   function updateEnemyToken(id, hpAfter, maxHp) {
     var t = els.enemyLane.querySelector('[data-enemy-id="' + id + '"]');
-    if (!t) {
-      return;
-    }
+    if (!t) { return; }
     var f = t.querySelector('.enemy-hp-fill');
-    if (f) {
-      f.style.width = Math.max(0, hpAfter / maxHp * 100) + '%';
-    }
+    if (f) { f.style.width = Math.max(0, hpAfter / maxHp * 100) + '%'; }
     var ht = t.querySelector('.enemy-hp-text');
-    if (ht) {
-      ht.textContent = hpAfter + '/' + maxHp;
-    }
+    if (ht) { ht.textContent = hpAfter + '/' + maxHp; }
     t.classList.add('damaged');
     setTimeout(function () { t.classList.remove('damaged'); }, 260);
   }
 
   function markEnemyDead(id) {
     var t = els.enemyLane.querySelector('[data-enemy-id="' + id + '"]');
-    if (t) {
-      t.classList.add('dead');
-    }
+    if (t) { t.classList.add('dead'); }
   }
 
   function reducedMotion() {
-    try {
-      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch (e) {
-      return false;
-    }
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
   }
 
   function resolveWave() {
     var s = window.gameState;
-    if (s.isResolvingCombat) {
-      return;
-    }
-    if (s.isGameOver || s.isVictory) {
-      s.phase = 'END';
-      render();
-      return;
-    }
+    if (s.isResolvingCombat) { return; }
+    if (s.isGameOver || s.isVictory) { s.phase = 'END'; render(); return; }
     var def = getWaveDef(s.wave);
-    if (!def) {
-      s.phase = 'END';
-      render();
-      return;
-    }
+    if (!def) { s.phase = 'END'; render(); return; }
     s.isResolvingCombat = true;
     var expectedToken = playToken + 1;
     var commit = commitWave();
     renderViewFromSnapshot(commit.preSnapshot);
     render();
-    showEnemyLane(commit.def.enemies.map(function (e, i) {
-      return { id: i + 1, type: e.type, hp: e.hp };
-    }));
+    showEnemyLane(commit.def.enemies.map(function (e, i) { return { id: i + 1, type: e.type, hp: e.hp }; }));
     log('[전투] 웨이브 ' + commit.clearedWave + ' 시작. 아군 ' + aliveWarriorCount() + '명 vs 적 ' + commit.def.enemies.length + '마리');
     playCombat(commit.result.events, function () { onCombatComplete(commit, expectedToken); });
   }
 
   function onCombatComplete(commit, expectedToken) {
-    if (playToken !== expectedToken) {
-      return;
-    }
-    if (!window.gameState.isResolvingCombat) {
-      return;
-    }
+    if (playToken !== expectedToken) { return; }
+    if (!window.gameState.isResolvingCombat) { return; }
     var r = commit.reward;
     logWaveResult(commit, r);
     handleComboBadge();
@@ -1894,18 +1723,14 @@ window.onerror = function (msg, url, line, col, err) {
       els.comboBadge.textContent = 'COMBO ×' + window.gameState.combo;
       els.comboBadge.classList.add('show');
       clearTimeout(els.comboBadge._timer);
-      els.comboBadge._timer = setTimeout(function () {
-        els.comboBadge.classList.remove('show');
-      }, 3000);
+      els.comboBadge._timer = setTimeout(function () { els.comboBadge.classList.remove('show'); }, 3000);
     } else {
       els.comboBadge.classList.remove('show');
     }
   }
 
   function finishCombatPhase(commit, expectedToken) {
-    if (playToken !== expectedToken) {
-      return;
-    }
+    if (playToken !== expectedToken) { return; }
     clearEnemyLane();
     window.gameState.isResolvingCombat = false;
     if (commit.outcome === 'GAME_OVER') {
@@ -1913,7 +1738,7 @@ window.onerror = function (msg, url, line, col, err) {
       playDefeat();
       showResult(false);
     } else if (commit.outcome === 'VICTORY') {
-      log('[승리] 모든 웨이브 클리어! 점수: ' + calculateScore(), 'highlight');
+      log('[승리] 모든 웨이브 클리어! (+20 보너스 골드) 점수: ' + calculateScore(), 'highlight');
       playVictory();
       showResult(true);
     } else {
@@ -1927,30 +1752,24 @@ window.onerror = function (msg, url, line, col, err) {
     for (var i = 0; i < SLOT_COUNT; i++) {
       var slot = slotEls[i];
       var w = snap.warriors[i];
+      var stripes = ['slot-front', 'slot-mid', 'slot-back'];
       var posLabels = ['전열 · 피해-30%', '중열 · 보정 없음', '후열 · 공격+30%'];
       var posBonuses = ['공격-20%', '지원 위치', '최후 피격'];
-      var stripes = ['slot-front', 'slot-mid', 'slot-back'];
       var cls = 'slot ' + stripes[i];
-      if (!w) {
-        cls += ' empty';
-      }
+      if (!w) { cls += ' empty'; }
       slot.className = cls;
-      var inner;
+      var avatarStr = w ? avatarHTML(w.cardId, ALL_CARDS[w.cardId] ? ALL_CARDS[w.cardId].rarity : '') : '<div class="avatar unknown"></div>';
+      var stackHTML;
       if (w) {
-        inner = '<div class="slot-stripe"></div>' +
-          '<div class="slot-warrior-line">' + avatarHTML(w.cardId) +
-          '<div><div class="slot-warrior-name">' + w.name + '</div>' +
-          '<div class="slot-warrior-stats">HP' + Math.max(0, w.hp) + '/' + w.maxHp + ' · ATK' + w.atk + '</div></div></div>' +
-          '<div><div class="slot-name">' + posLabels[i] + '</div></div>' +
-          '<div class="slot-bonus">' + posBonuses[i] + '</div>';
+        stackHTML = '<div class="slot-warrior-name">' + w.name + '</div><div class="slot-warrior-stats">HP' + Math.max(0, w.hp) + '/' + w.maxHp + ' · ATK' + w.atk + '</div><div class="slot-pos-label">' + posLabels[i] + '</div>';
       } else {
-        inner = '<div class="slot-stripe"></div>' +
-          '<div class="slot-warrior-line">' + avatarHTML(null) +
-          '<div class="slot-empty-text">빈 슬롯</div></div>' +
-          '<div><div class="slot-name">' + posLabels[i] + '</div></div>' +
-          '<div class="slot-bonus">' + posBonuses[i] + '</div>';
+        stackHTML = '<div class="slot-warrior-name">' + posLabels[i] + '</div><div class="slot-empty-text">빈 슬롯</div>';
       }
-      slot.innerHTML = inner;
+      slot.innerHTML =
+        '<div class="slot-stripe"></div>' +
+        '<div class="slot-avatar-slot">' + avatarStr + '</div>' +
+        '<div class="slot-text-stack">' + stackHTML + '</div>' +
+        '<div class="slot-preview-slot" style="color:var(--neutral)">' + posBonuses[i] + '</div>';
     }
     els.statWave.textContent = String(Math.min(snap.wave, window.gameState.maxWave));
     els.statGold.textContent = String(snap.gold);
@@ -1962,11 +1781,7 @@ window.onerror = function (msg, url, line, col, err) {
   function calculateScore() {
     var s = window.gameState;
     var wa = 0;
-    for (var i = 0; i < s.warriors.length; i++) {
-      if (s.warriors[i]) {
-        wa++;
-      }
-    }
+    for (var i = 0; i < s.warriors.length; i++) { if (s.warriors[i]) { wa++; } }
     var cleared = s.maxWaveReached - 1;
     return cleared * 100 + s.castleHp * 3 + wa * 30 + s.maxCombo * 20 + s.gold * 2;
   }
@@ -1975,9 +1790,7 @@ window.onerror = function (msg, url, line, col, err) {
     ensureAudio();
     playClick();
     var s = window.gameState;
-    if (s.isResolvingCombat || s.phase !== 'DRAW' || s.shopMode) {
-      return;
-    }
+    if (s.isResolvingCombat || s.phase !== 'DRAW' || s.shopMode) { return; }
     s.availableCards = drawThreeCards();
     s.selectedCardIndex = -1;
     s.phase = 'SELECT';
@@ -1993,11 +1806,7 @@ window.onerror = function (msg, url, line, col, err) {
     }
     log('[뽑기] 카드 3장: ' + names.join(', '));
     playGacha(hasRare || hasLegend);
-    if (hasLegend) {
-      playLegend();
-      flash('legend');
-      log('[뽑기] 전설 카드 등장!', 'highlight');
-    }
+    if (hasLegend) { playLegend(); flash('legend'); log('[뽑기] 전설 카드 등장!', 'highlight'); }
     saveState();
     render();
   }
@@ -2015,12 +1824,9 @@ window.onerror = function (msg, url, line, col, err) {
     s.selectedCardIndex = idx;
     log('[선택] ' + card.name + ' — ' + card.desc);
     var el = document.getElementById('card-choice-' + idx);
-    burstParticles(el, card.rarity === 'RARE' ? 'var(--gold)' : (card.rarity === 'LEGEND' ? 'var(--gold)' : 'var(--neutral)'), 8);
-    if (card.type === 'SUMMON') {
-      onSummonCardSelected(card, s);
-    } else {
-      onInstantCardSelected(card, s);
-    }
+    burstParticles(el, 'var(--gold)', 8);
+    if (card.type === 'SUMMON') { onSummonCardSelected(card, s); }
+    else { onInstantCardSelected(card, s); }
   }
 
   function onSummonCardSelected(card, s) {
@@ -2071,15 +1877,10 @@ window.onerror = function (msg, url, line, col, err) {
   function applyAtkBoost(s) {
     var cnt = 0;
     for (var i = 0; i < s.warriors.length; i++) {
-      if (s.warriors[i] && s.warriors[i].hp > 0) {
-        s.warriors[i].atk += 2;
-        cnt++;
-      }
+      if (s.warriors[i] && s.warriors[i].hp > 0) { s.warriors[i].atk += 2; cnt++; }
     }
     log('[선택] 모든 전사 ATK +2 (대상 ' + cnt + '명)');
-    if (cnt > 0) {
-      popDamage('+2 ATK', 'gold');
-    }
+    if (cnt > 0) { popDamage('+2 ATK', 'gold'); }
   }
 
   function applyFrontWall(s) {
@@ -2088,9 +1889,7 @@ window.onerror = function (msg, url, line, col, err) {
       s.warriors[0].maxHp += 10;
       log('[선택] 전열 ' + s.warriors[0].name + ' HP +10');
       popDamage('+10 HP', 'green', slotEls[0]);
-    } else {
-      log('[선택] 전열 전사 없음', 'danger');
-    }
+    } else { log('[선택] 전열 전사 없음', 'danger'); }
   }
 
   function applyBackFocus(s) {
@@ -2098,9 +1897,7 @@ window.onerror = function (msg, url, line, col, err) {
       s.warriors[2].atk += 4;
       log('[선택] 후열 ' + s.warriors[2].name + ' ATK +4');
       popDamage('+4 ATK', 'gold', slotEls[2]);
-    } else {
-      log('[선택] 후열 전사 없음', 'danger');
-    }
+    } else { log('[선택] 후열 전사 없음', 'danger'); }
   }
 
   function applyHeal(s) {
@@ -2111,9 +1908,7 @@ window.onerror = function (msg, url, line, col, err) {
     if (overflow > 0) {
       s.gold += overflow * 2;
       log('[선택] 성 HP +' + gained + ' · 초과분 ' + overflow + ' → 골드 +' + (overflow * 2));
-    } else {
-      log('[선택] 성 HP +' + gained);
-    }
+    } else { log('[선택] 성 HP +' + gained); }
     popDamage('+' + gained + ' HP', 'green');
   }
 
@@ -2221,14 +2016,14 @@ window.onerror = function (msg, url, line, col, err) {
     playClick();
     var s = window.gameState;
     if (s.isResolvingCombat || s.phase !== 'DRAW') { return; }
-    if (s.rerollUsedThisWave || s.gold < 12) { return; }
-    s.gold -= 12;
+    if (s.rerollUsedThisWave || s.gold < 10) { return; }
+    s.gold -= 10;
     s.rerollUsedThisWave = true;
     s.availableCards = drawThreeCards();
     s.selectedCardIndex = -1;
     s.cardsJustDrawn = true;
     s.phase = 'SELECT';
-    log('[상점] 카드 재뽑기 (12G). 골드: ' + s.gold);
+    log('[상점] 카드 재뽑기 (10G). 골드: ' + s.gold);
     saveState();
     render();
   }
@@ -2247,9 +2042,9 @@ window.onerror = function (msg, url, line, col, err) {
       render();
       return;
     }
-    if (s.phase !== 'DRAW' || s.gold < 18) { return; }
+    if (s.phase !== 'DRAW' || s.gold < 15) { return; }
     s.shopMode = 'SHOP_UPGRADE_TARGET';
-    log('[상점] 강화할 전사를 선택하세요. (18G)');
+    log('[상점] 강화할 전사를 선택하세요. (15G)');
     saveState();
     render();
   }
@@ -2259,12 +2054,12 @@ window.onerror = function (msg, url, line, col, err) {
     playClick();
     var s = window.gameState;
     if (s.isResolvingCombat || s.phase !== 'DRAW' || s.shopMode) { return; }
-    if (s.gold < 10 || s.castleHp >= s.castleMaxHp) { return; }
-    s.gold -= 10;
+    if (s.gold < 8 || s.castleHp >= s.castleMaxHp) { return; }
+    s.gold -= 8;
     var before = s.castleHp;
     s.castleHp = Math.min(s.castleMaxHp, s.castleHp + 6);
     var gained = s.castleHp - before;
-    log('[상점] 성벽 보수 (10G). 성 HP +' + gained);
+    log('[상점] 성벽 보수 (8G). 성 HP +' + gained);
     popDamage('+' + gained + ' HP', 'green', document.querySelector('.castle-panel'));
     saveState();
     render();
@@ -2295,14 +2090,14 @@ window.onerror = function (msg, url, line, col, err) {
     var s = window.gameState;
     if (s.isResolvingCombat || s.shopMode !== 'SHOP_UPGRADE_TARGET') { return; }
     if (!s.warriors[slotIdx] || s.warriors[slotIdx].hp <= 0) { return; }
-    if (s.gold < 18) { return; }
+    if (s.gold < 15) { return; }
     ensureAudio();
     playClick();
-    s.gold -= 18;
+    s.gold -= 15;
     s.warriors[slotIdx].atk += 2;
     s.warriors[slotIdx].hp += 8;
     s.warriors[slotIdx].maxHp += 8;
-    log('[상점] ' + s.warriors[slotIdx].name + ' 강화 (ATK+2, HP+8, 18G)');
+    log('[상점] ' + s.warriors[slotIdx].name + ' 강화 (ATK+2, HP+8, 15G)');
     burstParticles(slotEls[slotIdx], 'var(--gold)', 8);
     popDamage('+2 ATK', 'gold', slotEls[slotIdx]);
     s.shopMode = null;
@@ -2350,9 +2145,7 @@ window.onerror = function (msg, url, line, col, err) {
     if (els.helpOverlay.classList.contains('show')) { return; }
     els.helpOverlay.classList.add('show');
     document.addEventListener('keydown', helpTrap);
-    setTimeout(function () {
-      try { els.btnHelpClose.focus(); } catch (e) {}
-    }, 80);
+    setTimeout(function () { try { els.btnHelpClose.focus(); } catch (e) {} }, 80);
   }
 
   function closeHelp() {
@@ -2372,18 +2165,13 @@ window.onerror = function (msg, url, line, col, err) {
     } else {
       els.resultBox.className = 'modal-box defeat';
       els.resultTitle.textContent = '💀 DEFEAT 💀';
-      if (s.isEndless) {
-        els.resultWave.textContent = '최고 도달 웨이브: ' + (s.wave - 1);
-      } else {
-        els.resultWave.textContent = '도달 웨이브: ' + (s.wave - 1) + ' / ' + s.maxWave;
-      }
+      if (s.isEndless) { els.resultWave.textContent = '최고 도달 웨이브: ' + (s.wave - 1); }
+      else { els.resultWave.textContent = '도달 웨이브: ' + (s.wave - 1) + ' / ' + s.maxWave; }
       els.btnContinue.style.display = 'none';
     }
     els.resultScore.textContent = String(calculateScore());
     var wa = 0;
-    for (var i = 0; i < s.warriors.length; i++) {
-      if (s.warriors[i]) { wa++; }
-    }
+    for (var i = 0; i < s.warriors.length; i++) { if (s.warriors[i]) { wa++; } }
     els.resultDetail.textContent = '클리어 ' + Math.max(0, s.maxWaveReached - 1) + ' · 골드 ' + s.gold + ' · 성 HP ' + Math.max(0, s.castleHp) + ' · 최대 콤보 ' + s.maxCombo + ' · 생존 ' + wa;
     els.resultOverlay.classList.add('show');
     previousFocus = document.activeElement;
@@ -2397,9 +2185,7 @@ window.onerror = function (msg, url, line, col, err) {
   function hideResult() {
     els.resultOverlay.classList.remove('show');
     document.removeEventListener('keydown', resultTrap);
-    if (previousFocus && previousFocus.focus) {
-      try { previousFocus.focus(); } catch (e) {}
-    }
+    if (previousFocus && previousFocus.focus) { try { previousFocus.focus(); } catch (e) {} }
     previousFocus = null;
   }
 
@@ -2455,15 +2241,11 @@ window.onerror = function (msg, url, line, col, err) {
     try {
       var v = localStorage.getItem(SFX_KEY);
       window.gameState.sfxMuted = (v === '1' || v === 'true');
-    } catch (e) {
-      window.gameState.sfxMuted = false;
-    }
+    } catch (e) { window.gameState.sfxMuted = false; }
   }
 
   function saveSfxMuted() {
-    try {
-      localStorage.setItem(SFX_KEY, window.gameState.sfxMuted ? '1' : '0');
-    } catch (e) {}
+    try { localStorage.setItem(SFX_KEY, window.gameState.sfxMuted ? '1' : '0'); } catch (e) {}
   }
 
   function updateSfxButton() {
@@ -2475,10 +2257,7 @@ window.onerror = function (msg, url, line, col, err) {
     window.gameState.sfxMuted = !window.gameState.sfxMuted;
     saveSfxMuted();
     updateSfxButton();
-    if (!window.gameState.sfxMuted) {
-      ensureAudio();
-      playClick();
-    }
+    if (!window.gameState.sfxMuted) { ensureAudio(); playClick(); }
   }
 
   function checkTutorial() {
@@ -2495,27 +2274,11 @@ window.onerror = function (msg, url, line, col, err) {
     els.btnDraw.addEventListener('click', onDrawClick);
     els.btnCancelPick.addEventListener('click', onCancelPick);
     els.btnSkipTurn.addEventListener('click', onSkipTurn);
-    els.btnContinue.addEventListener('click', function () {
-      ensureAudio();
-      playClick();
-      continueEndless();
-    });
-    els.btnRestart.addEventListener('click', function () {
-      ensureAudio();
-      playClick();
-      resetGame();
-    });
+    els.btnContinue.addEventListener('click', function () { ensureAudio(); playClick(); continueEndless(); });
+    els.btnRestart.addEventListener('click', function () { ensureAudio(); playClick(); resetGame(); });
     els.btnSoundToggle.addEventListener('click', onSoundToggle);
-    els.btnHelp.addEventListener('click', function () {
-      ensureAudio();
-      playClick();
-      openHelp();
-    });
-    els.btnHelpClose.addEventListener('click', function () {
-      ensureAudio();
-      playClick();
-      closeHelp();
-    });
+    els.btnHelp.addEventListener('click', function () { ensureAudio(); playClick(); openHelp(); });
+    els.btnHelpClose.addEventListener('click', function () { ensureAudio(); playClick(); closeHelp(); });
     els.btnShopReroll.addEventListener('click', onShopReroll);
     els.btnShopUpgrade.addEventListener('click', onShopUpgradeToggle);
     els.btnShopRepair.addEventListener('click', onShopRepair);
@@ -2523,38 +2286,27 @@ window.onerror = function (msg, url, line, col, err) {
     bindSlotEvents();
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        if (els.helpOverlay.classList.contains('show')) {
-          closeHelp();
-        }
+        if (els.helpOverlay.classList.contains('show')) { closeHelp(); }
       }
     });
   }
 
   function bindSlotEvents() {
-    for (var i = 0; i < SLOT_COUNT; i++) {
-      bindOneSlot(i);
-    }
+    for (var i = 0; i < SLOT_COUNT; i++) { bindOneSlot(i); }
   }
 
   function bindOneSlot(idx) {
-    slotEls[idx].addEventListener('click', function () {
-      onSlotClick(idx);
-    });
+    slotEls[idx].addEventListener('click', function () { onSlotClick(idx); });
     makeKeyboardActivate(slotEls[idx]);
   }
 
   function onSlotClick(idx) {
     var s = window.gameState;
     if (s.isResolvingCombat) { return; }
-    if (s.phase === 'REPOSITION_SELECT') {
-      onRepositionClick(idx);
-    } else if (s.shopMode === 'SHOP_UPGRADE_TARGET') {
-      onSlotUpgradeClick(idx);
-    } else if (s.shopMode === 'SHOP_REMOVE_TARGET') {
-      onSlotRemoveClick(idx);
-    } else if (s.phase === 'DEPLOY') {
-      onDeployClick(idx);
-    }
+    if (s.phase === 'REPOSITION_SELECT') { onRepositionClick(idx); }
+    else if (s.shopMode === 'SHOP_UPGRADE_TARGET') { onSlotUpgradeClick(idx); }
+    else if (s.shopMode === 'SHOP_REMOVE_TARGET') { onSlotRemoveClick(idx); }
+    else if (s.phase === 'DEPLOY') { onDeployClick(idx); }
   }
 
   function boot() {
@@ -2572,9 +2324,7 @@ window.onerror = function (msg, url, line, col, err) {
       els.output.scrollTop = els.output.scrollHeight;
       render();
       log('[시스템] 이전 게임을 이어서 불러왔습니다.');
-      if (window.gameState.phase === 'END') {
-        showResult(!!window.gameState.isVictory);
-      }
+      if (window.gameState.phase === 'END') { showResult(!!window.gameState.isVictory); }
     } else {
       resetGame();
       checkTutorial();
@@ -2587,9 +2337,7 @@ window.onerror = function (msg, url, line, col, err) {
     var errors = [];
     function record(name, pass, detail) {
       results.push({ name: name, pass: !!pass, detail: detail || '' });
-      if (!pass) {
-        errors.push(name + (detail ? ' :: ' + detail : ''));
-      }
+      if (!pass) { errors.push(name + (detail ? ' :: ' + detail : '')); }
     }
     var backupSave = null;
     var backupSfx = null;
@@ -2636,9 +2384,7 @@ window.onerror = function (msg, url, line, col, err) {
     log('[테스트] 회귀 스위트: ' + report.result, pass ? 'highlight' : 'danger');
     log('[테스트] 통과: ' + report.passed + ' / ' + report.totalTests);
     if (!pass) {
-      for (var ei = 0; ei < errors.length; ei++) {
-        log('[테스트] 실패: ' + errors[ei], 'danger');
-      }
+      for (var ei = 0; ei < errors.length; ei++) { log('[테스트] 실패: ' + errors[ei], 'danger'); }
     } else {
       log('[테스트] 모든 검증 통과.', 'highlight');
     }
@@ -2721,6 +2467,8 @@ window.onerror = function (msg, url, line, col, err) {
     testHelpModal(record);
     testNoDeadAssets(record);
     testIsolation(record);
+    testLayout(record);
+    testSynergy(record);
   }
 
   function testBoot(record) {
@@ -2793,11 +2541,7 @@ window.onerror = function (msg, url, line, col, err) {
 
   function testArchmage(record) {
     var snap = { warriors: [null, null, { cardId: 'ARCHMAGE', name: '대마법사', hp: 26, maxHp: 26, atk: 11 }], castleHp: 50, castleMaxHp: 50, combo: 0 };
-    var def = { enemies: [
-      { type: '잡병', hp: 20, atk: 1 },
-      { type: '잡병', hp: 20, atk: 1 },
-      { type: '잡병', hp: 20, atk: 1 }
-    ], gold: 5 };
+    var def = { enemies: [{ type: '잡병', hp: 20, atk: 1 }, { type: '잡병', hp: 20, atk: 1 }, { type: '잡병', hp: 20, atk: 1 }], gold: 5 };
     var meta = [null, null, { archmage: true }];
     var r = computeCombat(snap, def, meta);
     var aoe = r.events.filter(function (e) { return e.special === 'ARCHMAGE_AOE'; });
@@ -2836,10 +2580,7 @@ window.onerror = function (msg, url, line, col, err) {
       { cardId: 'PALADIN', name: '성기사', hp: 50, maxHp: 50, atk: 9 },
       null
     ], castleHp: 50, castleMaxHp: 50, combo: 0 };
-    var def = { enemies: [
-      { type: '잡병', hp: 100, atk: 10 },
-      { type: '잡병', hp: 100, atk: 10 }
-    ], gold: 5 };
+    var def = { enemies: [{ type: '잡병', hp: 100, atk: 10 }, { type: '잡병', hp: 100, atk: 10 }], gold: 5 };
     var meta = [{}, { paladin: true }, null];
     var r = computeCombat(snap, def, meta);
     var guards = r.events.filter(function (e) { return e.kind === 'paladinGuard'; });
@@ -2886,7 +2627,6 @@ window.onerror = function (msg, url, line, col, err) {
     }
     record('T19 후열 없음 → BACK_FOCUS 0회', backCnt === 0, 'cnt=' + backCnt);
 
-    window.gameState.warriors = [{ cardId: 'SWORDSMAN', name: '검사', hp: 32, maxHp: 32, atk: 7 }, null, null];
     var repoCnt = 0;
     for (var m = 0; m < 200; m++) {
       var c3 = drawRandomCard(m * 0.5);
@@ -3013,13 +2753,13 @@ window.onerror = function (msg, url, line, col, err) {
     var g1 = window.gameState.gold;
     window.gameState.rerollUsedThisWave = false;
     onShopReroll();
-    record('T29 재뽑기 12G', window.gameState.gold === g1 - 12, 'gold=' + window.gameState.gold);
+    record('T29 재뽑기 10G', window.gameState.gold === g1 - 10, 'gold=' + window.gameState.gold);
     window.gameState.gold = 100;
     window.gameState.phase = 'DRAW';
     window.gameState.shopMode = null;
     window.gameState.castleHp = 30;
     onShopRepair();
-    record('T29 보수 10G', window.gameState.gold === 90);
+    record('T29 보수 8G', window.gameState.gold === 92);
     record('T29 보수 HP +6', window.gameState.castleHp === 36);
   }
 
@@ -3081,8 +2821,9 @@ window.onerror = function (msg, url, line, col, err) {
 
   function testWave5(record) {
     var d5 = getWaveDef(5);
-    var elite = d5.enemies.filter(function (e) { return e.type === '정예'; });
-    record('T34 W5 정예 HP 28', elite.length > 0 && elite[0].hp === 28, 'hp=' + (elite[0] ? elite[0].hp : 'null'));
+    var totalHp = 0;
+    for (var i = 0; i < d5.enemies.length; i++) { totalHp += d5.enemies[i].hp; }
+    record('T34 W5 총 HP 92', totalHp === 92, 'hp=' + totalHp);
   }
 
   function testInfiniteWave(record) {
@@ -3112,6 +2853,33 @@ window.onerror = function (msg, url, line, col, err) {
 
   function testIsolation(record) {
     record('T38 테스트 격리 확인', typeof window.runRegressionSuite === 'function');
+  }
+
+  function testLayout(record) {
+    resetGame();
+    window.gameState.phase = 'DRAW';
+    render();
+    var stack = document.querySelector('#slot-0 .slot-text-stack');
+    record('T39 슬롯 텍스트 폭 >= 100', stack && stack.offsetWidth >= 100, 'width=' + (stack ? stack.offsetWidth : 0));
+    var avatars = document.querySelectorAll('#slot-0 .slot-avatar-slot');
+    record('T39 아바타 컬럼 1개', avatars.length === 1, 'cnt=' + avatars.length);
+  }
+
+  function testSynergy(record) {
+    resetGame();
+    window.gameState.warriors = [
+      { cardId: 'SWORDSMAN', name: '검사', hp: 32, maxHp: 32, atk: 7 },
+      { cardId: 'SWORDSMAN', name: '검사', hp: 32, maxHp: 32, atk: 7 },
+      { cardId: 'ARCHER', name: '궁수', hp: 22, maxHp: 22, atk: 8 }
+    ];
+    var def = { enemies: [{ type: '잡병', hp: 500, atk: 1 }], gold: 5 };
+    var meta = [{}, {}, { backBonus: 2 }];
+    var snap = { warriors: window.gameState.warriors, castleHp: 50, castleMaxHp: 50, combo: 0 };
+    var r = computeCombat(snap, def, meta);
+    var firstRound = r.events.filter(function (e) { return e.kind === 'warriorAttack'; });
+    var totalDmg = 0;
+    for (var i = 0; i < firstRound.length; i++) { totalDmg += firstRound[i].dmg; }
+    record('T40 시너지 +1 반영 총합 29', totalDmg === 29, 'total=' + totalDmg);
   }
 
   window.runPhase1SelfTest = window.runRegressionSuite;
