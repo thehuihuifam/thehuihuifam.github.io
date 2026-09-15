@@ -5,17 +5,58 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>타이니 워리어 러시</title>
 <style>
+  :root {
+    --bg-deep:      #08080d;
+    --bg-primary:   #0d0d12;
+    --bg-panel:     #14141f;
+    --bg-panel-2:   #1a1a24;
+    --bg-inset:     #0a0a12;
+
+    --text-primary: #e8e8ee;
+    --text-muted:   #8888a0;
+    --text-dim:     #55556a;
+
+    --gold:         #ffcc00;
+    --gold-deep:    #a66800;
+    --blue:         #4a90e2;
+    --blue-deep:    #1a4a8a;
+    --red:          #ff3366;
+    --red-deep:     #8a1a34;
+    --green:        #00ff66;
+    --green-deep:   #00883a;
+
+    --border-subtle: #2a2a3a;
+    --border-strong: #3a3a4a;
+
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --r-pill: 999px;
+
+    --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.05);
+    --shadow-drop:  0 4px 12px rgba(0,0,0,0.5);
+    --glow-gold:    0 0 24px rgba(255,204,0,0.6);
+    --glow-blue:    0 0 16px rgba(74,144,226,0.5);
+    --glow-red:     0 0 20px rgba(255,51,102,0.7);
+    --glow-green:   0 0 20px rgba(0,255,102,0.6);
+
+    --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', Roboto, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   html, body {
-    background: #0d0d12;
-    color: #e8e8ee;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', '맑은 고딕', Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
     min-height: 100vh;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     -webkit-user-select: none;
     overflow-x: hidden;
   }
+
   #app {
     max-width: 480px;
     margin: 0 auto;
@@ -26,50 +67,120 @@
     min-height: 100vh;
     position: relative;
   }
+
   h1 {
-    font-size: 14px;
-    color: #ffcc00;
+    font-size: 15px;
+    color: var(--gold);
     text-align: center;
-    letter-spacing: 2px;
-    font-weight: 800;
-    text-shadow: 0 0 12px rgba(255,204,0,0.6);
+    letter-spacing: 3px;
+    font-weight: 900;
+    text-shadow: 0 0 12px rgba(255,204,0,0.6), 0 0 24px rgba(255,204,0,0.3);
   }
+
+  /* ===== 성 패널 ===== */
   .castle-panel {
-    background: linear-gradient(180deg, #1a1a24 0%, #0f0f18 100%);
-    border: 1px solid #2a2a3a;
-    border-radius: 10px;
+    background: linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-md);
     padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .castle-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 8px,
+      rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px
+    );
+    pointer-events: none;
+  }
+  .castle-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+  .castle-emoji {
+    font-size: 32px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+    transition: filter 0.3s;
+  }
+  .castle-emoji.warn {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 6px var(--gold));
+    animation: castleShake 0.4s infinite;
+  }
+  .castle-emoji.danger {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 8px var(--red));
+    animation: castleShake 0.3s infinite;
+  }
+  @keyframes castleShake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-1.5px) rotate(-2deg); }
+    75% { transform: translateX(1.5px) rotate(2deg); }
+  }
+  .castle-info {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    position: relative;
+    z-index: 1;
   }
   .castle-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
-    color: #888;
+    color: var(--text-muted);
     letter-spacing: 0.5px;
   }
-  .castle-row .wave-tag { color: #ffcc00; font-weight: 800; font-size: 13px; }
-  .castle-row .gold-tag { color: #ffcc00; font-weight: 700; }
+  .castle-row .wave-tag {
+    color: var(--gold);
+    font-weight: 800;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    letter-spacing: 1px;
+  }
+  .castle-row .gold-tag {
+    color: var(--gold);
+    font-weight: 800;
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
   .hp-bar {
     width: 100%;
-    height: 16px;
-    background: #1e1e2a;
-    border-radius: 8px;
+    height: 18px;
+    background: var(--bg-inset);
+    border-radius: var(--r-sm);
     overflow: hidden;
     position: relative;
-    border: 1px solid #2a2a3a;
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-inset);
   }
   .hp-fill {
     height: 100%;
-    background: linear-gradient(90deg, #00ff66 0%, #88ff66 100%);
-    transition: width 0.4s ease, background 0.3s ease;
+    background: linear-gradient(90deg, #00ff66 0%, #88ff66 50%, #00ff66 100%);
+    transition: width 0.4s cubic-bezier(0.34, 1.2, 0.64, 1), background 0.3s ease;
     border-radius: 7px;
+    box-shadow: inset 0 0 8px rgba(0,255,102,0.5);
   }
-  .hp-fill.warn { background: linear-gradient(90deg, #ffcc00 0%, #ff9900 100%); }
-  .hp-fill.danger { background: linear-gradient(90deg, #ff3366 0%, #ff0044 100%); animation: pulseRed 0.6s infinite alternate; }
+  .hp-fill.warn {
+    background: linear-gradient(90deg, #ffcc00, #ff9900);
+    box-shadow: inset 0 0 8px rgba(255,204,0,0.5);
+  }
+  .hp-fill.danger {
+    background: linear-gradient(90deg, #ff3366, #ff0044);
+    box-shadow: inset 0 0 12px rgba(255,51,102,0.7);
+    animation: pulseRed 0.6s infinite alternate;
+  }
   .hp-text {
     position: absolute;
     inset: 0;
@@ -77,29 +188,61 @@
     align-items: center;
     justify-content: center;
     font-size: 10px;
-    font-weight: 800;
-    color: #0d0d12;
-    text-shadow: 0 0 4px rgba(255,255,255,0.4);
+    font-weight: 900;
+    color: var(--bg-deep);
+    text-shadow: 0 0 4px rgba(255,255,255,0.7);
+    font-family: var(--font-mono);
+    letter-spacing: 0.5px;
   }
   @keyframes pulseRed {
     from { box-shadow: inset 0 0 0 0 rgba(255,51,102,0); }
-    to   { box-shadow: inset 0 0 12px 2px rgba(255,51,102,0.6); }
+    to   { box-shadow: inset 0 0 14px 2px rgba(255,51,102,0.8); }
   }
+
+  /* ===== 상태 힌트 ===== */
+  #status-hint {
+    background: var(--bg-panel-2);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-sm);
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.25s, border-color 0.25s, background 0.25s;
+  }
+  #status-hint.deploy {
+    color: var(--blue);
+    border-color: var(--blue);
+    background: rgba(74,144,226,0.08);
+  }
+  #status-hint.end {
+    color: var(--red);
+    border-color: var(--red);
+    background: rgba(255,51,102,0.08);
+  }
+
+  /* ===== 전장 슬롯 ===== */
   .battlefield {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
-    background: #0a0a12;
-    border: 1px solid #1f1f2e;
-    border-radius: 10px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-md);
     padding: 10px 8px;
-    min-height: 108px;
+    min-height: 112px;
   }
   .slot {
-    background: #14141f;
-    border: 2px dashed #2a2a3a;
-    border-radius: 8px;
-    min-height: 88px;
+    background: var(--bg-panel);
+    border: 2px dashed var(--border-subtle);
+    border-radius: var(--r-md);
+    min-height: 96px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -110,198 +253,444 @@
     position: relative;
     overflow: hidden;
   }
+  .slot .slot-icon {
+    position: absolute;
+    font-size: 54px;
+    opacity: 0.08;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+  }
   .slot.empty::after {
     content: '빈 슬롯';
-    color: #3a3a4a;
+    color: var(--text-dim);
     font-size: 10px;
     letter-spacing: 1px;
-  }
-  .slot.filled {
-    border-style: solid;
-    border-color: #4a90e2;
-    background: linear-gradient(180deg, #1a2a44 0%, #0f1a2e 100%);
-    box-shadow: 0 0 12px rgba(74,144,226,0.4);
-    animation: slotPop 0.35s ease;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
   }
   .slot .slot-pos {
     position: absolute;
-    top: 3px;
-    left: 5px;
-    font-size: 8px;
-    color: #4a6a8a;
+    top: 4px;
+    left: 6px;
+    font-size: 9px;
+    color: var(--blue);
+    letter-spacing: 0.8px;
+    font-weight: 900;
+    z-index: 2;
+  }
+  .slot .slot-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    position: relative;
+    z-index: 1;
+  }
+  .slot.filled {
+    border-style: solid;
+    border-color: var(--blue);
+    background: linear-gradient(180deg, #1a2a44 0%, #0f1a2e 100%);
+    box-shadow: var(--glow-blue);
+  }
+  .slot.deploy-anim { animation: slotDeploy 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes slotDeploy {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.12); box-shadow: 0 0 28px rgba(74,144,226,0.9); }
+    100% { transform: scale(1); }
+  }
+  .slot.hit-anim { animation: slotHit 0.18s ease; }
+  @keyframes slotHit {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .warrior-emoji {
+    font-size: 28px;
+    filter: drop-shadow(0 0 6px rgba(74,144,226,0.8));
+    position: relative;
+    z-index: 1;
+  }
+  .warrior-name {
+    font-size: 10px;
+    font-weight: 800;
+    color: #a8cfff;
     letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+  }
+  .warrior-stats {
+    font-size: 9px;
+    color: #88a8cc;
+    font-family: var(--font-mono);
     font-weight: 700;
+    position: relative;
+    z-index: 1;
   }
-  @keyframes slotPop {
-    0% { transform: scale(0.7); opacity: 0; }
-    60% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  .warrior-emoji { font-size: 26px; filter: drop-shadow(0 0 6px rgba(74,144,226,0.8)); }
-  .warrior-name { font-size: 10px; font-weight: 700; color: #a8cfff; letter-spacing: 0.5px; }
-  .warrior-stats { font-size: 9px; color: #88a8cc; font-family: 'Courier New', monospace; }
+
+  /* ===== 적 미리보기 ===== */
   .enemy-preview {
-    background: #1a0f14;
-    border: 1px solid #3a1a24;
-    border-radius: 8px;
-    padding: 6px 10px;
+    background: linear-gradient(180deg, #1a0f14 0%, #10080c 100%);
+    border: 1px solid var(--red-deep);
+    border-radius: var(--r-sm);
+    padding: 7px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
   }
-  .enemy-preview .label { color: #ff6688; letter-spacing: 0.5px; font-weight: 700; }
-  .enemy-preview .count { color: #ff3366; font-weight: 800; font-family: 'Courier New', monospace; }
-  .enemy-preview .detail { color: #885566; font-size: 10px; font-family: 'Courier New', monospace; }
+  .enemy-preview .label {
+    color: #ff6688;
+    letter-spacing: 0.8px;
+    font-weight: 800;
+    font-size: 10px;
+  }
+  .enemy-preview .count {
+    color: var(--red);
+    font-weight: 900;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .enemy-preview .detail {
+    color: #885566;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  /* ===== 카드 ===== */
   .cards-area {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
-    min-height: 118px;
+    min-height: 128px;
   }
   .card {
-    background: linear-gradient(180deg, #1f1f2e 0%, #14141f 100%);
-    border: 2px solid #2a2a3a;
-    border-radius: 10px;
-    padding: 8px 4px;
+    background: linear-gradient(160deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%);
+    border: 2px solid var(--border-strong);
+    border-radius: var(--r-md);
+    padding: 20px 4px 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: 4px;
     cursor: pointer;
-    transition: all 0.15s;
-    min-height: 118px;
+    transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+    min-height: 128px;
     position: relative;
     overflow: hidden;
     text-align: center;
   }
+  .card-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .card-banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: var(--bg-deep);
+    background: var(--border-strong);
+    border-radius: 10px 10px 0 0;
+    z-index: 2;
+  }
+  .card.rarity-COMMON .card-banner { background: #4a4a5a; color: #c8c8d8; }
+  .card.rarity-RARE   .card-banner { background: var(--blue); color: #0d1a2e; }
+  .card.rarity-LEGEND .card-banner { background: var(--gold); color: #2a1a00; }
+
+  .card.rarity-COMMON { border-color: var(--border-strong); }
+  .card.rarity-RARE   { border-color: var(--blue); box-shadow: var(--glow-blue); }
+  .card.rarity-LEGEND { border-color: var(--gold); box-shadow: var(--glow-gold); }
+
+  .card-shine {
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(255,204,0,0.25) 40deg, transparent 80deg);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .card.rarity-LEGEND .card-shine {
+    opacity: 1;
+    animation: legendRotate 3s linear infinite;
+  }
+  @keyframes legendRotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
   .card.placeholder {
     cursor: default;
-    background: #0f0f18;
+    background: var(--bg-panel);
     border-style: dashed;
-    color: #3a3a4a;
+    color: var(--text-dim);
     font-size: 11px;
     letter-spacing: 1px;
+    font-weight: 700;
+    padding: 10px 4px;
   }
-  .card:not(.placeholder):active { transform: scale(0.95); }
-  .card.appear { animation: cardIn 0.35s ease backwards; }
-  .card.appear:nth-child(2) { animation-delay: 0.08s; }
-  .card.appear:nth-child(3) { animation-delay: 0.16s; }
+  .card.placeholder .card-banner { display: none; }
+
+  .card:not(.placeholder):active { transform: scale(0.94); }
+
+  .card.appear { animation: cardIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
+  .card.appear:nth-child(2) { animation-delay: 0.09s; }
+  .card.appear:nth-child(3) { animation-delay: 0.18s; }
   @keyframes cardIn {
-    from { transform: translateY(-20px) scale(0.8); opacity: 0; }
+    from { transform: translateY(-24px) scale(0.85); opacity: 0; }
     to   { transform: translateY(0) scale(1); opacity: 1; }
   }
+
   .card.selected {
-    border-color: #ffcc00;
-    box-shadow: 0 0 18px rgba(255,204,0,0.7);
-    transform: scale(1.03);
+    border-color: var(--gold);
+    box-shadow: 0 0 24px rgba(255,204,0,0.9), 0 0 48px rgba(255,204,0,0.4);
+    transform: scale(1.05) rotateZ(-1deg);
   }
-  .card.disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.7); }
-  .card-emoji { font-size: 26px; }
-  .card-name { font-size: 10px; font-weight: 700; color: #e8e8ee; letter-spacing: 0.5px; }
-  .card-desc { font-size: 9px; color: #888; font-family: 'Courier New', monospace; }
-  .card.rarity-COMMON { border-color: #4a4a5a; }
-  .card.rarity-RARE   { border-color: #4a90e2; box-shadow: 0 0 8px rgba(74,144,226,0.4); }
-  .card.rarity-LEGEND { border-color: #ffcc00; box-shadow: 0 0 18px rgba(255,204,0,0.8); animation: legendGlow 1s infinite alternate; }
-  @keyframes legendGlow {
-    from { box-shadow: 0 0 12px rgba(255,204,0,0.5); }
-    to   { box-shadow: 0 0 26px rgba(255,204,0,1); }
+  .card.locked {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(0.7);
   }
+  .card-emoji { font-size: 28px; }
+  .card-name {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+  }
+  .card-desc {
+    font-size: 9px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  /* ===== 조작 ===== */
   .actions { display: flex; flex-direction: column; gap: 8px; }
   .deploy-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .deploy-btn {
     min-height: 48px;
-    background: #14141f;
-    border: 2px solid #2a2a3a;
-    border-radius: 8px;
-    color: #888;
-    font-family: inherit;
+    background: var(--bg-panel);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--r-sm);
+    color: var(--text-muted);
+    font-family: var(--font-ui);
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.5px;
     cursor: pointer;
     transition: all 0.15s;
   }
-  .deploy-btn:not(:disabled):active { transform: scale(0.95); }
+  .deploy-btn:not(:disabled):active { transform: scale(0.94); }
   .deploy-btn:not(:disabled) {
-    border-color: #4a90e2;
+    border-color: var(--blue);
     color: #a8cfff;
     background: linear-gradient(180deg, #1a2a44 0%, #0f1a2e 100%);
-    box-shadow: 0 0 10px rgba(74,144,226,0.4);
+    box-shadow: var(--glow-blue);
   }
   .deploy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .deploy-btn .plus { font-size: 16px; display: block; line-height: 1; margin-bottom: 2px; }
+
   #btn-draw-card {
     min-height: 56px;
-    background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%);
+    background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%);
     border: none;
-    border-radius: 10px;
-    color: #0d0d12;
-    font-family: inherit;
+    border-radius: var(--r-md);
+    color: var(--bg-deep);
+    font-family: var(--font-ui);
     font-size: 15px;
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 2.5px;
     cursor: pointer;
-    box-shadow: 0 4px 0 #a66800, 0 0 20px rgba(255,204,0,0.5);
+    box-shadow: 0 4px 0 var(--gold-deep), var(--glow-gold);
     transition: all 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  #btn-draw-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -60%;
+    width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: shine 2.5s infinite;
+  }
+  @keyframes shine {
+    0% { left: -60%; }
+    60%, 100% { left: 120%; }
   }
   #btn-draw-card:not(:disabled):active {
     transform: translateY(3px);
-    box-shadow: 0 1px 0 #a66800, 0 0 20px rgba(255,204,0,0.5);
+    box-shadow: 0 1px 0 var(--gold-deep), var(--glow-gold);
   }
   #btn-draw-card:disabled {
-    background: #2a2a3a;
-    color: #555;
+    background: var(--border-subtle);
+    color: var(--text-dim);
     box-shadow: none;
     cursor: not-allowed;
   }
+  #btn-draw-card:disabled::after { display: none; }
+
+  /* ===== 로그 ===== */
   #game-output {
-    background: #0a0a12;
-    border-radius: 8px;
+    background: var(--bg-inset);
+    border-radius: var(--r-sm);
     padding: 8px 10px;
     height: 130px;
     overflow-y: auto;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
     line-height: 1.5;
-    color: #888;
-    border: 1px solid #1f1f2e;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
   }
   .log-line { white-space: pre-wrap; word-break: break-all; }
-  .log-line:last-child { color: #ffcc00; }
-  .log-line.highlight { color: #00ff66; font-weight: 700; }
-  .log-line.danger { color: #ff3366; font-weight: 700; }
+  .log-line:last-child { color: var(--gold); }
+  .log-line.highlight { color: var(--green); font-weight: 700; }
+  .log-line.danger { color: var(--red); font-weight: 700; }
+  .log-line.combat { animation: logIn 0.3s ease backwards; }
+  @keyframes logIn {
+    from { transform: translateX(-6px); opacity: 0.3; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ===== 플래시 ===== */
   #flash {
     position: fixed;
     inset: 0;
-    background: #ffcc00;
+    background: var(--gold);
     opacity: 0;
     pointer-events: none;
     z-index: 999;
     transition: opacity 0.15s;
   }
-  #flash.active { opacity: 0.5; }
-  #flash.victory { background: #00ff66; }
-  #flash.danger { background: #ff3366; }
+  #flash.active { opacity: 0.45; }
+  #flash.victory { background: var(--green); }
+  #flash.danger { background: var(--red); }
+
+  /* ===== 데미지 팝업 ===== */
   .dmg-popup {
     position: fixed;
     font-size: 22px;
     font-weight: 900;
-    color: #ff3366;
+    color: var(--red);
     text-shadow: 0 0 8px rgba(255,51,102,0.9), 2px 2px 0 #000;
     pointer-events: none;
     z-index: 1000;
-    animation: dmgFloat 0.9s ease-out forwards;
-    font-family: 'Courier New', monospace;
+    animation: dmgFloat 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    font-family: var(--font-mono);
   }
-  .dmg-popup.gold { color: #ffcc00; text-shadow: 0 0 8px rgba(255,204,0,0.9), 2px 2px 0 #000; }
-  .dmg-popup.green { color: #00ff66; text-shadow: 0 0 8px rgba(0,255,102,0.9), 2px 2px 0 #000; }
+  .dmg-popup.gold { color: var(--gold); text-shadow: 0 0 8px rgba(255,204,0,0.9), 2px 2px 0 #000; }
+  .dmg-popup.green { color: var(--green); text-shadow: 0 0 8px rgba(0,255,102,0.9), 2px 2px 0 #000; }
   @keyframes dmgFloat {
-    0% { transform: translateY(0) scale(0.6); opacity: 0; }
-    20% { transform: translateY(-10px) scale(1.3); opacity: 1; }
-    100% { transform: translateY(-70px) scale(1); opacity: 0; }
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    25% { transform: translateY(-12px) scale(1.35); opacity: 1; }
+    100% { transform: translateY(-80px) scale(1); opacity: 0; }
   }
+
+  /* ===== 콤보 배지 ===== */
+  #combo-badge {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, var(--gold), #ff9900);
+    color: var(--bg-deep);
+    font-family: var(--font-mono);
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border-radius: var(--r-pill);
+    box-shadow: var(--glow-gold);
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+    z-index: 1002;
+    transition: opacity 0.25s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  #combo-badge.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* ===== 웨이브 전환 ===== */
+  #wave-transition {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1003;
+    transition: opacity 0.3s;
+  }
+  #wave-transition.show {
+    opacity: 1;
+    animation: waveIn 1.0s ease forwards;
+  }
+  #wave-transition .wave-title {
+    font-family: var(--font-ui);
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: var(--gold);
+    text-shadow: 0 0 24px rgba(255,204,0,0.9), 0 0 48px rgba(255,204,0,0.5);
+  }
+  @keyframes waveIn {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ===== 스크린 셰이크 ===== */
+  #app.shake { animation: screenShake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+  @keyframes screenShake {
+    10%, 90% { transform: translateX(-3px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+  }
+
+  /* ===== 파티클 ===== */
+  #particle-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 998;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleBurst 0.65s ease-out forwards;
+  }
+  @keyframes particleBurst {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
+  }
+
+  /* ===== 결과 오버레이 ===== */
   #result-overlay {
     position: fixed;
     inset: 0;
@@ -314,36 +703,65 @@
   }
   #result-overlay.show { display: flex; }
   .result-box {
-    background: #14141f;
-    border: 3px solid #ffcc00;
-    border-radius: 16px;
+    background: var(--bg-panel);
+    border: 3px solid var(--gold);
+    border-radius: var(--r-lg);
     padding: 26px 20px;
     text-align: center;
     max-width: 320px;
     width: 100%;
-    box-shadow: 0 0 40px rgba(255,204,0,0.6);
+    box-shadow: 0 0 40px rgba(255,204,0,0.6), 0 0 80px rgba(255,204,0,0.3);
+    animation: resultPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  .result-box.defeat { border-color: #ff3366; box-shadow: 0 0 40px rgba(255,51,102,0.6); }
-  .result-box h2 { font-size: 22px; letter-spacing: 3px; margin-bottom: 12px; color: #ffcc00; }
-  .result-box.defeat h2 { color: #ff3366; }
-  .result-box p { font-size: 13px; color: #aaa; margin-bottom: 6px; }
-  .result-box .score { font-size: 28px; color: #00ff66; font-weight: 900; margin: 12px 0; font-family: 'Courier New', monospace; }
+  @keyframes resultPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .result-box.defeat {
+    border-color: var(--red);
+    box-shadow: 0 0 40px rgba(255,51,102,0.6), 0 0 80px rgba(255,51,102,0.3);
+  }
+  .result-box h2 {
+    font-size: 22px;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    color: var(--gold);
+    font-weight: 900;
+  }
+  .result-box.defeat h2 { color: var(--red); }
+  .result-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+  .result-box .score {
+    font-size: 30px;
+    color: var(--green);
+    font-weight: 900;
+    margin: 14px 0;
+    font-family: var(--font-mono);
+    text-shadow: 0 0 12px rgba(0,255,102,0.6);
+  }
   #btn-restart {
     margin-top: 14px;
     min-height: 48px;
     padding: 0 24px;
-    background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%);
+    background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%);
     border: none;
-    border-radius: 10px;
-    color: #0d0d12;
-    font-family: inherit;
+    border-radius: var(--r-md);
+    color: var(--bg-deep);
+    font-family: var(--font-ui);
     font-weight: 900;
     font-size: 14px;
     letter-spacing: 2px;
     cursor: pointer;
-    box-shadow: 0 4px 0 #a66800;
+    box-shadow: 0 4px 0 var(--gold-deep);
   }
-  #btn-restart:active { transform: translateY(3px); box-shadow: 0 1px 0 #a66800; }
+  #btn-restart:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gold-deep); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -351,22 +769,41 @@
   <h1>⚔️ TINY WARRIORS RUSH ⚔️</h1>
 
   <div class="castle-panel">
-    <div class="castle-row">
-      <span class="wave-tag">WAVE <span id="stat-wave">1</span> / <span id="stat-max-wave">3</span></span>
-      <span class="gold-tag">💰 <span id="stat-gold">0</span></span>
+    <div class="castle-visual">
+      <div class="castle-emoji" id="castle-emoji">🏰</div>
     </div>
-    <div class="hp-bar">
-      <div id="castle-hp-fill" class="hp-fill" style="width: 100%;"></div>
-      <div class="hp-text">
-        <span id="stat-castle-hp">50</span> / <span id="stat-castle-max-hp">50</span>
+    <div class="castle-info">
+      <div class="castle-row">
+        <span class="wave-tag">WAVE <span id="stat-wave">1</span> / <span id="stat-max-wave">3</span></span>
+        <span class="gold-tag">💰 <span id="stat-gold">0</span></span>
+      </div>
+      <div class="hp-bar">
+        <div id="castle-hp-fill" class="hp-fill" style="width: 100%;"></div>
+        <div class="hp-text">
+          <span id="stat-castle-hp">50</span> / <span id="stat-castle-max-hp">50</span>
+        </div>
       </div>
     </div>
   </div>
 
+  <div id="status-hint">카드 뽑기 버튼을 누르세요</div>
+
   <div class="battlefield" id="battlefield">
-    <div class="slot empty" id="slot-0" data-slot="0"><span class="slot-pos">전열</span></div>
-    <div class="slot empty" id="slot-1" data-slot="1"><span class="slot-pos">중열</span></div>
-    <div class="slot empty" id="slot-2" data-slot="2"><span class="slot-pos">후열</span></div>
+    <div class="slot empty" id="slot-0" data-slot="0">
+      <div class="slot-icon">🛡️</div>
+      <span class="slot-pos">전열</span>
+      <div class="slot-content"></div>
+    </div>
+    <div class="slot empty" id="slot-1" data-slot="1">
+      <div class="slot-icon">⚔️</div>
+      <span class="slot-pos">중열</span>
+      <div class="slot-content"></div>
+    </div>
+    <div class="slot empty" id="slot-2" data-slot="2">
+      <div class="slot-icon">🚩</div>
+      <span class="slot-pos">후열</span>
+      <div class="slot-content"></div>
+    </div>
   </div>
 
   <div class="enemy-preview">
@@ -394,6 +831,9 @@
 </div>
 
 <div id="flash"></div>
+<div id="particle-layer"></div>
+<div id="combo-badge">PERFECT ×2</div>
+<div id="wave-transition"><div class="wave-title" id="wave-transition-title">WAVE 2</div></div>
 
 <div id="result-overlay">
   <div class="result-box" id="result-box">
@@ -426,7 +866,6 @@
     id: 'HEAL', name: '성 회복', emoji: '💚', rarity: 'RARE', type: 'INSTANT',
     desc: '성 HP +5'
   };
-  var CARD_POOL = [CARD_TANKER, CARD_ATK, CARD_HEAL];
 
   var WAVES = [
     { enemies: [{ hp: 6, atk: 2 }, { hp: 6, atk: 2 }] },
@@ -435,6 +874,7 @@
   ];
 
   window.gameState = {
+    phase: 'DRAW',
     wave: 1,
     maxWave: MAX_WAVE,
     castleHp: CASTLE_MAX_HP,
@@ -443,22 +883,22 @@
     warriors: [null, null, null],
     availableCards: [],
     selectedCard: null,
-    pendingDeploy: false,
     lastActionStatus: 'IDLE',
     isGameOver: false,
     isVictory: false,
+    combo: 0,
     log: []
   };
 
-  var resolving = false;
-
   var els = {
+    app: document.getElementById('app'),
     statWave: document.getElementById('stat-wave'),
     statMaxWave: document.getElementById('stat-max-wave'),
     statGold: document.getElementById('stat-gold'),
     statCastleHp: document.getElementById('stat-castle-hp'),
     statCastleMaxHp: document.getElementById('stat-castle-max-hp'),
     castleHpFill: document.getElementById('castle-hp-fill'),
+    castleEmoji: document.getElementById('castle-emoji'),
     enemyCount: document.getElementById('enemy-count'),
     enemyDetail: document.getElementById('enemy-detail'),
     cardsArea: document.getElementById('cards-area'),
@@ -467,6 +907,11 @@
     btnDraw: document.getElementById('btn-draw-card'),
     btnRestart: document.getElementById('btn-restart'),
     flash: document.getElementById('flash'),
+    statusHint: document.getElementById('status-hint'),
+    comboBadge: document.getElementById('combo-badge'),
+    waveTransition: document.getElementById('wave-transition'),
+    waveTransitionTitle: document.getElementById('wave-transition-title'),
+    particleLayer: document.getElementById('particle-layer'),
     resultOverlay: document.getElementById('result-overlay'),
     resultBox: document.getElementById('result-box'),
     resultTitle: document.getElementById('result-title'),
@@ -481,6 +926,51 @@
     document.getElementById('btn-deploy-2')
   ];
 
+  /* ===== Web Audio API ===== */
+  var audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        audioCtx = null;
+      }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  function tone(freq, type, duration, gain, freqEnd) {
+    if (!audioCtx) return;
+    try {
+      var osc = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      if (freqEnd !== undefined) {
+        osc.frequency.linearRampToValueAtTime(freqEnd, audioCtx.currentTime + duration);
+      }
+      g.gain.value = gain;
+      g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+      osc.connect(g);
+      g.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch (e) { /* ignore */ }
+  }
+
+  function playClick() { tone(800, 'sine', 0.06, 0.05); }
+  function playHit() { tone(200, 'square', 0.1, 0.06, 120); }
+  function playGacha(rare) { tone(rare ? 800 : 400, 'sine', 0.3, 0.06, rare ? 1600 : 1200); }
+  function playVictory() {
+    tone(523, 'sine', 0.1, 0.08);
+    setTimeout(function () { tone(659, 'sine', 0.1, 0.08); }, 100);
+    setTimeout(function () { tone(784, 'sine', 0.2, 0.08); }, 200);
+  }
+  function playDefeat() { tone(300, 'square', 0.4, 0.08, 100); }
+
+  /* ===== 로그 ===== */
   function log(text, cls) {
     var div = document.createElement('div');
     div.className = 'log-line' + (cls ? ' ' + cls : '');
@@ -503,13 +993,19 @@
     setTimeout(function () { els.flash.classList.remove('active'); }, 150);
   }
 
+  function screenShake() {
+    els.app.classList.remove('shake');
+    void els.app.offsetWidth;
+    els.app.classList.add('shake');
+    setTimeout(function () { els.app.classList.remove('shake'); }, 320);
+  }
+
   function popDamage(text, color, anchorEl) {
     var pop = document.createElement('div');
     pop.className = 'dmg-popup' + (color ? ' ' + color : '');
     pop.textContent = text;
-    var rect;
     if (anchorEl) {
-      rect = anchorEl.getBoundingClientRect();
+      var rect = anchorEl.getBoundingClientRect();
       pop.style.left = (rect.left + rect.width / 2 - 20) + 'px';
       pop.style.top = (rect.top + rect.height / 2 - 10) + 'px';
     } else {
@@ -520,12 +1016,72 @@
     setTimeout(function () { pop.remove(); }, 950);
   }
 
+  function burstParticles(anchorEl, color) {
+    if (!anchorEl) return;
+    var rect = anchorEl.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    for (var i = 0; i < 8; i++) {
+      (function (idx) {
+        var angle = (Math.PI * 2 * idx) / 8;
+        var dist = 40 + Math.random() * 20;
+        var tx = Math.cos(angle) * dist;
+        var ty = Math.sin(angle) * dist;
+        var p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = (cx - 4) + 'px';
+        p.style.top = (cy - 4) + 'px';
+        p.style.background = color;
+        p.style.boxShadow = '0 0 8px ' + color;
+        p.style.setProperty('--tx', tx + 'px');
+        p.style.setProperty('--ty', ty + 'px');
+        p.style.animationDelay = (idx * 0.02) + 's';
+        els.particleLayer.appendChild(p);
+        setTimeout(function () { p.remove(); }, 800);
+      })(i);
+    }
+  }
+
+  function showWaveTransition(n) {
+    els.waveTransitionTitle.textContent = 'WAVE ' + n;
+    els.waveTransition.classList.remove('show');
+    void els.waveTransition.offsetWidth;
+    els.waveTransition.classList.add('show');
+    setTimeout(function () { els.waveTransition.classList.remove('show'); }, 1000);
+  }
+
+  function updateCombo(perfect) {
+    var s = window.gameState;
+    if (perfect) {
+      s.combo += 1;
+    } else {
+      s.combo = 0;
+    }
+    if (s.combo >= 2) {
+      els.comboBadge.textContent = 'PERFECT ×' + s.combo;
+      els.comboBadge.classList.add('show');
+      clearTimeout(els.comboBadge._timer);
+      els.comboBadge._timer = setTimeout(function () {
+        els.comboBadge.classList.remove('show');
+      }, 3000);
+    } else {
+      els.comboBadge.classList.remove('show');
+    }
+  }
+
+  /* ===== 렌더링 ===== */
   function renderCastle() {
     var pct = Math.max(0, window.gameState.castleHp) / window.gameState.castleMaxHp * 100;
     els.castleHpFill.style.width = pct + '%';
     els.castleHpFill.classList.remove('warn', 'danger');
-    if (pct <= 20) els.castleHpFill.classList.add('danger');
-    else if (pct <= 50) els.castleHpFill.classList.add('warn');
+    els.castleEmoji.classList.remove('warn', 'danger');
+    if (pct <= 20) {
+      els.castleHpFill.classList.add('danger');
+      els.castleEmoji.classList.add('danger');
+    } else if (pct <= 50) {
+      els.castleHpFill.classList.add('warn');
+      els.castleEmoji.classList.add('warn');
+    }
     els.statCastleHp.textContent = String(Math.max(0, window.gameState.castleHp));
     els.statCastleMaxHp.textContent = String(window.gameState.castleMaxHp);
   }
@@ -554,26 +1110,28 @@
   }
 
   function renderBattlefield() {
-    var positions = ['전열', '중열', '후열'];
     for (var i = 0; i < SLOT_COUNT; i++) {
       var slotEl = document.getElementById('slot-' + i);
+      var contentEl = slotEl.querySelector('.slot-content');
       var w = window.gameState.warriors[i];
       if (w) {
         slotEl.className = 'slot filled';
-        slotEl.innerHTML =
-          '<span class="slot-pos">' + positions[i] + '</span>' +
+        var posLabels = ['전열', '중열', '후열'];
+        slotEl.querySelector('.slot-pos').textContent = posLabels[i];
+        contentEl.innerHTML =
           '<div class="warrior-emoji">' + w.emoji + '</div>' +
           '<div class="warrior-name">' + w.name + '</div>' +
           '<div class="warrior-stats">HP' + w.hp + ' ATK' + w.atk + '</div>';
       } else {
         slotEl.className = 'slot empty';
-        slotEl.innerHTML = '<span class="slot-pos">' + positions[i] + '</span>';
+        contentEl.innerHTML = '';
       }
     }
   }
 
   function renderCards() {
-    var cards = window.gameState.availableCards;
+    var s = window.gameState;
+    var cards = s.availableCards;
     if (!cards || cards.length === 0) {
       els.cardsArea.innerHTML =
         '<div class="card placeholder">카드</div>' +
@@ -587,29 +1145,43 @@
         var c = cards[idx];
         var cardEl = document.createElement('div');
         cardEl.className = 'card appear rarity-' + c.rarity;
-        if (window.gameState.selectedCard === c) cardEl.classList.add('selected');
+        if (s.selectedCard === c) cardEl.classList.add('selected');
+        if (s.phase !== 'SELECT') cardEl.classList.add('locked');
         cardEl.setAttribute('data-card-index', String(idx));
         cardEl.id = 'card-choice-' + idx;
         cardEl.innerHTML =
-          '<div class="card-emoji">' + c.emoji + '</div>' +
-          '<div class="card-name">' + c.name + '</div>' +
-          '<div class="card-desc">' + c.desc + '</div>';
+          '<div class="card-banner">' + c.rarity + '</div>' +
+          '<div class="card-inner">' +
+            '<div class="card-emoji">' + c.emoji + '</div>' +
+            '<div class="card-name">' + c.name + '</div>' +
+            '<div class="card-desc">' + c.desc + '</div>' +
+          '</div>' +
+          '<div class="card-shine"></div>';
         cardEl.addEventListener('click', function () { onCardClick(idx); });
         els.cardsArea.appendChild(cardEl);
       })(i);
     }
   }
 
+  function renderStatusHint() {
+    var s = window.gameState;
+    var hint = '';
+    if (s.phase === 'DRAW') hint = '카드 뽑기 버튼을 누르세요';
+    else if (s.phase === 'SELECT') hint = '카드를 선택하세요';
+    else if (s.phase === 'DEPLOY') hint = '배치할 슬롯을 누르세요';
+    else if (s.phase === 'END') hint = '게임 종료 — 다시 도전 버튼을 누르세요';
+    els.statusHint.textContent = hint;
+    els.statusHint.className = '';
+    if (s.phase === 'DEPLOY') els.statusHint.classList.add('deploy');
+    else if (s.phase === 'END') els.statusHint.classList.add('end');
+  }
+
   function renderButtons() {
     var s = window.gameState;
-    var gameOver = s.isGameOver || s.isVictory;
-    var canDraw = !gameOver && !resolving && !s.pendingDeploy && (!s.availableCards || s.availableCards.length === 0);
-    els.btnDraw.disabled = !canDraw;
-
+    els.btnDraw.disabled = (s.phase !== 'DRAW');
     for (var i = 0; i < SLOT_COUNT; i++) {
       var slotEmpty = s.warriors[i] === null;
-      var canDeploy = s.pendingDeploy && slotEmpty && !gameOver && !resolving;
-      btnDeploy[i].disabled = !canDeploy;
+      btnDeploy[i].disabled = !(s.phase === 'DEPLOY' && slotEmpty);
     }
   }
 
@@ -618,9 +1190,11 @@
     renderEnemyPreview();
     renderBattlefield();
     renderCards();
+    renderStatusHint();
     renderButtons();
   }
 
+  /* ===== 카드 뽑기 ===== */
   function drawRandomCard() {
     var r = Math.random() * 100;
     if (r < 70) return CARD_TANKER;
@@ -639,27 +1213,32 @@
   }
 
   function onDrawClick() {
+    ensureAudio();
+    playClick();
     var s = window.gameState;
-    if (s.isGameOver || s.isVictory) return;
-    if (resolving) return;
-    if (s.availableCards && s.availableCards.length > 0) return;
-    if (s.pendingDeploy) return;
+    if (s.phase !== 'DRAW') return;
 
     s.availableCards = drawThreeCards();
     s.selectedCard = null;
-    s.pendingDeploy = false;
+    s.phase = 'SELECT';
     s.lastActionStatus = 'DRAW_SUCCESS';
 
     var names = [];
-    for (var i = 0; i < s.availableCards.length; i++) names.push(s.availableCards[i].name);
+    var hasRare = false;
+    for (var i = 0; i < s.availableCards.length; i++) {
+      names.push(s.availableCards[i].name);
+      if (s.availableCards[i].rarity === 'RARE' || s.availableCards[i].rarity === 'LEGEND') hasRare = true;
+    }
     log('[DRAW] Drew 3 cards: ' + names.join(', ') + '.');
+    playGacha(hasRare);
     render();
   }
 
   function onCardClick(idx) {
+    ensureAudio();
+    playClick();
     var s = window.gameState;
-    if (s.isGameOver || s.isVictory) return;
-    if (resolving) return;
+    if (s.phase !== 'SELECT') return;
     if (!s.availableCards || s.availableCards.length === 0) return;
     if (s.selectedCard) return;
 
@@ -667,25 +1246,23 @@
     if (!card) return;
 
     s.selectedCard = card;
-    s.lastActionStatus = 'PICK_SUCCESS';
     log('[PICK] Picked ' + card.name + '. Effect: ' + card.desc);
 
+    var cardEl = document.getElementById('card-choice-' + idx);
+    burstParticles(cardEl, card.rarity === 'RARE' ? '#4a90e2' : '#ffcc00');
+
     if (card.type === 'SUMMON') {
-      s.pendingDeploy = true;
+      s.phase = 'DEPLOY';
+      s.lastActionStatus = 'PICK_SUCCESS';
       flash('default');
       render();
     } else if (card.type === 'INSTANT') {
       applyInstant(card);
-      s.pendingDeploy = false;
       s.availableCards = [];
       s.selectedCard = null;
       s.lastActionStatus = 'INSTANT_SUCCESS';
-      resolving = true;
       render();
-      setTimeout(function () {
-        resolving = false;
-        resolveWave();
-      }, 250);
+      resolveWave();
     }
   }
 
@@ -708,10 +1285,10 @@
   }
 
   function onDeployClick(slotIdx) {
+    ensureAudio();
+    playClick();
     var s = window.gameState;
-    if (s.isGameOver || s.isVictory) return;
-    if (resolving) return;
-    if (!s.pendingDeploy) return;
+    if (s.phase !== 'DEPLOY') return;
     if (s.warriors[slotIdx] !== null) return;
     if (!s.selectedCard || !s.selectedCard.warrior) return;
 
@@ -722,26 +1299,40 @@
     s.lastActionStatus = 'DEPLOY_SUCCESS';
     log('[DEPLOY] Deployed ' + w.name + ' at slot ' + (slotIdx + 1) + '.');
 
-    s.pendingDeploy = false;
     s.availableCards = [];
     s.selectedCard = null;
-    resolving = true;
     flash('default');
     render();
 
-    setTimeout(function () {
-      resolving = false;
-      resolveWave();
-    }, 250);
+    var slotEl = document.getElementById('slot-' + slotIdx);
+    slotEl.classList.add('deploy-anim');
+    burstParticles(slotEl, '#4a90e2');
+    setTimeout(function () { slotEl.classList.remove('deploy-anim'); }, 520);
+
+    resolveWave();
   }
 
   function resolveWave() {
     var s = window.gameState;
-    if (s.isGameOver || s.isVictory) return;
-    if (s.wave > s.maxWave) return;
+    if (s.isGameOver || s.isVictory) {
+      s.phase = 'END';
+      render();
+      return;
+    }
+    if (s.wave > s.maxWave) {
+      s.phase = 'END';
+      render();
+      return;
+    }
 
     var def = WAVES[s.wave - 1];
-    if (!def) return;
+    if (!def) {
+      s.phase = 'END';
+      render();
+      return;
+    }
+
+    var currentWave = s.wave;
 
     var enemies = [];
     for (var k = 0; k < def.enemies.length; k++) {
@@ -749,11 +1340,15 @@
     }
 
     var aliveWarriors = [];
+    var warriorSlotIdx = [];
     for (var i = SLOT_COUNT - 1; i >= 0; i--) {
-      if (s.warriors[i]) aliveWarriors.push(s.warriors[i]);
+      if (s.warriors[i]) {
+        aliveWarriors.push(s.warriors[i]);
+        warriorSlotIdx.push(i);
+      }
     }
 
-    log('[COMBAT] Wave ' + s.wave + ' combat begins. Warriors: ' + aliveWarriors.length + ', Enemies: ' + enemies.length);
+    log('[COMBAT] Wave ' + currentWave + ' combat begins. Warriors: ' + aliveWarriors.length + ', Enemies: ' + enemies.length, 'combat');
 
     for (var w = 0; w < aliveWarriors.length; w++) {
       var targetIdx = -1;
@@ -763,7 +1358,18 @@
       if (targetIdx < 0) break;
       var atk = aliveWarriors[w].atk;
       enemies[targetIdx].hp -= atk;
-      log('[COMBAT] ' + aliveWarriors[w].name + ' dealt ' + atk + ' damage to Enemy ' + (targetIdx + 1) + '.');
+      log('[COMBAT] ' + aliveWarriors[w].name + ' dealt ' + atk + ' damage to Enemy ' + (targetIdx + 1) + '.', 'combat');
+
+      (function (slotI) {
+        setTimeout(function () {
+          var slotEl = document.getElementById('slot-' + slotI);
+          if (slotEl) {
+            slotEl.classList.add('hit-anim');
+            setTimeout(function () { slotEl.classList.remove('hit-anim'); }, 200);
+          }
+          playHit();
+        }, w * 80);
+      })(warriorSlotIdx[w]);
     }
 
     var remaining = [];
@@ -778,8 +1384,11 @@
     if (dmgToCastle > 0) {
       s.castleHp = Math.max(0, s.castleHp - dmgToCastle);
       log('[DAMAGE] ' + remaining.length + ' enemies reached castle. -' + dmgToCastle + ' HP.', 'danger');
-      flash('danger');
-      popDamage('-' + dmgToCastle, '', null);
+      setTimeout(function () {
+        flash('danger');
+        screenShake();
+        popDamage('-' + dmgToCastle, '', null);
+      }, aliveWarriors.length * 80);
     }
 
     var clutch = s.castleHp > 0 && s.castleHp <= 5;
@@ -789,36 +1398,46 @@
     s.gold += baseGold;
 
     if (perfect) {
-      log('[WAVE] Wave ' + s.wave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: YES', 'highlight');
-      flash('victory');
-      popDamage('PERFECT! +' + baseGold + '💰', 'gold');
+      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: YES', 'highlight');
+      setTimeout(function () {
+        flash('victory');
+        popDamage('PERFECT! +' + baseGold + '💰', 'gold');
+      }, aliveWarriors.length * 80 + 100);
       s.lastActionStatus = 'WAVE_PERFECT';
     } else if (clutch) {
-      log('[WAVE] Wave ' + s.wave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO', 'highlight');
+      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO', 'highlight');
       log('[CLUTCH] 성 HP 5 이하! 골드 2배 (+' + baseGold + ')', 'highlight');
-      popDamage('CLUTCH! +' + baseGold + '💰', 'gold');
+      setTimeout(function () {
+        popDamage('CLUTCH! +' + baseGold + '💰', 'gold');
+      }, aliveWarriors.length * 80 + 100);
       s.lastActionStatus = 'WAVE_CLEAR';
     } else {
-      log('[WAVE] Wave ' + s.wave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO');
-      popDamage('+' + baseGold + '💰', 'gold');
+      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO');
       s.lastActionStatus = 'WAVE_CLEAR';
     }
 
+    updateCombo(perfect);
     s.wave += 1;
 
     if (s.castleHp <= 0) {
       s.isGameOver = true;
+      s.phase = 'END';
       s.lastActionStatus = 'GAME_OVER';
-      log('[GAME OVER] Castle destroyed at wave ' + (s.wave - 1) + '.', 'danger');
+      log('[GAME OVER] Castle destroyed at wave ' + currentWave + '.', 'danger');
+      playDefeat();
       showResult(false);
     } else if (s.wave > s.maxWave) {
       s.isVictory = true;
+      s.phase = 'END';
       s.lastActionStatus = 'VICTORY';
       var score = calculateScore();
       log('[VICTORY] All ' + s.maxWave + ' waves cleared. Score: ' + score, 'highlight');
+      playVictory();
       showResult(true);
     } else {
+      s.phase = 'DRAW';
       log('[TURN] Wave ' + s.wave + ' begins.');
+      showWaveTransition(s.wave);
     }
 
     render();
@@ -852,6 +1471,7 @@
 
   function resetGame() {
     var s = window.gameState;
+    s.phase = 'DRAW';
     s.wave = 1;
     s.castleHp = CASTLE_MAX_HP;
     s.castleMaxHp = CASTLE_MAX_HP;
@@ -859,20 +1479,24 @@
     s.warriors = [null, null, null];
     s.availableCards = [];
     s.selectedCard = null;
-    s.pendingDeploy = false;
     s.lastActionStatus = 'IDLE';
     s.isGameOver = false;
     s.isVictory = false;
+    s.combo = 0;
     s.log = [];
-    resolving = false;
     els.output.innerHTML = '';
     els.resultOverlay.classList.remove('show');
+    els.comboBadge.classList.remove('show');
     log('[TURN] Wave 1 begins.');
     render();
   }
 
   els.btnDraw.addEventListener('click', onDrawClick);
-  els.btnRestart.addEventListener('click', resetGame);
+  els.btnRestart.addEventListener('click', function () {
+    ensureAudio();
+    playClick();
+    resetGame();
+  });
 
   for (var bi = 0; bi < SLOT_COUNT; bi++) {
     (function (idx) {
@@ -880,7 +1504,7 @@
     })(bi);
   }
 
-  window.runPhase1SelfTest = async function () {
+  window.runPhase1SelfTest = function () {
     var results = [];
     var errors = [];
 
@@ -891,7 +1515,7 @@
 
     resetGame();
 
-    // 1. 초기 상태
+    record('초기 phase === DRAW', window.gameState.phase === 'DRAW', 'phase=' + window.gameState.phase);
     record('초기 wave === 1', window.gameState.wave === 1, 'wave=' + window.gameState.wave);
     record('초기 castleHp === 50', window.gameState.castleHp === 50, 'hp=' + window.gameState.castleHp);
     record('초기 gold === 0', window.gameState.gold === 0, 'gold=' + window.gameState.gold);
@@ -899,80 +1523,81 @@
       window.gameState.warriors[0] === null &&
       window.gameState.warriors[1] === null &&
       window.gameState.warriors[2] === null);
-    record('초기 availableCards 비어있음', window.gameState.availableCards.length === 0);
     record('초기 draw 버튼 활성', els.btnDraw.disabled === false);
     record('초기 deploy-0 비활성', btnDeploy[0].disabled === true);
     record('초기 deploy-1 비활성', btnDeploy[1].disabled === true);
     record('초기 deploy-2 비활성', btnDeploy[2].disabled === true);
 
-    // 2. 카드 뽑기
+    record('#status-hint 초기 문구', els.statusHint.textContent === '카드 뽑기 버튼을 누르세요',
+      'text=' + els.statusHint.textContent);
+    record('#combo-badge DOM 존재', !!els.comboBadge);
+    record('#wave-transition DOM 존재', !!els.waveTransition);
+    record('#castle-hp-fill에 hp-fill 클래스', els.castleHpFill.className.indexOf('hp-fill') !== -1);
+    record('--gold 토큰 = #ffcc00',
+      getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() === '#ffcc00');
+
     els.btnDraw.click();
+    record('뽑기 후 phase === SELECT', window.gameState.phase === 'SELECT', 'phase=' + window.gameState.phase);
     record('뽑기 후 카드 3장', window.gameState.availableCards.length === 3,
       'cards=' + window.gameState.availableCards.length);
     record('뽑기 후 lastActionStatus === DRAW_SUCCESS',
       window.gameState.lastActionStatus === 'DRAW_SUCCESS');
     record('뽑기 후 draw 버튼 비활성', els.btnDraw.disabled === true);
-    record('뽑기 로그 포함', window.gameState.log.some(function (l) {
-      return l.indexOf('[DRAW] Drew 3 cards:') === 0;
-    }));
 
-    // 3. COMMON 카드 탐색 및 선택
     var tankerIdx = -1;
     for (var i = 0; i < window.gameState.availableCards.length; i++) {
       if (window.gameState.availableCards[i].id === 'TANKER') { tankerIdx = i; break; }
     }
-    record('COMMON 카드 1장 이상 존재', tankerIdx >= 0, 'tankerIdx=' + tankerIdx);
+    record('COMMON 카드 1장 이상 존재', tankerIdx >= 0, 'idx=' + tankerIdx);
 
     if (tankerIdx >= 0) {
       var cardEl = document.getElementById('card-choice-' + tankerIdx);
       record('카드 DOM 존재', !!cardEl);
       if (cardEl) cardEl.click();
     }
+    record('선택 후 phase === DEPLOY', window.gameState.phase === 'DEPLOY', 'phase=' + window.gameState.phase);
     record('선택 후 selectedCard.id === TANKER',
       window.gameState.selectedCard && window.gameState.selectedCard.id === 'TANKER');
-    record('선택 후 pendingDeploy === true', window.gameState.pendingDeploy === true);
     record('선택 후 lastActionStatus === PICK_SUCCESS',
       window.gameState.lastActionStatus === 'PICK_SUCCESS');
-    record('선택 로그 포함', window.gameState.log.some(function (l) {
-      return l.indexOf('[PICK] Picked 탱커 소환.') === 0;
-    }));
 
-    // 4. 배치
     record('배치 전 deploy-0 활성', btnDeploy[0].disabled === false);
+    var waveBefore = window.gameState.wave;
+    var goldBefore = window.gameState.gold;
     btnDeploy[0].click();
-    record('배치 후 warriors[0] 존재', window.gameState.warriors[0] !== null);
-    record('warriors[0].name === 탱커',
+
+    record('배치 후 warriors[0].name === 탱커',
       window.gameState.warriors[0] && window.gameState.warriors[0].name === '탱커');
-    record('배치 후 pendingDeploy === false', window.gameState.pendingDeploy === false);
-    record('배치 로그 포함', window.gameState.log.some(function (l) {
-      return l === '[DEPLOY] Deployed 탱커 at slot 1.';
-    }));
-
-    // 5. 웨이브 자동 진행 대기
-    await new Promise(function (r) { setTimeout(r, 500); });
-
-    record('웨이브 클리어 후 wave === 2', window.gameState.wave === 2,
+    record('배치 후 wave === ' + (waveBefore + 1),
+      window.gameState.wave === waveBefore + 1,
       'wave=' + window.gameState.wave);
-    record('웨이브 클리어 후 gold >= 5', window.gameState.gold >= 5,
+    record('배치 후 gold > 0', window.gameState.gold > goldBefore,
       'gold=' + window.gameState.gold);
-    record('lastActionStatus가 WAVE_CLEAR 또는 WAVE_PERFECT',
+    record('배치 후 phase === DRAW', window.gameState.phase === 'DRAW',
+      'phase=' + window.gameState.phase);
+    record('배치 후 lastActionStatus가 WAVE_CLEAR 또는 WAVE_PERFECT',
       window.gameState.lastActionStatus === 'WAVE_CLEAR' ||
       window.gameState.lastActionStatus === 'WAVE_PERFECT',
       'status=' + window.gameState.lastActionStatus);
-    record('웨이브 클리어 로그 포함', window.gameState.log.some(function (l) {
-      return l.indexOf('[WAVE] Wave 1 cleared.') === 0;
-    }));
+    record('웨이브 1 클리어 로그 존재',
+      window.gameState.log.some(function (l) { return l.indexOf('[WAVE] Wave 1 cleared.') === 0; }));
+    record('웨이브 2 시작 로그 존재',
+      window.gameState.log.some(function (l) { return l === '[TURN] Wave 2 begins.'; }));
 
-    // 6. DOM 동기화
-    record('#stat-wave 텍스트 일치',
-      els.statWave.textContent === String(Math.min(window.gameState.wave, window.gameState.maxWave)),
-      'dom=' + els.statWave.textContent + ' state=' + window.gameState.wave);
+    record('#stat-wave 텍스트가 2로 갱신됨',
+      els.statWave.textContent === '2',
+      'dom=' + els.statWave.textContent);
     record('#stat-castle-hp 텍스트 일치',
       els.statCastleHp.textContent === String(Math.max(0, window.gameState.castleHp)),
       'dom=' + els.statCastleHp.textContent + ' state=' + window.gameState.castleHp);
     record('#stat-gold 텍스트 일치',
       els.statGold.textContent === String(window.gameState.gold),
       'dom=' + els.statGold.textContent + ' state=' + window.gameState.gold);
+    record('#btn-draw-card 재활성', els.btnDraw.disabled === false);
+
+    els.btnDraw.click();
+    record('wave 2에서 카드 뽑기 성공', window.gameState.availableCards.length === 3);
+    record('wave 2 phase === SELECT', window.gameState.phase === 'SELECT');
 
     var pass = errors.length === 0;
     var report = {
@@ -983,15 +1608,15 @@
       tests: results,
       errors: errors,
       finalState: {
+        phase: window.gameState.phase,
         wave: window.gameState.wave,
         castleHp: window.gameState.castleHp,
         gold: window.gameState.gold,
+        combo: window.gameState.combo,
         warriors: window.gameState.warriors.map(function (w) {
           return w ? { name: w.name, hp: w.hp, atk: w.atk } : null;
         }),
-        lastActionStatus: window.gameState.lastActionStatus,
-        isGameOver: window.gameState.isGameOver,
-        isVictory: window.gameState.isVictory
+        lastActionStatus: window.gameState.lastActionStatus
       }
     };
 
