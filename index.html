@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>타이니 워리어 러시 v4.3</title>
+<title>타이니 워리어 러시 v4.3.1</title>
 <style>
 :root{
   --bg-deep:#0a0a0f;
@@ -594,7 +594,7 @@ window.onerror = function (msg, url, line, col, err) {
     els.flash.classList.add('active');
     if (color === 'victory') { els.flash.classList.add('victory'); }
     else if (color === 'danger') { els.flash.classList.add('danger'); }
-    setTimeout(function () { els.flash.classList.remove('active'); }, 200);
+    setTimeout(function () { els.flash.className = ''; }, 200);
   }
 
   function screenShake() {
@@ -2441,6 +2441,7 @@ window.onerror = function (msg, url, line, col, err) {
         }
       }
       if (s.phase === 'SELECT' && s.availableCards.length === 0) { s.phase = 'DRAW'; }
+      els.flash.className = '';
       render();
     } catch (e) {}
   }
@@ -2478,6 +2479,7 @@ window.onerror = function (msg, url, line, col, err) {
     testLayout(record);
     testSynergy(record);
     testDeployFlow(record);
+    testFlashCleanup(record);
   }
 
   function testBoot(record) {
@@ -2907,9 +2909,32 @@ window.onerror = function (msg, url, line, col, err) {
     record('T41 배치 후 selectedCardIndex -1', window.gameState.selectedCardIndex === -1);
     record('T41 배치 후 availableCards 비어있음', window.gameState.availableCards.length === 0);
     record('T41 배치 후 isResolvingCombat true', window.gameState.isResolvingCombat === true);
-    // 정리
     playToken += 1;
     window.gameState.isResolvingCombat = false;
+  }
+
+  function testFlashCleanup(record) {
+    els.flash.className = '';
+    flash('victory');
+    record('T42 flash victory 즉시 active 클래스', els.flash.classList.contains('active') && els.flash.classList.contains('victory'));
+    var startTime = Date.now();
+    while (Date.now() - startTime < 260) {
+      // busy wait 260ms
+    }
+    record('T42 flash victory 260ms 후 완전 초기화', els.flash.className === '', 'className=' + els.flash.className);
+    els.flash.className = '';
+    flash('danger');
+    record('T42 flash danger 즉시 active 클래스', els.flash.classList.contains('active') && els.flash.classList.contains('danger'));
+    var startTime2 = Date.now();
+    while (Date.now() - startTime2 < 260) {
+      // busy wait
+    }
+    record('T42 flash danger 260ms 후 완전 초기화', els.flash.className === '', 'className=' + els.flash.className);
+    els.flash.className = '';
+    flash('default');
+    var startTime3 = Date.now();
+    while (Date.now() - startTime3 < 260) {}
+    record('T42 flash default 260ms 후 완전 초기화', els.flash.className === '', 'className=' + els.flash.className);
   }
 
   window.runPhase1SelfTest = window.runRegressionSuite;
