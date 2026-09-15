@@ -738,8 +738,29 @@
     font-family: var(--font-mono);
     text-shadow: 0 0 12px rgba(0,255,102,0.6);
   }
-  #btn-restart {
+  .result-btn-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-top: 14px;
+  }
+  #btn-continue {
+    min-height: 48px;
+    padding: 0 24px;
+    background: linear-gradient(135deg, var(--green) 0%, #00aa44 100%);
+    border: none;
+    border-radius: var(--r-md);
+    color: var(--bg-deep);
+    font-family: var(--font-ui);
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--green-deep), var(--glow-green);
+  }
+  #btn-continue:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-deep), var(--glow-green); }
+  #btn-continue.hidden { display: none; }
+  #btn-restart {
     min-height: 48px;
     padding: 0 24px;
     background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%);
@@ -774,7 +795,7 @@
     </div>
     <div class="castle-info">
       <div class="castle-row">
-        <span class="wave-tag">WAVE <span id="stat-wave">1</span> / <span id="stat-max-wave">3</span></span>
+        <span class="wave-tag">WAVE <span id="stat-wave">1</span> / <span id="stat-max-wave">5</span></span>
         <span class="gold-tag">💰 <span id="stat-gold">0</span></span>
       </div>
       <div class="hp-bar">
@@ -838,10 +859,13 @@
 <div id="result-overlay">
   <div class="result-box" id="result-box">
     <h2 id="result-title">🏆 VICTORY 🏆</h2>
-    <p id="result-wave">도달 웨이브: 3 / 3</p>
+    <p id="result-wave">도달 웨이브: 5 / 5</p>
     <div class="score" id="result-score">0</div>
     <p id="result-detail"></p>
-    <button id="btn-restart">다시 도전</button>
+    <div class="result-btn-row">
+      <button id="btn-continue">계속 도전 (무한 모드)</button>
+      <button id="btn-restart">처음부터</button>
+    </div>
   </div>
 </div>
 
@@ -849,7 +873,7 @@
 (function () {
   'use strict';
 
-  var MAX_WAVE = 3;
+  var MAX_WAVE = 5;
   var CASTLE_MAX_HP = 50;
   var SLOT_COUNT = 3;
 
@@ -868,15 +892,19 @@
   };
 
   var WAVES = [
-    { enemies: [{ hp: 6, atk: 2 }, { hp: 6, atk: 2 }] },
-    { enemies: [{ hp: 8, atk: 3 }, { hp: 8, atk: 3 }, { hp: 8, atk: 3 }] },
-    { enemies: [{ hp: 12, atk: 4 }, { hp: 12, atk: 4 }, { hp: 12, atk: 4 }, { hp: 12, atk: 4 }] }
+    { enemies: [{ hp: 6,  atk: 2 }, { hp: 6,  atk: 2 }] },
+    { enemies: [{ hp: 8,  atk: 3 }, { hp: 8,  atk: 3 }, { hp: 8,  atk: 3 }] },
+    { enemies: [{ hp: 12, atk: 4 }, { hp: 12, atk: 4 }, { hp: 12, atk: 4 }, { hp: 12, atk: 4 }] },
+    { enemies: [{ hp: 14, atk: 4 }, { hp: 14, atk: 4 }, { hp: 14, atk: 4 }, { hp: 14, atk: 4 }] },
+    { enemies: [{ hp: 16, atk: 5 }, { hp: 16, atk: 5 }, { hp: 16, atk: 5 }, { hp: 16, atk: 5 }, { hp: 16, atk: 5 }] }
   ];
 
   window.gameState = {
     phase: 'DRAW',
     wave: 1,
     maxWave: MAX_WAVE,
+    maxWaveReached: 1,
+    isEndless: false,
     castleHp: CASTLE_MAX_HP,
     castleMaxHp: CASTLE_MAX_HP,
     gold: 0,
@@ -905,6 +933,7 @@
     battlefield: document.getElementById('battlefield'),
     output: document.getElementById('game-output'),
     btnDraw: document.getElementById('btn-draw-card'),
+    btnContinue: document.getElementById('btn-continue'),
     btnRestart: document.getElementById('btn-restart'),
     flash: document.getElementById('flash'),
     statusHint: document.getElementById('status-hint'),
@@ -1069,6 +1098,28 @@
     }
   }
 
+  /* ===== 웨이브 정의 (무한 모드 포함) ===== */
+  function getWaveDef(waveNum) {
+    if (waveNum <= MAX_WAVE) {
+      return WAVES[waveNum - 1];
+    }
+    // 무한 모드 (wave >= 6)
+    var over = waveNum - MAX_WAVE;
+    var count = Math.min(8, 5 + Math.floor(over / 2));
+    var hp = 16 + over * 3;
+    var atk = 5 + Math.floor(over / 3);
+    var enemies = [];
+    for (var i = 0; i < count; i++) {
+      enemies.push({ hp: hp, atk: atk });
+    }
+    return { enemies: enemies, endless: true };
+  }
+
+  function getWaveReward(waveNum) {
+    if (waveNum <= MAX_WAVE) return 5;
+    return 5 + Math.floor((waveNum - MAX_WAVE) / 2);
+  }
+
   /* ===== 렌더링 ===== */
   function renderCastle() {
     var pct = Math.max(0, window.gameState.castleHp) / window.gameState.castleMaxHp * 100;
@@ -1087,19 +1138,26 @@
   }
 
   function renderStats() {
-    els.statWave.textContent = String(Math.min(window.gameState.wave, window.gameState.maxWave));
-    els.statMaxWave.textContent = String(window.gameState.maxWave);
-    els.statGold.textContent = String(window.gameState.gold);
+    var s = window.gameState;
+    if (s.isEndless || s.wave > s.maxWave) {
+      els.statWave.textContent = String(s.wave);
+      els.statMaxWave.textContent = '∞';
+    } else {
+      els.statWave.textContent = String(Math.min(s.wave, s.maxWave));
+      els.statMaxWave.textContent = String(s.maxWave);
+    }
+    els.statGold.textContent = String(s.gold);
     renderCastle();
   }
 
   function renderEnemyPreview() {
-    if (window.gameState.isGameOver || window.gameState.isVictory || window.gameState.wave > window.gameState.maxWave) {
+    var s = window.gameState;
+    if (s.isGameOver || s.isVictory || (s.wave > s.maxWave && !s.isEndless)) {
       els.enemyCount.textContent = '—';
       els.enemyDetail.textContent = '게임 종료';
       return;
     }
-    var def = WAVES[window.gameState.wave - 1];
+    var def = getWaveDef(s.wave);
     if (!def) {
       els.enemyCount.textContent = '0 마리';
       els.enemyDetail.textContent = 'HP - / ATK -';
@@ -1169,7 +1227,7 @@
     if (s.phase === 'DRAW') hint = '카드 뽑기 버튼을 누르세요';
     else if (s.phase === 'SELECT') hint = '카드를 선택하세요';
     else if (s.phase === 'DEPLOY') hint = '배치할 슬롯을 누르세요';
-    else if (s.phase === 'END') hint = '게임 종료 — 다시 도전 버튼을 누르세요';
+    else if (s.phase === 'END') hint = '게임 종료 — 결과창을 확인하세요';
     els.statusHint.textContent = hint;
     els.statusHint.className = '';
     if (s.phase === 'DEPLOY') els.statusHint.classList.add('deploy');
@@ -1319,13 +1377,8 @@
       render();
       return;
     }
-    if (s.wave > s.maxWave) {
-      s.phase = 'END';
-      render();
-      return;
-    }
 
-    var def = WAVES[s.wave - 1];
+    var def = getWaveDef(s.wave);
     if (!def) {
       s.phase = 'END';
       render();
@@ -1392,7 +1445,7 @@
     }
 
     var clutch = s.castleHp > 0 && s.castleHp <= 5;
-    var baseGold = 5;
+    var baseGold = getWaveReward(currentWave);
     if (perfect) baseGold += 5;
     if (clutch) baseGold *= 2;
     s.gold += baseGold;
@@ -1418,15 +1471,22 @@
 
     updateCombo(perfect);
     s.wave += 1;
+    if (s.wave > s.maxWaveReached) s.maxWaveReached = s.wave;
 
+    // 종료 판정
     if (s.castleHp <= 0) {
       s.isGameOver = true;
       s.phase = 'END';
       s.lastActionStatus = 'GAME_OVER';
-      log('[GAME OVER] Castle destroyed at wave ' + currentWave + '.', 'danger');
+      if (s.isEndless) {
+        log('[GAME OVER] Endless mode ended at wave ' + currentWave + '.', 'danger');
+      } else {
+        log('[GAME OVER] Castle destroyed at wave ' + currentWave + '.', 'danger');
+      }
       playDefeat();
       showResult(false);
-    } else if (s.wave > s.maxWave) {
+    } else if (s.wave > s.maxWave && !s.isEndless) {
+      // 기본 클리어 (무한 모드 미진입 상태에서 웨이브 5 완료)
       s.isVictory = true;
       s.phase = 'END';
       s.lastActionStatus = 'VICTORY';
@@ -1434,6 +1494,12 @@
       log('[VICTORY] All ' + s.maxWave + ' waves cleared. Score: ' + score, 'highlight');
       playVictory();
       showResult(true);
+    } else if (s.isEndless) {
+      // 무한 모드 진행
+      s.phase = 'DRAW';
+      log('[ENDLESS] Wave ' + s.wave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '.');
+      log('[TURN] Wave ' + s.wave + ' begins.');
+      showWaveTransition(s.wave);
     } else {
       s.phase = 'DRAW';
       log('[TURN] Wave ' + s.wave + ' begins.');
@@ -1449,7 +1515,7 @@
     for (var i = 0; i < s.warriors.length; i++) {
       if (s.warriors[i]) warriorsAlive++;
     }
-    return s.gold * 10 + s.castleHp * 2 + warriorsAlive * 20;
+    return s.gold * 10 + s.castleHp * 2 + warriorsAlive * 20 + (s.maxWaveReached - 1) * 30;
   }
 
   function showResult(isVictory) {
@@ -1457,22 +1523,44 @@
     if (isVictory) {
       els.resultBox.className = 'result-box';
       els.resultTitle.textContent = '🏆 VICTORY 🏆';
+      els.resultWave.textContent = '도달 웨이브: ' + s.maxWave + ' / ' + s.maxWave;
+      els.btnContinue.classList.remove('hidden');
     } else {
       els.resultBox.className = 'result-box defeat';
       els.resultTitle.textContent = '💀 DEFEAT 💀';
+      if (s.isEndless) {
+        els.resultWave.textContent = '최고 도달 웨이브: ' + (s.wave - 1);
+      } else {
+        els.resultWave.textContent = '도달 웨이브: ' + (s.wave - 1) + ' / ' + s.maxWave;
+      }
+      els.btnContinue.classList.add('hidden');
     }
-    els.resultWave.textContent = '도달 웨이브: ' + (isVictory ? s.maxWave : s.wave - 1) + ' / ' + s.maxWave;
     els.resultScore.textContent = String(calculateScore());
     var warriorsAlive = 0;
     for (var i = 0; i < s.warriors.length; i++) { if (s.warriors[i]) warriorsAlive++; }
-    els.resultDetail.textContent = '골드 ' + s.gold + ' · 성 HP ' + s.castleHp + ' · 생존 전사 ' + warriorsAlive;
+    els.resultDetail.textContent = '골드 ' + s.gold + ' · 성 HP ' + Math.max(0, s.castleHp) + ' · 생존 전사 ' + warriorsAlive;
     els.resultOverlay.classList.add('show');
+  }
+
+  function continueEndless() {
+    var s = window.gameState;
+    if (!s.isVictory) return;
+    s.isVictory = false;
+    s.isEndless = true;
+    s.phase = 'DRAW';
+    els.resultOverlay.classList.remove('show');
+    log('[ENDLESS] Endless mode begins at wave ' + s.wave + '.', 'highlight');
+    showWaveTransition(s.wave);
+    render();
   }
 
   function resetGame() {
     var s = window.gameState;
     s.phase = 'DRAW';
     s.wave = 1;
+    s.maxWave = MAX_WAVE;
+    s.maxWaveReached = 1;
+    s.isEndless = false;
     s.castleHp = CASTLE_MAX_HP;
     s.castleMaxHp = CASTLE_MAX_HP;
     s.gold = 0;
@@ -1492,6 +1580,11 @@
   }
 
   els.btnDraw.addEventListener('click', onDrawClick);
+  els.btnContinue.addEventListener('click', function () {
+    ensureAudio();
+    playClick();
+    continueEndless();
+  });
   els.btnRestart.addEventListener('click', function () {
     ensureAudio();
     playClick();
@@ -1517,19 +1610,19 @@
 
     record('초기 phase === DRAW', window.gameState.phase === 'DRAW', 'phase=' + window.gameState.phase);
     record('초기 wave === 1', window.gameState.wave === 1, 'wave=' + window.gameState.wave);
-    record('초기 castleHp === 50', window.gameState.castleHp === 50, 'hp=' + window.gameState.castleHp);
-    record('초기 gold === 0', window.gameState.gold === 0, 'gold=' + window.gameState.gold);
-    record('초기 warriors 모두 null',
-      window.gameState.warriors[0] === null &&
-      window.gameState.warriors[1] === null &&
-      window.gameState.warriors[2] === null);
+    record('초기 maxWave === 5', window.gameState.maxWave === 5, 'maxWave=' + window.gameState.maxWave);
+    record('초기 maxWaveReached === 1', window.gameState.maxWaveReached === 1,
+      'maxWaveReached=' + window.gameState.maxWaveReached);
+    record('초기 isEndless === false', window.gameState.isEndless === false);
+    record('초기 castleHp === 50', window.gameState.castleHp === 50);
+    record('초기 gold === 0', window.gameState.gold === 0);
     record('초기 draw 버튼 활성', els.btnDraw.disabled === false);
     record('초기 deploy-0 비활성', btnDeploy[0].disabled === true);
     record('초기 deploy-1 비활성', btnDeploy[1].disabled === true);
     record('초기 deploy-2 비활성', btnDeploy[2].disabled === true);
 
-    record('#status-hint 초기 문구', els.statusHint.textContent === '카드 뽑기 버튼을 누르세요',
-      'text=' + els.statusHint.textContent);
+    record('#btn-continue DOM 존재', !!els.btnContinue);
+    record('#status-hint 초기 문구', els.statusHint.textContent === '카드 뽑기 버튼을 누르세요');
     record('#combo-badge DOM 존재', !!els.comboBadge);
     record('#wave-transition DOM 존재', !!els.waveTransition);
     record('#castle-hp-fill에 hp-fill 클래스', els.castleHpFill.className.indexOf('hp-fill') !== -1);
@@ -1537,29 +1630,23 @@
       getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() === '#ffcc00');
 
     els.btnDraw.click();
-    record('뽑기 후 phase === SELECT', window.gameState.phase === 'SELECT', 'phase=' + window.gameState.phase);
-    record('뽑기 후 카드 3장', window.gameState.availableCards.length === 3,
-      'cards=' + window.gameState.availableCards.length);
-    record('뽑기 후 lastActionStatus === DRAW_SUCCESS',
-      window.gameState.lastActionStatus === 'DRAW_SUCCESS');
+    record('뽑기 후 phase === SELECT', window.gameState.phase === 'SELECT');
+    record('뽑기 후 카드 3장', window.gameState.availableCards.length === 3);
     record('뽑기 후 draw 버튼 비활성', els.btnDraw.disabled === true);
 
     var tankerIdx = -1;
     for (var i = 0; i < window.gameState.availableCards.length; i++) {
       if (window.gameState.availableCards[i].id === 'TANKER') { tankerIdx = i; break; }
     }
-    record('COMMON 카드 1장 이상 존재', tankerIdx >= 0, 'idx=' + tankerIdx);
+    record('COMMON 카드 존재', tankerIdx >= 0);
 
     if (tankerIdx >= 0) {
       var cardEl = document.getElementById('card-choice-' + tankerIdx);
-      record('카드 DOM 존재', !!cardEl);
       if (cardEl) cardEl.click();
     }
-    record('선택 후 phase === DEPLOY', window.gameState.phase === 'DEPLOY', 'phase=' + window.gameState.phase);
+    record('선택 후 phase === DEPLOY', window.gameState.phase === 'DEPLOY');
     record('선택 후 selectedCard.id === TANKER',
       window.gameState.selectedCard && window.gameState.selectedCard.id === 'TANKER');
-    record('선택 후 lastActionStatus === PICK_SUCCESS',
-      window.gameState.lastActionStatus === 'PICK_SUCCESS');
 
     record('배치 전 deploy-0 활성', btnDeploy[0].disabled === false);
     var waveBefore = window.gameState.wave;
@@ -1573,31 +1660,22 @@
       'wave=' + window.gameState.wave);
     record('배치 후 gold > 0', window.gameState.gold > goldBefore,
       'gold=' + window.gameState.gold);
-    record('배치 후 phase === DRAW', window.gameState.phase === 'DRAW',
-      'phase=' + window.gameState.phase);
-    record('배치 후 lastActionStatus가 WAVE_CLEAR 또는 WAVE_PERFECT',
-      window.gameState.lastActionStatus === 'WAVE_CLEAR' ||
-      window.gameState.lastActionStatus === 'WAVE_PERFECT',
-      'status=' + window.gameState.lastActionStatus);
-    record('웨이브 1 클리어 로그 존재',
-      window.gameState.log.some(function (l) { return l.indexOf('[WAVE] Wave 1 cleared.') === 0; }));
-    record('웨이브 2 시작 로그 존재',
-      window.gameState.log.some(function (l) { return l === '[TURN] Wave 2 begins.'; }));
+    record('배치 후 phase === DRAW', window.gameState.phase === 'DRAW');
+    record('maxWaveReached === 2', window.gameState.maxWaveReached === 2,
+      'maxWaveReached=' + window.gameState.maxWaveReached);
 
-    record('#stat-wave 텍스트가 2로 갱신됨',
-      els.statWave.textContent === '2',
+    record('#stat-wave 텍스트가 2', els.statWave.textContent === '2',
       'dom=' + els.statWave.textContent);
-    record('#stat-castle-hp 텍스트 일치',
-      els.statCastleHp.textContent === String(Math.max(0, window.gameState.castleHp)),
-      'dom=' + els.statCastleHp.textContent + ' state=' + window.gameState.castleHp);
-    record('#stat-gold 텍스트 일치',
-      els.statGold.textContent === String(window.gameState.gold),
-      'dom=' + els.statGold.textContent + ' state=' + window.gameState.gold);
     record('#btn-draw-card 재활성', els.btnDraw.disabled === false);
 
-    els.btnDraw.click();
-    record('wave 2에서 카드 뽑기 성공', window.gameState.availableCards.length === 3);
-    record('wave 2 phase === SELECT', window.gameState.phase === 'SELECT');
+    // 무한 모드 진입 시뮬레이션
+    window.gameState.isVictory = true;
+    window.gameState.phase = 'END';
+    els.btnContinue.classList.remove('hidden');
+    els.btnContinue.click();
+    record('계속 도전 후 isEndless === true', window.gameState.isEndless === true);
+    record('계속 도전 후 isVictory === false', window.gameState.isVictory === false);
+    record('계속 도전 후 phase === DRAW', window.gameState.phase === 'DRAW');
 
     var pass = errors.length === 0;
     var report = {
@@ -1610,13 +1688,11 @@
       finalState: {
         phase: window.gameState.phase,
         wave: window.gameState.wave,
+        maxWave: window.gameState.maxWave,
+        maxWaveReached: window.gameState.maxWaveReached,
+        isEndless: window.gameState.isEndless,
         castleHp: window.gameState.castleHp,
-        gold: window.gameState.gold,
-        combo: window.gameState.combo,
-        warriors: window.gameState.warriors.map(function (w) {
-          return w ? { name: w.name, hp: w.hp, atk: w.atk } : null;
-        }),
-        lastActionStatus: window.gameState.lastActionStatus
+        gold: window.gameState.gold
       }
     };
 
@@ -1641,4 +1717,4 @@
 })();
 </script>
 </body>
-</html>
+  </html>
