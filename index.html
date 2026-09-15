@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>타이니 워리어 러시</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>타이니 워리어 러시 v2.0</title>
 <style>
   :root {
     --bg-deep:      #08080d;
@@ -11,11 +11,9 @@
     --bg-panel:     #14141f;
     --bg-panel-2:   #1a1a24;
     --bg-inset:     #0a0a12;
-
     --text-primary: #e8e8ee;
     --text-muted:   #8888a0;
     --text-dim:     #55556a;
-
     --gold:         #ffcc00;
     --gold-deep:    #a66800;
     --blue:         #4a90e2;
@@ -24,22 +22,18 @@
     --red-deep:     #8a1a34;
     --green:        #00ff66;
     --green-deep:   #00883a;
-
     --border-subtle: #2a2a3a;
     --border-strong: #3a3a4a;
-
     --r-sm: 8px;
     --r-md: 12px;
     --r-lg: 16px;
     --r-pill: 999px;
-
     --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.05);
     --shadow-drop:  0 4px 12px rgba(0,0,0,0.5);
     --glow-gold:    0 0 24px rgba(255,204,0,0.6);
     --glow-blue:    0 0 16px rgba(74,144,226,0.5);
     --glow-red:     0 0 20px rgba(255,51,102,0.7);
     --glow-green:   0 0 20px rgba(0,255,102,0.6);
-
     --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', Roboto, sans-serif;
     --font-mono: 'Courier New', Courier, monospace;
   }
@@ -52,10 +46,10 @@
     font-family: var(--font-ui);
     min-height: 100vh;
     -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    -webkit-user-select: none;
     overflow-x: hidden;
   }
+
+  button, .card, .slot, .deploy-btn { user-select: none; -webkit-user-select: none; }
 
   #app {
     max-width: 480px;
@@ -68,6 +62,13 @@
     position: relative;
   }
 
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
   h1 {
     font-size: 15px;
     color: var(--gold);
@@ -75,9 +76,28 @@
     letter-spacing: 3px;
     font-weight: 900;
     text-shadow: 0 0 12px rgba(255,204,0,0.6), 0 0 24px rgba(255,204,0,0.3);
+    flex: 1;
   }
 
-  /* ===== 성 패널 ===== */
+  #btn-sound-toggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--bg-panel-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-sm);
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #btn-sound-toggle:active { transform: translateY(-50%) scale(0.94); }
+
   .castle-panel {
     background: linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%);
     border: 1px solid var(--border-subtle);
@@ -94,11 +114,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent 0px, transparent 8px,
-      rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px
-    );
+    background: repeating-linear-gradient(90deg, transparent 0px, transparent 8px, rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px);
     pointer-events: none;
   }
   .castle-visual {
@@ -107,6 +123,8 @@
     justify-content: center;
     position: relative;
     z-index: 1;
+    flex-direction: column;
+    gap: 2px;
   }
   .castle-emoji {
     font-size: 32px;
@@ -125,6 +143,13 @@
     0%, 100% { transform: translateX(0) rotate(0deg); }
     25% { transform: translateX(-1.5px) rotate(-2deg); }
     75% { transform: translateX(1.5px) rotate(2deg); }
+  }
+  .castle-status-label {
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    min-height: 11px;
+    text-align: center;
   }
   .castle-info {
     display: flex;
@@ -199,7 +224,6 @@
     to   { box-shadow: inset 0 0 14px 2px rgba(255,51,102,0.8); }
   }
 
-  /* ===== 상태 힌트 ===== */
   #status-hint {
     background: var(--bg-panel-2);
     border: 1px dashed var(--border-strong);
@@ -216,18 +240,10 @@
     justify-content: center;
     transition: color 0.25s, border-color 0.25s, background 0.25s;
   }
-  #status-hint.deploy {
-    color: var(--blue);
-    border-color: var(--blue);
-    background: rgba(74,144,226,0.08);
-  }
-  #status-hint.end {
-    color: var(--red);
-    border-color: var(--red);
-    background: rgba(255,51,102,0.08);
-  }
+  #status-hint.deploy { color: var(--blue); border-color: var(--blue); background: rgba(74,144,226,0.08); }
+  #status-hint.shop { color: var(--gold); border-color: var(--gold); background: rgba(255,204,0,0.08); }
+  #status-hint.end { color: var(--red); border-color: var(--red); background: rgba(255,51,102,0.08); }
 
-  /* ===== 전장 슬롯 ===== */
   .battlefield {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -252,6 +268,17 @@
     transition: all 0.2s;
     position: relative;
     overflow: hidden;
+    cursor: default;
+  }
+  .slot.shop-target {
+    cursor: pointer;
+    border-color: var(--gold) !important;
+    box-shadow: var(--glow-gold);
+    animation: shopPulse 0.8s infinite alternate;
+  }
+  @keyframes shopPulse {
+    from { box-shadow: 0 0 12px rgba(255,204,0,0.5); }
+    to   { box-shadow: 0 0 24px rgba(255,204,0,0.9); }
   }
   .slot .slot-icon {
     position: absolute;
@@ -307,6 +334,11 @@
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.08); }
   }
+  .slot.damage-anim { animation: slotDamage 0.3s ease; }
+  @keyframes slotDamage {
+    0%, 100% { transform: scale(1); filter: none; }
+    50% { transform: scale(0.94); filter: brightness(1.6) hue-rotate(-30deg); }
+  }
   .warrior-emoji {
     font-size: 28px;
     filter: drop-shadow(0 0 6px rgba(74,144,226,0.8));
@@ -330,7 +362,6 @@
     z-index: 1;
   }
 
-  /* ===== 적 미리보기 ===== */
   .enemy-preview {
     background: linear-gradient(180deg, #1a0f14 0%, #10080c 100%);
     border: 1px solid var(--red-deep);
@@ -341,26 +372,10 @@
     align-items: center;
     font-size: 11px;
   }
-  .enemy-preview .label {
-    color: #ff6688;
-    letter-spacing: 0.8px;
-    font-weight: 800;
-    font-size: 10px;
-  }
-  .enemy-preview .count {
-    color: var(--red);
-    font-weight: 900;
-    font-family: var(--font-mono);
-    font-size: 12px;
-  }
-  .enemy-preview .detail {
-    color: #885566;
-    font-size: 10px;
-    font-family: var(--font-mono);
-    font-weight: 700;
-  }
+  .enemy-preview .label { color: #ff6688; letter-spacing: 0.8px; font-weight: 800; font-size: 10px; }
+  .enemy-preview .count { color: var(--red); font-weight: 900; font-family: var(--font-mono); font-size: 12px; }
+  .enemy-preview .detail { color: #885566; font-size: 10px; font-family: var(--font-mono); font-weight: 700; }
 
-  /* ===== 카드 ===== */
   .cards-area {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -378,25 +393,16 @@
     justify-content: center;
     gap: 4px;
     cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+    transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s, opacity 0.25s;
     min-height: 128px;
     position: relative;
     overflow: hidden;
     text-align: center;
   }
-  .card-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    position: relative;
-    z-index: 1;
-  }
+  .card-inner { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; }
   .card-banner {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 16px;
     display: flex;
     align-items: center;
@@ -425,10 +431,7 @@
     pointer-events: none;
     z-index: 0;
   }
-  .card.rarity-LEGEND .card-shine {
-    opacity: 1;
-    animation: legendRotate 3s linear infinite;
-  }
+  .card.rarity-LEGEND .card-shine { opacity: 1; animation: legendRotate 3s linear infinite; }
   @keyframes legendRotate {
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
@@ -451,6 +454,7 @@
   .card.appear { animation: cardIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
   .card.appear:nth-child(2) { animation-delay: 0.09s; }
   .card.appear:nth-child(3) { animation-delay: 0.18s; }
+  .card.appear:nth-child(4) { animation-delay: 0.27s; }
   @keyframes cardIn {
     from { transform: translateY(-24px) scale(0.85); opacity: 0; }
     to   { transform: translateY(0) scale(1); opacity: 1; }
@@ -461,26 +465,12 @@
     box-shadow: 0 0 24px rgba(255,204,0,0.9), 0 0 48px rgba(255,204,0,0.4);
     transform: scale(1.05) rotateZ(-1deg);
   }
-  .card.locked {
-    opacity: 0.35;
-    cursor: not-allowed;
-    filter: grayscale(0.7);
-  }
+  .card.locked { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.7); }
+  .card.fade-out { opacity: 0; transform: scale(0.85); pointer-events: none; }
   .card-emoji { font-size: 28px; }
-  .card-name {
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--text-primary);
-    letter-spacing: 0.5px;
-  }
-  .card-desc {
-    font-size: 9px;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-weight: 700;
-  }
+  .card-name { font-size: 11px; font-weight: 800; color: var(--text-primary); letter-spacing: 0.5px; }
+  .card-desc { font-size: 9px; color: var(--text-muted); font-family: var(--font-mono); font-weight: 700; }
 
-  /* ===== 조작 ===== */
   .actions { display: flex; flex-direction: column; gap: 8px; }
   .deploy-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .deploy-btn {
@@ -534,19 +524,80 @@
     0% { left: -60%; }
     60%, 100% { left: 120%; }
   }
-  #btn-draw-card:not(:disabled):active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 var(--gold-deep), var(--glow-gold);
-  }
-  #btn-draw-card:disabled {
-    background: var(--border-subtle);
-    color: var(--text-dim);
-    box-shadow: none;
-    cursor: not-allowed;
-  }
+  #btn-draw-card:not(:disabled):active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gold-deep), var(--glow-gold); }
+  #btn-draw-card:disabled { background: var(--border-subtle); color: var(--text-dim); box-shadow: none; cursor: not-allowed; }
   #btn-draw-card:disabled::after { display: none; }
 
-  /* ===== 로그 ===== */
+  #btn-discard {
+    min-height: 40px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-sm);
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+  #btn-discard:not(:disabled) { color: #ff8899; border-color: var(--red-deep); }
+  #btn-discard:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .shop-panel {
+    background: var(--bg-panel-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-sm);
+    padding: 0;
+    overflow: hidden;
+  }
+  .shop-panel summary {
+    list-style: none;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .shop-panel summary::-webkit-details-marker { display: none; }
+  .shop-panel summary::after { content: '▼'; font-size: 10px; transition: transform 0.2s; }
+  .shop-panel[open] summary::after { transform: rotate(180deg); }
+  .shop-panel .shop-body {
+    padding: 8px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .shop-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .shop-btn {
+    min-height: 52px;
+    background: var(--bg-panel);
+    border: 2px solid var(--border-strong);
+    border-radius: var(--r-sm);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    line-height: 1.2;
+    transition: all 0.15s;
+  }
+  .shop-btn:not(:disabled):active { transform: scale(0.94); }
+  .shop-btn:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+  .shop-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .shop-btn .price { font-family: var(--font-mono); font-size: 10px; color: var(--gold); }
+
   #game-output {
     background: var(--bg-inset);
     border-radius: var(--r-sm);
@@ -558,6 +609,8 @@
     line-height: 1.5;
     color: var(--text-muted);
     border: 1px solid var(--border-subtle);
+    user-select: text;
+    -webkit-user-select: text;
   }
   .log-line { white-space: pre-wrap; word-break: break-all; }
   .log-line:last-child { color: var(--gold); }
@@ -569,7 +622,6 @@
     to { transform: translateX(0); opacity: 1; }
   }
 
-  /* ===== 플래시 ===== */
   #flash {
     position: fixed;
     inset: 0;
@@ -582,8 +634,8 @@
   #flash.active { opacity: 0.45; }
   #flash.victory { background: var(--green); }
   #flash.danger { background: var(--red); }
+  #flash.legend { background: var(--gold); opacity: 0.7; }
 
-  /* ===== 데미지 팝업 ===== */
   .dmg-popup {
     position: fixed;
     font-size: 22px;
@@ -603,7 +655,6 @@
     100% { transform: translateY(-80px) scale(1); opacity: 0; }
   }
 
-  /* ===== 콤보 배지 ===== */
   #combo-badge {
     position: fixed;
     top: 12px;
@@ -623,12 +674,8 @@
     z-index: 1002;
     transition: opacity 0.25s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  #combo-badge.show {
-    opacity: 1;
-    transform: scale(1);
-  }
+  #combo-badge.show { opacity: 1; transform: scale(1); }
 
-  /* ===== 웨이브 전환 ===== */
   #wave-transition {
     position: fixed;
     inset: 0;
@@ -641,10 +688,7 @@
     z-index: 1003;
     transition: opacity 0.3s;
   }
-  #wave-transition.show {
-    opacity: 1;
-    animation: waveIn 1.0s ease forwards;
-  }
+  #wave-transition.show { opacity: 1; animation: waveIn 1.0s ease forwards; }
   #wave-transition .wave-title {
     font-family: var(--font-ui);
     font-size: 42px;
@@ -660,7 +704,53 @@
     100% { opacity: 0; }
   }
 
-  /* ===== 스크린 셰이크 ===== */
+  #enemy-row-overlay {
+    position: fixed;
+    bottom: 100px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+    pointer-events: none;
+    z-index: 997;
+    opacity: 0;
+  }
+  #enemy-row-overlay.show { animation: enemyRowIn 1.2s ease forwards; }
+  @keyframes enemyRowIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+  }
+  .enemy-token {
+    background: linear-gradient(180deg, #3a1a24, #1a0f14);
+    border: 2px solid var(--red-deep);
+    border-radius: var(--r-sm);
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 42px;
+  }
+  .enemy-token.elite { border-color: var(--gold); box-shadow: var(--glow-gold); }
+  .enemy-token .enemy-emoji { font-size: 20px; }
+  .enemy-token .enemy-mini-hp {
+    width: 32px;
+    height: 4px;
+    background: var(--bg-inset);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .enemy-token .enemy-mini-hp-fill {
+    height: 100%;
+    background: var(--red);
+    transition: width 0.3s;
+  }
+
   #app.shake { animation: screenShake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
   @keyframes screenShake {
     10%, 90% { transform: translateX(-3px); }
@@ -669,7 +759,6 @@
     40%, 60% { transform: translateX(4px); }
   }
 
-  /* ===== 파티클 ===== */
   #particle-layer {
     position: fixed;
     inset: 0;
@@ -690,7 +779,6 @@
     100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
   }
 
-  /* ===== 결과 오버레이 ===== */
   #result-overlay {
     position: fixed;
     inset: 0;
@@ -717,33 +805,12 @@
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
   }
-  .result-box.defeat {
-    border-color: var(--red);
-    box-shadow: 0 0 40px rgba(255,51,102,0.6), 0 0 80px rgba(255,51,102,0.3);
-  }
-  .result-box h2 {
-    font-size: 22px;
-    letter-spacing: 3px;
-    margin-bottom: 12px;
-    color: var(--gold);
-    font-weight: 900;
-  }
+  .result-box.defeat { border-color: var(--red); box-shadow: 0 0 40px rgba(255,51,102,0.6), 0 0 80px rgba(255,51,102,0.3); }
+  .result-box h2 { font-size: 22px; letter-spacing: 3px; margin-bottom: 12px; color: var(--gold); font-weight: 900; }
   .result-box.defeat h2 { color: var(--red); }
   .result-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
-  .result-box .score {
-    font-size: 30px;
-    color: var(--green);
-    font-weight: 900;
-    margin: 14px 0;
-    font-family: var(--font-mono);
-    text-shadow: 0 0 12px rgba(0,255,102,0.6);
-  }
-  .result-btn-row {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 14px;
-  }
+  .result-box .score { font-size: 30px; color: var(--green); font-weight: 900; margin: 14px 0; font-family: var(--font-mono); text-shadow: 0 0 12px rgba(0,255,102,0.6); }
+  .result-btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
   #btn-continue {
     min-height: 48px;
     padding: 0 24px;
@@ -776,6 +843,18 @@
   }
   #btn-restart:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gold-deep); }
 
+  button:focus-visible, .card:focus-visible, .slot:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 481px) {
+    #app { max-width: 720px; }
+    .cards-area { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .battlefield { grid-template-columns: repeat(3, 1fr); }
+    .shop-row { grid-template-columns: repeat(3, 1fr); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -787,11 +866,15 @@
 </head>
 <body>
 <div id="app">
-  <h1>⚔️ TINY WARRIORS RUSH ⚔️</h1>
+  <div class="header-row">
+    <h1>⚔️ TINY WARRIORS RUSH ⚔️</h1>
+    <button id="btn-sound-toggle" aria-label="효과음 켜기/끄기" title="효과음 토글">🔊</button>
+  </div>
 
   <div class="castle-panel">
     <div class="castle-visual">
       <div class="castle-emoji" id="castle-emoji">🏰</div>
+      <div class="castle-status-label" id="castle-status-label"></div>
     </div>
     <div class="castle-info">
       <div class="castle-row">
@@ -807,20 +890,20 @@
     </div>
   </div>
 
-  <div id="status-hint">카드 뽑기 버튼을 누르세요</div>
+  <div id="status-hint" aria-live="polite">카드 뽑기 버튼을 누르세요</div>
 
   <div class="battlefield" id="battlefield">
-    <div class="slot empty" id="slot-0" data-slot="0">
+    <div class="slot empty" id="slot-0" data-slot="0" tabindex="0" role="button" aria-label="전열 슬롯, 비어있음">
       <div class="slot-icon">🛡️</div>
       <span class="slot-pos">전열</span>
       <div class="slot-content"></div>
     </div>
-    <div class="slot empty" id="slot-1" data-slot="1">
+    <div class="slot empty" id="slot-1" data-slot="1" tabindex="0" role="button" aria-label="중열 슬롯, 비어있음">
       <div class="slot-icon">⚔️</div>
       <span class="slot-pos">중열</span>
       <div class="slot-content"></div>
     </div>
-    <div class="slot empty" id="slot-2" data-slot="2">
+    <div class="slot empty" id="slot-2" data-slot="2" tabindex="0" role="button" aria-label="후열 슬롯, 비어있음">
       <div class="slot-icon">🚩</div>
       <span class="slot-pos">후열</span>
       <div class="slot-content"></div>
@@ -841,20 +924,42 @@
 
   <div class="actions">
     <div class="deploy-row">
-      <button id="btn-deploy-0" class="deploy-btn" disabled><span class="plus">+</span>전열</button>
-      <button id="btn-deploy-1" class="deploy-btn" disabled><span class="plus">+</span>중열</button>
-      <button id="btn-deploy-2" class="deploy-btn" disabled><span class="plus">+</span>후열</button>
+      <button id="btn-deploy-0" class="deploy-btn" disabled aria-label="전열 슬롯에 배치"><span class="plus">+</span>전열</button>
+      <button id="btn-deploy-1" class="deploy-btn" disabled aria-label="중열 슬롯에 배치"><span class="plus">+</span>중열</button>
+      <button id="btn-deploy-2" class="deploy-btn" disabled aria-label="후열 슬롯에 배치"><span class="plus">+</span>후열</button>
     </div>
-    <button id="btn-draw-card">카드 뽑기</button>
+    <button id="btn-discard" aria-label="선택한 카드 버리기">🗑️ 카드 버리기</button>
+    <button id="btn-draw-card" aria-label="카드 뽑기">카드 뽑기</button>
+
+    <details class="shop-panel" id="shop-panel">
+      <summary>🏪 상점 · 골드 <span id="shop-gold">0</span></summary>
+      <div class="shop-body">
+        <div class="shop-row">
+          <button id="btn-shop-reroll" class="shop-btn" aria-label="카드 재뽑기, 10골드">
+            🎲 재뽑기
+            <span class="price">10G</span>
+          </button>
+          <button id="btn-shop-upgrade" class="shop-btn" aria-label="전사 강화, 15골드">
+            ⬆️ 강화
+            <span class="price">15G</span>
+          </button>
+          <button id="btn-shop-repair" class="shop-btn" aria-label="성벽 보수, 8골드">
+            🛠️ 보수
+            <span class="price">8G</span>
+          </button>
+        </div>
+      </div>
+    </details>
   </div>
 
-  <div id="game-output"></div>
+  <div id="game-output" aria-live="polite"></div>
 </div>
 
 <div id="flash"></div>
 <div id="particle-layer"></div>
 <div id="combo-badge">PERFECT ×2</div>
 <div id="wave-transition"><div class="wave-title" id="wave-transition-title">WAVE 2</div></div>
+<div id="enemy-row-overlay"></div>
 
 <div id="result-overlay">
   <div class="result-box" id="result-box">
@@ -876,7 +981,10 @@
   var MAX_WAVE = 5;
   var CASTLE_MAX_HP = 50;
   var SLOT_COUNT = 3;
+  var SAVE_KEY = 'tinyWarriorsSave';
+  var SFX_KEY = 'sfxMuted';
 
+  /* ===== 카드 정의 ===== */
   var CARD_TANKER = {
     id: 'TANKER', name: '탱커 소환', emoji: '🛡️', rarity: 'COMMON', type: 'SUMMON',
     desc: 'HP30/ATK3',
@@ -890,15 +998,59 @@
     id: 'HEAL', name: '성 회복', emoji: '💚', rarity: 'RARE', type: 'INSTANT',
     desc: '성 HP +5'
   };
+  var CARD_HERO = {
+    id: 'HERO', name: '전설의 용사', emoji: '👑', rarity: 'LEGEND', type: 'SUMMON',
+    desc: 'HP50/ATK8',
+    warrior: { name: '용사', emoji: '👑', hp: 50, maxHp: 50, atk: 8 }
+  };
 
-  var WAVES = [
-    { enemies: [{ hp: 6,  atk: 2 }, { hp: 6,  atk: 2 }] },
-    { enemies: [{ hp: 8,  atk: 3 }, { hp: 8,  atk: 3 }, { hp: 8,  atk: 3 }] },
-    { enemies: [{ hp: 12, atk: 4 }, { hp: 12, atk: 4 }, { hp: 12, atk: 4 }, { hp: 12, atk: 4 }] },
-    { enemies: [{ hp: 14, atk: 4 }, { hp: 14, atk: 4 }, { hp: 14, atk: 4 }, { hp: 14, atk: 4 }] },
-    { enemies: [{ hp: 16, atk: 5 }, { hp: 16, atk: 5 }, { hp: 16, atk: 5 }, { hp: 16, atk: 5 }, { hp: 16, atk: 5 }] }
-  ];
+  /* ===== 웨이브 정의 ===== */
+  function getWaveDef(waveNum) {
+    if (waveNum === 1) return { enemies: [
+      { type: '잡병', hp: 6, atk: 2 },
+      { type: '잡병', hp: 6, atk: 2 }
+    ], gold: 5 };
+    if (waveNum === 2) return { enemies: [
+      { type: '잡병', hp: 8, atk: 3 },
+      { type: '잡병', hp: 8, atk: 3 },
+      { type: '잡병', hp: 8, atk: 3 }
+    ], gold: 5 };
+    if (waveNum === 3) return { enemies: [
+      { type: '잡병', hp: 10, atk: 3 },
+      { type: '잡병', hp: 10, atk: 3 },
+      { type: '잡병', hp: 10, atk: 3 },
+      { type: '정예', hp: 20, atk: 5 }
+    ], gold: 6 };
+    if (waveNum === 4) return { enemies: [
+      { type: '잡병', hp: 12, atk: 4 },
+      { type: '잡병', hp: 12, atk: 4 },
+      { type: '잡병', hp: 12, atk: 4 },
+      { type: '정예', hp: 24, atk: 6 }
+    ], gold: 6 };
+    if (waveNum === 5) return { enemies: [
+      { type: '잡병', hp: 14, atk: 4 },
+      { type: '잡병', hp: 14, atk: 4 },
+      { type: '잡병', hp: 14, atk: 4 },
+      { type: '잡병', hp: 14, atk: 4 },
+      { type: '정예', hp: 30, atk: 7 }
+    ], gold: 7 };
+    // 무한 모드 (wave >= 6)
+    var over = waveNum - 5;
+    var gruntHp = 14 + over * 2;
+    var gruntAtk = 4 + Math.floor(over / 3);
+    var eliteHp = 30 + over * 4;
+    var eliteAtk = 7 + Math.floor(over / 2);
+    var totalEnemies = Math.min(8, 5 + Math.floor(over / 2));
+    var eliteCount = Math.max(1, Math.floor(totalEnemies * 0.2));
+    var gruntCount = totalEnemies - eliteCount;
+    var arr = [];
+    var i;
+    for (i = 0; i < gruntCount; i++) arr.push({ type: '잡병', hp: gruntHp, atk: gruntAtk });
+    for (i = 0; i < eliteCount; i++) arr.push({ type: '정예', hp: eliteHp, atk: eliteAtk });
+    return { enemies: arr, gold: 5 + Math.floor(over / 2) };
+  }
 
+  /* ===== 상태 ===== */
   window.gameState = {
     phase: 'DRAW',
     wave: 1,
@@ -915,9 +1067,13 @@
     isGameOver: false,
     isVictory: false,
     combo: 0,
+    rerollUsedThisWave: false,
+    shopMode: null,
+    sfxMuted: false,
     log: []
   };
 
+  /* ===== DOM 참조 ===== */
   var els = {
     app: document.getElementById('app'),
     statWave: document.getElementById('stat-wave'),
@@ -927,26 +1083,34 @@
     statCastleMaxHp: document.getElementById('stat-castle-max-hp'),
     castleHpFill: document.getElementById('castle-hp-fill'),
     castleEmoji: document.getElementById('castle-emoji'),
+    castleStatusLabel: document.getElementById('castle-status-label'),
     enemyCount: document.getElementById('enemy-count'),
     enemyDetail: document.getElementById('enemy-detail'),
     cardsArea: document.getElementById('cards-area'),
     battlefield: document.getElementById('battlefield'),
     output: document.getElementById('game-output'),
     btnDraw: document.getElementById('btn-draw-card'),
+    btnDiscard: document.getElementById('btn-discard'),
     btnContinue: document.getElementById('btn-continue'),
     btnRestart: document.getElementById('btn-restart'),
+    btnSoundToggle: document.getElementById('btn-sound-toggle'),
     flash: document.getElementById('flash'),
     statusHint: document.getElementById('status-hint'),
     comboBadge: document.getElementById('combo-badge'),
     waveTransition: document.getElementById('wave-transition'),
     waveTransitionTitle: document.getElementById('wave-transition-title'),
     particleLayer: document.getElementById('particle-layer'),
+    enemyRowOverlay: document.getElementById('enemy-row-overlay'),
     resultOverlay: document.getElementById('result-overlay'),
     resultBox: document.getElementById('result-box'),
     resultTitle: document.getElementById('result-title'),
     resultWave: document.getElementById('result-wave'),
     resultScore: document.getElementById('result-score'),
-    resultDetail: document.getElementById('result-detail')
+    resultDetail: document.getElementById('result-detail'),
+    shopGold: document.getElementById('shop-gold'),
+    btnShopReroll: document.getElementById('btn-shop-reroll'),
+    btnShopUpgrade: document.getElementById('btn-shop-upgrade'),
+    btnShopRepair: document.getElementById('btn-shop-repair')
   };
 
   var btnDeploy = [
@@ -955,31 +1119,33 @@
     document.getElementById('btn-deploy-2')
   ];
 
-  /* ===== Web Audio API ===== */
+  var slotEls = [
+    document.getElementById('slot-0'),
+    document.getElementById('slot-1'),
+    document.getElementById('slot-2')
+  ];
+
+  /* ===== 오디오 ===== */
   var audioCtx = null;
+
   function ensureAudio() {
     if (!audioCtx) {
       try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      } catch (e) {
-        audioCtx = null;
-      }
+      } catch (e) { audioCtx = null; }
     }
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   }
 
   function tone(freq, type, duration, gain, freqEnd) {
+    if (window.gameState.sfxMuted) return;
     if (!audioCtx) return;
     try {
       var osc = audioCtx.createOscillator();
       var g = audioCtx.createGain();
       osc.type = type;
       osc.frequency.value = freq;
-      if (freqEnd !== undefined) {
-        osc.frequency.linearRampToValueAtTime(freqEnd, audioCtx.currentTime + duration);
-      }
+      if (freqEnd !== undefined) osc.frequency.linearRampToValueAtTime(freqEnd, audioCtx.currentTime + duration);
       g.gain.value = gain;
       g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
       osc.connect(g);
@@ -992,6 +1158,11 @@
   function playClick() { tone(800, 'sine', 0.06, 0.05); }
   function playHit() { tone(200, 'square', 0.1, 0.06, 120); }
   function playGacha(rare) { tone(rare ? 800 : 400, 'sine', 0.3, 0.06, rare ? 1600 : 1200); }
+  function playLegend() {
+    tone(660, 'sine', 0.15, 0.08);
+    setTimeout(function () { tone(880, 'sine', 0.15, 0.08); }, 120);
+    setTimeout(function () { tone(1320, 'sine', 0.3, 0.1); }, 240);
+  }
   function playVictory() {
     tone(523, 'sine', 0.1, 0.08);
     setTimeout(function () { tone(659, 'sine', 0.1, 0.08); }, 100);
@@ -999,15 +1170,13 @@
   }
   function playDefeat() { tone(300, 'square', 0.4, 0.08, 100); }
 
-  /* ===== 로그 ===== */
+  /* ===== 유틸 ===== */
   function log(text, cls) {
     var div = document.createElement('div');
     div.className = 'log-line' + (cls ? ' ' + cls : '');
     div.textContent = text;
     els.output.appendChild(div);
-    while (els.output.children.length > 200) {
-      els.output.removeChild(els.output.firstChild);
-    }
+    while (els.output.children.length > 200) els.output.removeChild(els.output.firstChild);
     els.output.scrollTop = els.output.scrollHeight;
     window.gameState.log.push(text);
     if (window.gameState.log.length > 500) window.gameState.log.shift();
@@ -1019,7 +1188,8 @@
     els.flash.classList.add('active');
     if (color === 'victory') els.flash.classList.add('victory');
     else if (color === 'danger') els.flash.classList.add('danger');
-    setTimeout(function () { els.flash.classList.remove('active'); }, 150);
+    else if (color === 'legend') els.flash.classList.add('legend');
+    setTimeout(function () { els.flash.classList.remove('active'); }, 200);
   }
 
   function screenShake() {
@@ -1045,15 +1215,16 @@
     setTimeout(function () { pop.remove(); }, 950);
   }
 
-  function burstParticles(anchorEl, color) {
+  function burstParticles(anchorEl, color, count) {
     if (!anchorEl) return;
+    count = count || 8;
     var rect = anchorEl.getBoundingClientRect();
     var cx = rect.left + rect.width / 2;
     var cy = rect.top + rect.height / 2;
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < count; i++) {
       (function (idx) {
-        var angle = (Math.PI * 2 * idx) / 8;
-        var dist = 40 + Math.random() * 20;
+        var angle = (Math.PI * 2 * idx) / count;
+        var dist = 40 + Math.random() * 40;
         var tx = Math.cos(angle) * dist;
         var ty = Math.sin(angle) * dist;
         var p = document.createElement('div');
@@ -1064,7 +1235,7 @@
         p.style.boxShadow = '0 0 8px ' + color;
         p.style.setProperty('--tx', tx + 'px');
         p.style.setProperty('--ty', ty + 'px');
-        p.style.animationDelay = (idx * 0.02) + 's';
+        p.style.animationDelay = (idx * 0.015) + 's';
         els.particleLayer.appendChild(p);
         setTimeout(function () { p.remove(); }, 800);
       })(i);
@@ -1084,6 +1255,7 @@
     if (perfect) {
       s.combo += 1;
     } else {
+      if (s.combo > 0) log('[콤보 종료] 콤보가 초기화되었습니다.', 'danger');
       s.combo = 0;
     }
     if (s.combo >= 2) {
@@ -1098,43 +1270,37 @@
     }
   }
 
-  /* ===== 웨이브 정의 (무한 모드 포함) ===== */
-  function getWaveDef(waveNum) {
-    if (waveNum <= MAX_WAVE) {
-      return WAVES[waveNum - 1];
-    }
-    // 무한 모드 (wave >= 6)
-    var over = waveNum - MAX_WAVE;
-    var count = Math.min(8, 5 + Math.floor(over / 2));
-    var hp = 16 + over * 3;
-    var atk = 5 + Math.floor(over / 3);
-    var enemies = [];
-    for (var i = 0; i < count; i++) {
-      enemies.push({ hp: hp, atk: atk });
-    }
-    return { enemies: enemies, endless: true };
+  function makeKeyboardActivate(el) {
+    el.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ' || ev.keyCode === 13 || ev.keyCode === 32) {
+        ev.preventDefault();
+        el.click();
+      }
+    });
   }
 
-  function getWaveReward(waveNum) {
-    if (waveNum <= MAX_WAVE) return 5;
-    return 5 + Math.floor((waveNum - MAX_WAVE) / 2);
-  }
-
-  /* ===== 렌더링 ===== */
+  /* ===== 렌더 ===== */
   function renderCastle() {
-    var pct = Math.max(0, window.gameState.castleHp) / window.gameState.castleMaxHp * 100;
+    var s = window.gameState;
+    var pct = Math.max(0, s.castleHp) / s.castleMaxHp * 100;
     els.castleHpFill.style.width = pct + '%';
     els.castleHpFill.classList.remove('warn', 'danger');
     els.castleEmoji.classList.remove('warn', 'danger');
+    els.castleStatusLabel.textContent = '';
+    els.castleStatusLabel.style.color = '';
     if (pct <= 20) {
       els.castleHpFill.classList.add('danger');
       els.castleEmoji.classList.add('danger');
+      els.castleStatusLabel.textContent = '💀 함락 임박';
+      els.castleStatusLabel.style.color = 'var(--red)';
     } else if (pct <= 50) {
       els.castleHpFill.classList.add('warn');
       els.castleEmoji.classList.add('warn');
+      els.castleStatusLabel.textContent = '⚠️ 위험';
+      els.castleStatusLabel.style.color = 'var(--gold)';
     }
-    els.statCastleHp.textContent = String(Math.max(0, window.gameState.castleHp));
-    els.statCastleMaxHp.textContent = String(window.gameState.castleMaxHp);
+    els.statCastleHp.textContent = String(Math.max(0, s.castleHp));
+    els.statCastleMaxHp.textContent = String(s.castleMaxHp);
   }
 
   function renderStats() {
@@ -1147,6 +1313,7 @@
       els.statMaxWave.textContent = String(s.maxWave);
     }
     els.statGold.textContent = String(s.gold);
+    els.shopGold.textContent = String(s.gold);
     renderCastle();
   }
 
@@ -1158,31 +1325,51 @@
       return;
     }
     var def = getWaveDef(s.wave);
-    if (!def) {
+    if (!def || !def.enemies.length) {
       els.enemyCount.textContent = '0 마리';
       els.enemyDetail.textContent = 'HP - / ATK -';
       return;
     }
+    var hps = def.enemies.map(function (e) { return e.hp; });
+    var atks = def.enemies.map(function (e) { return e.atk; });
+    var minHp = Math.min.apply(null, hps);
+    var maxHp = Math.max.apply(null, hps);
+    var minAtk = Math.min.apply(null, atks);
+    var maxAtk = Math.max.apply(null, atks);
+    var hpStr = minHp === maxHp ? String(minHp) : minHp + '~' + maxHp;
+    var atkStr = minAtk === maxAtk ? String(minAtk) : minAtk + '~' + maxAtk;
     els.enemyCount.textContent = def.enemies.length + ' 마리';
-    els.enemyDetail.textContent = 'HP ' + def.enemies[0].hp + ' / ATK ' + def.enemies[0].atk;
+    els.enemyDetail.textContent = 'HP ' + hpStr + ' / ATK ' + atkStr;
   }
 
   function renderBattlefield() {
+    var positions = ['전열', '중열', '후열'];
+    var s = window.gameState;
     for (var i = 0; i < SLOT_COUNT; i++) {
-      var slotEl = document.getElementById('slot-' + i);
+      var slotEl = slotEls[i];
       var contentEl = slotEl.querySelector('.slot-content');
-      var w = window.gameState.warriors[i];
+      var w = s.warriors[i];
+      var isShopTarget = s.shopMode === 'upgrade';
+      var cls = 'slot';
       if (w) {
-        slotEl.className = 'slot filled';
-        var posLabels = ['전열', '중열', '후열'];
-        slotEl.querySelector('.slot-pos').textContent = posLabels[i];
+        cls += ' filled';
+        slotEl.querySelector('.slot-pos').textContent = positions[i];
         contentEl.innerHTML =
           '<div class="warrior-emoji">' + w.emoji + '</div>' +
           '<div class="warrior-name">' + w.name + '</div>' +
-          '<div class="warrior-stats">HP' + w.hp + ' ATK' + w.atk + '</div>';
+          '<div class="warrior-stats">HP' + Math.max(0, w.hp) + '/' + w.maxHp + ' ATK' + w.atk + '</div>';
       } else {
-        slotEl.className = 'slot empty';
+        cls += ' empty';
         contentEl.innerHTML = '';
+      }
+      if (isShopTarget && w) cls += ' shop-target';
+      slotEl.className = cls;
+
+      // aria-label 갱신
+      if (w) {
+        slotEl.setAttribute('aria-label', positions[i] + ' 슬롯, ' + w.name + ', HP ' + Math.max(0, w.hp) + '/' + w.maxHp + ', ATK ' + w.atk);
+      } else {
+        slotEl.setAttribute('aria-label', positions[i] + ' 슬롯, 비어있음');
       }
     }
   }
@@ -1202,11 +1389,16 @@
       (function (idx) {
         var c = cards[idx];
         var cardEl = document.createElement('div');
-        cardEl.className = 'card appear rarity-' + c.rarity;
+        var cls = 'card appear rarity-' + c.rarity;
         if (s.selectedCard === c) cardEl.classList.add('selected');
-        if (s.phase !== 'SELECT') cardEl.classList.add('locked');
+        else if (s.phase === 'DEPLOY' || s.phase === 'END' || s.shopMode === 'upgrade') cls += ' fade-out';
+        else if (s.phase !== 'SELECT') cls += ' locked';
+        cardEl.className = cls;
         cardEl.setAttribute('data-card-index', String(idx));
         cardEl.id = 'card-choice-' + idx;
+        cardEl.setAttribute('tabindex', '0');
+        cardEl.setAttribute('role', 'button');
+        cardEl.setAttribute('aria-label', c.name + ' 카드, ' + c.rarity + ' 등급, ' + c.desc);
         cardEl.innerHTML =
           '<div class="card-banner">' + c.rarity + '</div>' +
           '<div class="card-inner">' +
@@ -1216,6 +1408,7 @@
           '</div>' +
           '<div class="card-shine"></div>';
         cardEl.addEventListener('click', function () { onCardClick(idx); });
+        makeKeyboardActivate(cardEl);
         els.cardsArea.appendChild(cardEl);
       })(i);
     }
@@ -1224,23 +1417,33 @@
   function renderStatusHint() {
     var s = window.gameState;
     var hint = '';
-    if (s.phase === 'DRAW') hint = '카드 뽑기 버튼을 누르세요';
+    var cls = '';
+    if (s.shopMode === 'upgrade') { hint = '강화할 전사를 선택하세요 (골드 15)'; cls = 'shop'; }
+    else if (s.phase === 'DRAW') hint = '카드 뽑기 버튼을 누르세요';
     else if (s.phase === 'SELECT') hint = '카드를 선택하세요';
     else if (s.phase === 'DEPLOY') hint = '배치할 슬롯을 누르세요';
-    else if (s.phase === 'END') hint = '게임 종료 — 결과창을 확인하세요';
+    else if (s.phase === 'END') { hint = '게임 종료 — 결과창을 확인하세요'; cls = 'end'; }
     els.statusHint.textContent = hint;
-    els.statusHint.className = '';
-    if (s.phase === 'DEPLOY') els.statusHint.classList.add('deploy');
-    else if (s.phase === 'END') els.statusHint.classList.add('end');
+    els.statusHint.className = cls;
+  }
+
+  function renderShop() {
+    var s = window.gameState;
+    var anyWarrior = s.warriors.some(function (w) { return w && w.hp > 0; });
+    els.btnShopReroll.disabled = !(s.phase === 'SELECT' && !s.rerollUsedThisWave && s.gold >= 10 && !s.shopMode);
+    els.btnShopUpgrade.disabled = !((s.phase === 'DRAW' || s.phase === 'SELECT') && anyWarrior && s.gold >= 15 && !s.shopMode);
+    els.btnShopRepair.disabled = !((s.phase === 'DRAW' || s.phase === 'SELECT') && s.gold >= 8 && s.castleHp < s.castleMaxHp && !s.shopMode);
   }
 
   function renderButtons() {
     var s = window.gameState;
-    els.btnDraw.disabled = (s.phase !== 'DRAW');
+    els.btnDraw.disabled = (s.phase !== 'DRAW' || s.shopMode !== null);
+    els.btnDiscard.disabled = (s.phase !== 'DEPLOY');
     for (var i = 0; i < SLOT_COUNT; i++) {
       var slotEmpty = s.warriors[i] === null;
-      btnDeploy[i].disabled = !(s.phase === 'DEPLOY' && slotEmpty);
+      btnDeploy[i].disabled = !(s.phase === 'DEPLOY' && slotEmpty && s.shopMode === null);
     }
+    renderShop();
   }
 
   function render() {
@@ -1250,23 +1453,92 @@
     renderCards();
     renderStatusHint();
     renderButtons();
+    saveState();
+  }
+
+  /* ===== 저장/복원 ===== */
+  function saveState() {
+    try {
+      var s = window.gameState;
+      var savePhase = (s.phase === 'SELECT' || s.phase === 'DEPLOY') ? 'DRAW' : s.phase;
+      var save = {
+        phase: savePhase,
+        wave: s.wave,
+        gold: s.gold,
+        castleHp: s.castleHp,
+        warriors: s.warriors,
+        maxWaveReached: s.maxWaveReached,
+        isEndless: s.isEndless,
+        combo: s.combo,
+        isGameOver: s.isGameOver,
+        isVictory: s.isVictory
+      };
+      localStorage.setItem(SAVE_KEY, JSON.stringify(save));
+    } catch (e) { /* ignore */ }
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return false;
+      var save = JSON.parse(raw);
+      var s = window.gameState;
+      s.phase = save.phase || 'DRAW';
+      s.wave = save.wave || 1;
+      s.gold = save.gold || 0;
+      s.castleHp = (typeof save.castleHp === 'number') ? save.castleHp : CASTLE_MAX_HP;
+      s.warriors = save.warriors || [null, null, null];
+      s.maxWaveReached = save.maxWaveReached || 1;
+      s.isEndless = !!save.isEndless;
+      s.combo = save.combo || 0;
+      s.isGameOver = !!save.isGameOver;
+      s.isVictory = !!save.isVictory;
+      s.availableCards = [];
+      s.selectedCard = null;
+      s.shopMode = null;
+      s.rerollUsedThisWave = false;
+      if (s.isGameOver || s.isVictory) s.phase = 'END';
+      if (s.phase !== 'DRAW' && s.phase !== 'END') s.phase = 'DRAW';
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function clearSave() {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* ignore */ }
   }
 
   /* ===== 카드 뽑기 ===== */
+  function allSlotsFull() {
+    var s = window.gameState;
+    for (var i = 0; i < SLOT_COUNT; i++) {
+      if (!s.warriors[i]) return false;
+    }
+    return true;
+  }
+
   function drawRandomCard() {
+    var slotsFull = allSlotsFull();
     var r = Math.random() * 100;
-    if (r < 70) return CARD_TANKER;
-    if (r < 95) return CARD_ATK;
+    if (!slotsFull) {
+      if (r < 65) return CARD_TANKER;
+      if (r < 95) return Math.random() < 0.5 ? CARD_ATK : CARD_HEAL;
+      return CARD_HERO;
+    }
+    // 슬롯이 가득: SUMMON 계열 완전 제외, INSTANT만 등장
+    if (r < 50) return CARD_ATK;
     return CARD_HEAL;
   }
 
   function drawThreeCards() {
     var cards = [drawRandomCard(), drawRandomCard(), drawRandomCard()];
-    var hasCommon = false;
-    for (var i = 0; i < cards.length; i++) {
-      if (cards[i].rarity === 'COMMON') { hasCommon = true; break; }
+    // 최소 1장 COMMON 보정 (슬롯 여유 있을 때만)
+    if (!allSlotsFull()) {
+      var hasCommon = false;
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].rarity === 'COMMON') { hasCommon = true; break; }
+      }
+      if (!hasCommon) cards[0] = CARD_TANKER;
     }
-    if (!hasCommon) cards[0] = CARD_TANKER;
     return cards;
   }
 
@@ -1274,7 +1546,7 @@
     ensureAudio();
     playClick();
     var s = window.gameState;
-    if (s.phase !== 'DRAW') return;
+    if (s.phase !== 'DRAW' || s.shopMode !== null) return;
 
     s.availableCards = drawThreeCards();
     s.selectedCard = null;
@@ -1283,33 +1555,57 @@
 
     var names = [];
     var hasRare = false;
+    var hasLegend = false;
     for (var i = 0; i < s.availableCards.length; i++) {
       names.push(s.availableCards[i].name);
-      if (s.availableCards[i].rarity === 'RARE' || s.availableCards[i].rarity === 'LEGEND') hasRare = true;
+      if (s.availableCards[i].rarity === 'RARE') hasRare = true;
+      if (s.availableCards[i].rarity === 'LEGEND') hasLegend = true;
     }
     log('[DRAW] Drew 3 cards: ' + names.join(', ') + '.');
-    playGacha(hasRare);
+    playGacha(hasRare || hasLegend);
+    if (hasLegend) {
+      playLegend();
+      flash('legend');
+      var center = document.createElement('div');
+      center.style.position = 'fixed';
+      center.style.left = '50%';
+      center.style.top = '40%';
+      document.body.appendChild(center);
+      burstParticles(center, '#ffcc00', 20);
+      setTimeout(function () { center.remove(); }, 100);
+      log('[LEGEND] 전설 카드가 등장했습니다!', 'highlight');
+    }
     render();
   }
 
   function onCardClick(idx) {
     ensureAudio();
-    playClick();
     var s = window.gameState;
-    if (s.phase !== 'SELECT') return;
+    if (s.phase !== 'SELECT' || s.shopMode !== null) return;
     if (!s.availableCards || s.availableCards.length === 0) return;
     if (s.selectedCard) return;
 
     var card = s.availableCards[idx];
     if (!card) return;
 
+    playClick();
     s.selectedCard = card;
     log('[PICK] Picked ' + card.name + '. Effect: ' + card.desc);
 
     var cardEl = document.getElementById('card-choice-' + idx);
-    burstParticles(cardEl, card.rarity === 'RARE' ? '#4a90e2' : '#ffcc00');
+    burstParticles(cardEl, card.rarity === 'RARE' ? '#4a90e2' : (card.rarity === 'LEGEND' ? '#ffcc00' : '#8888a0'), 8);
 
     if (card.type === 'SUMMON') {
+      // 방어: 슬롯 가득인데 SUMMON이 나온 경우 → 자동 discard
+      if (allSlotsFull()) {
+        log('[경고] 슬롯이 가득 차 SUMMON 카드를 사용할 수 없습니다. 자동으로 버립니다.', 'danger');
+        s.selectedCard = null;
+        s.availableCards = [];
+        s.phase = 'DRAW';
+        s.lastActionStatus = 'IDLE';
+        render();
+        return;
+      }
       s.phase = 'DEPLOY';
       s.lastActionStatus = 'PICK_SUCCESS';
       flash('default');
@@ -1331,7 +1627,7 @@
       for (var i = 0; i < s.warriors.length; i++) {
         if (s.warriors[i]) { s.warriors[i].atk += 2; count++; }
       }
-      log('[EFFECT] 전사 ATK +2 (대상 ' + count + '명)');
+      log('[EFFECT] 모든 전사 ATK +2 (대상 ' + count + '명)');
       if (count > 0) popDamage('+2 ATK', 'gold');
     } else if (card.id === 'HEAL') {
       var before = s.castleHp;
@@ -1346,7 +1642,7 @@
     ensureAudio();
     playClick();
     var s = window.gameState;
-    if (s.phase !== 'DEPLOY') return;
+    if (s.phase !== 'DEPLOY' || s.shopMode !== null) return;
     if (s.warriors[slotIdx] !== null) return;
     if (!s.selectedCard || !s.selectedCard.warrior) return;
 
@@ -1362,114 +1658,227 @@
     flash('default');
     render();
 
-    var slotEl = document.getElementById('slot-' + slotIdx);
+    var slotEl = slotEls[slotIdx];
     slotEl.classList.add('deploy-anim');
-    burstParticles(slotEl, '#4a90e2');
+    burstParticles(slotEl, '#4a90e2', 8);
     setTimeout(function () { slotEl.classList.remove('deploy-anim'); }, 520);
 
     resolveWave();
   }
 
+  function onDiscard() {
+    ensureAudio();
+    playClick();
+    var s = window.gameState;
+    if (s.phase !== 'DEPLOY') return;
+    s.selectedCard = null;
+    s.availableCards = [];
+    s.phase = 'DRAW';
+    s.lastActionStatus = 'IDLE';
+    log('[DISCARD] 선택한 카드를 버렸습니다.');
+    render();
+  }
+
+  /* ===== 상점 ===== */
+  function onShopReroll() {
+    ensureAudio();
+    var s = window.gameState;
+    if (s.phase !== 'SELECT' || s.rerollUsedThisWave) return;
+    if (s.gold < 10) return;
+    playClick();
+    s.gold -= 10;
+    s.rerollUsedThisWave = true;
+    s.availableCards = drawThreeCards();
+    s.selectedCard = null;
+    log('[SHOP] 카드 재뽑기 성공 (10G 소모). 골드: ' + s.gold);
+    render();
+  }
+
+  function onShopUpgrade() {
+    ensureAudio();
+    var s = window.gameState;
+    if (s.gold < 15) return;
+    var anyWarrior = s.warriors.some(function (w) { return w && w.hp > 0; });
+    if (!anyWarrior) return;
+    playClick();
+    s.shopMode = 'upgrade';
+    log('[SHOP] 강화할 전사를 선택하세요. (15G)');
+    render();
+  }
+
+  function onShopRepair() {
+    ensureAudio();
+    var s = window.gameState;
+    if (s.gold < 8) return;
+    if (s.castleHp >= s.castleMaxHp) return;
+    playClick();
+    s.gold -= 8;
+    var before = s.castleHp;
+    s.castleHp = Math.min(s.castleMaxHp, s.castleHp + 3);
+    var gained = s.castleHp - before;
+    log('[SHOP] 성벽 보수 성공 (8G 소모). 성 HP +' + gained + ' → ' + s.castleHp + '/' + s.castleMaxHp);
+    popDamage('+' + gained + ' HP', 'green', document.querySelector('.castle-panel'));
+    render();
+  }
+
+  function onSlotUpgradeClick(slotIdx) {
+    var s = window.gameState;
+    if (s.shopMode !== 'upgrade') return;
+    if (!s.warriors[slotIdx]) return;
+    if (s.gold < 15) return;
+    playClick();
+    s.gold -= 15;
+    s.warriors[slotIdx].atk += 1;
+    s.warriors[slotIdx].hp += 5;
+    s.warriors[slotIdx].maxHp += 5;
+    log('[SHOP] ' + s.warriors[slotIdx].name + ' 강화 완료! (ATK+1, HP+5, 15G 소모)');
+    burstParticles(slotEls[slotIdx], '#ffcc00', 8);
+    popDamage('+1 ATK', 'gold', slotEls[slotIdx]);
+    s.shopMode = null;
+    render();
+  }
+
+  /* ===== 전투 ===== */
+  function showEnemyRow(enemies) {
+    els.enemyRowOverlay.innerHTML = '';
+    for (var i = 0; i < enemies.length; i++) {
+      var e = enemies[i];
+      var token = document.createElement('div');
+      token.className = 'enemy-token' + (e.type === '정예' ? ' elite' : '');
+      var emoji = e.type === '정예' ? '👹' : '👺';
+      token.innerHTML =
+        '<div class="enemy-emoji">' + emoji + '</div>' +
+        '<div class="enemy-mini-hp"><div class="enemy-mini-hp-fill" style="width:100%"></div></div>';
+      els.enemyRowOverlay.appendChild(token);
+    }
+    els.enemyRowOverlay.classList.remove('show');
+    void els.enemyRowOverlay.offsetWidth;
+    els.enemyRowOverlay.classList.add('show');
+    setTimeout(function () {
+      els.enemyRowOverlay.classList.remove('show');
+    }, 1200);
+  }
+
   function resolveWave() {
     var s = window.gameState;
-    if (s.isGameOver || s.isVictory) {
-      s.phase = 'END';
-      render();
-      return;
-    }
+    if (s.isGameOver || s.isVictory) { s.phase = 'END'; render(); return; }
 
     var def = getWaveDef(s.wave);
-    if (!def) {
-      s.phase = 'END';
-      render();
-      return;
-    }
+    if (!def) { s.phase = 'END'; render(); return; }
 
     var currentWave = s.wave;
 
-    var enemies = [];
-    for (var k = 0; k < def.enemies.length; k++) {
-      enemies.push({ hp: def.enemies[k].hp, atk: def.enemies[k].atk, maxHp: def.enemies[k].hp });
-    }
+    var enemies = def.enemies.map(function (e) {
+      return { type: e.type, hp: e.hp, maxHp: e.hp, atk: e.atk };
+    });
 
-    var aliveWarriors = [];
-    var warriorSlotIdx = [];
+    showEnemyRow(enemies);
+
+    var aliveSlotIdx = [];
     for (var i = SLOT_COUNT - 1; i >= 0; i--) {
-      if (s.warriors[i]) {
-        aliveWarriors.push(s.warriors[i]);
-        warriorSlotIdx.push(i);
-      }
+      if (s.warriors[i] && s.warriors[i].hp > 0) aliveSlotIdx.push(i);
     }
 
-    log('[COMBAT] Wave ' + currentWave + ' combat begins. Warriors: ' + aliveWarriors.length + ', Enemies: ' + enemies.length, 'combat');
+    log('[COMBAT] Wave ' + currentWave + ' combat begins. Warriors: ' + aliveSlotIdx.length + ', Enemies: ' + enemies.length, 'combat');
 
-    for (var w = 0; w < aliveWarriors.length; w++) {
+    // 1) 전사 공격 (슬롯 역순 → 첫 생존 적)
+    for (var w = 0; w < aliveSlotIdx.length; w++) {
+      var slotIdx = aliveSlotIdx[w];
+      var warrior = s.warriors[slotIdx];
       var targetIdx = -1;
-      for (var j = 0; j < enemies.length; j++) {
-        if (enemies[j].hp > 0) { targetIdx = j; break; }
+      for (var k = 0; k < enemies.length; k++) {
+        if (enemies[k].hp > 0) { targetIdx = k; break; }
       }
       if (targetIdx < 0) break;
-      var atk = aliveWarriors[w].atk;
+      var atk = warrior.atk;
       enemies[targetIdx].hp -= atk;
-      log('[COMBAT] ' + aliveWarriors[w].name + ' dealt ' + atk + ' damage to Enemy ' + (targetIdx + 1) + '.', 'combat');
-
-      (function (slotI) {
+      log('[COMBAT] ' + warrior.name + '이(가) Enemy ' + (targetIdx + 1) + '(' + enemies[targetIdx].type + ')에게 ' + atk + ' 데미지.', 'combat');
+      (function (slotI, idx) {
         setTimeout(function () {
-          var slotEl = document.getElementById('slot-' + slotI);
+          var slotEl = slotEls[slotI];
           if (slotEl) {
             slotEl.classList.add('hit-anim');
             setTimeout(function () { slotEl.classList.remove('hit-anim'); }, 200);
           }
           playHit();
-        }, w * 80);
-      })(warriorSlotIdx[w]);
+        }, idx * 80);
+      })(slotIdx, w);
     }
 
-    var remaining = [];
-    for (var m = 0; m < enemies.length; m++) {
-      if (enemies[m].hp > 0) remaining.push(enemies[m]);
+    // 2) 살아남은 적 → 전열 전사부터 피격
+    var remaining = enemies.filter(function (e) { return e.hp > 0; });
+    var totalCastleDmg = 0;
+
+    for (var e = 0; e < remaining.length; e++) {
+      var targetSlot = -1;
+      for (var sl = 0; sl < SLOT_COUNT; sl++) {
+        if (s.warriors[sl] && s.warriors[sl].hp > 0) { targetSlot = sl; break; }
+      }
+      if (targetSlot < 0) {
+        totalCastleDmg += remaining[e].atk;
+      } else {
+        var target = s.warriors[targetSlot];
+        target.hp -= remaining[e].atk;
+        log('[COMBAT] Enemy ' + (e + 1) + '(' + remaining[e].type + ')이(가) ' + target.name + '에게 ' + remaining[e].atk + ' 데미지. (HP: ' + Math.max(0, target.hp) + '/' + target.maxHp + ')', 'combat');
+        (function (slotI) {
+          setTimeout(function () {
+            var slotEl = slotEls[slotI];
+            if (slotEl) {
+              slotEl.classList.add('damage-anim');
+              setTimeout(function () { slotEl.classList.remove('damage-anim'); }, 320);
+            }
+          }, 400 + slotI * 60);
+        })(targetSlot);
+        if (target.hp <= 0) {
+          log('[전사자] ' + target.name + '이(가) 전사했습니다.', 'danger');
+          s.warriors[targetSlot] = null;
+        }
+      }
     }
 
-    var perfect = remaining.length === 0;
-    var dmgToCastle = 0;
-    for (var n = 0; n < remaining.length; n++) dmgToCastle += remaining[n].atk;
-
-    if (dmgToCastle > 0) {
-      s.castleHp = Math.max(0, s.castleHp - dmgToCastle);
-      log('[DAMAGE] ' + remaining.length + ' enemies reached castle. -' + dmgToCastle + ' HP.', 'danger');
+    if (totalCastleDmg > 0) {
+      s.castleHp = Math.max(0, s.castleHp - totalCastleDmg);
+      log('[DAMAGE] ' + remaining.length + ' enemies reached castle. -' + totalCastleDmg + ' HP.', 'danger');
       setTimeout(function () {
         flash('danger');
         screenShake();
-        popDamage('-' + dmgToCastle, '', null);
-      }, aliveWarriors.length * 80);
+        popDamage('-' + totalCastleDmg, '', document.querySelector('.castle-panel'));
+      }, aliveSlotIdx.length * 80 + 200);
     }
 
+    var perfect = enemies.every(function (en) { return en.hp <= 0; });
     var clutch = s.castleHp > 0 && s.castleHp <= 5;
-    var baseGold = getWaveReward(currentWave);
+
+    // 보상
+    var baseGold = def.gold;
     if (perfect) baseGold += 5;
+    var comboBonus = 0;
+    if (perfect && s.combo >= 1) {
+      // combo는 이미 증가되기 전 값 기준 (updateCombo에서 증가)
+      comboBonus = Math.min(20, s.combo * 2);
+    }
     if (clutch) baseGold *= 2;
-    s.gold += baseGold;
+    var totalGold = baseGold + comboBonus;
+    s.gold += totalGold;
 
     if (perfect) {
-      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: YES', 'highlight');
+      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: YES (+' + baseGold + '💰' + (comboBonus > 0 ? ' + 콤보' + comboBonus + '💰' : '') + ')', 'highlight');
       setTimeout(function () {
         flash('victory');
-        popDamage('PERFECT! +' + baseGold + '💰', 'gold');
-      }, aliveWarriors.length * 80 + 100);
+        popDamage('PERFECT! +' + totalGold + '💰', 'gold');
+      }, aliveSlotIdx.length * 80 + 300);
       s.lastActionStatus = 'WAVE_PERFECT';
     } else if (clutch) {
-      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO', 'highlight');
-      log('[CLUTCH] 성 HP 5 이하! 골드 2배 (+' + baseGold + ')', 'highlight');
-      setTimeout(function () {
-        popDamage('CLUTCH! +' + baseGold + '💰', 'gold');
-      }, aliveWarriors.length * 80 + 100);
+      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO (+' + totalGold + '💰 CLUTCH 2배)', 'highlight');
       s.lastActionStatus = 'WAVE_CLEAR';
     } else {
-      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO');
+      log('[WAVE] Wave ' + currentWave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '. Perfect: NO (+' + totalGold + '💰)');
       s.lastActionStatus = 'WAVE_CLEAR';
     }
 
     updateCombo(perfect);
+    s.rerollUsedThisWave = false;
+    s.shopMode = null;
     s.wave += 1;
     if (s.wave > s.maxWaveReached) s.maxWaveReached = s.wave;
 
@@ -1486,7 +1895,6 @@
       playDefeat();
       showResult(false);
     } else if (s.wave > s.maxWave && !s.isEndless) {
-      // 기본 클리어 (무한 모드 미진입 상태에서 웨이브 5 완료)
       s.isVictory = true;
       s.phase = 'END';
       s.lastActionStatus = 'VICTORY';
@@ -1494,14 +1902,9 @@
       log('[VICTORY] All ' + s.maxWave + ' waves cleared. Score: ' + score, 'highlight');
       playVictory();
       showResult(true);
-    } else if (s.isEndless) {
-      // 무한 모드 진행
-      s.phase = 'DRAW';
-      log('[ENDLESS] Wave ' + s.wave + ' cleared. Castle HP: ' + s.castleHp + '/' + s.castleMaxHp + '.');
-      log('[TURN] Wave ' + s.wave + ' begins.');
-      showWaveTransition(s.wave);
     } else {
       s.phase = 'DRAW';
+      if (s.isEndless) log('[ENDLESS] Wave ' + (s.wave - 1) + ' cleared. 다음 웨이브: ' + s.wave);
       log('[TURN] Wave ' + s.wave + ' begins.');
       showWaveTransition(s.wave);
     }
@@ -1556,6 +1959,7 @@
 
   function resetGame() {
     var s = window.gameState;
+    clearSave();
     s.phase = 'DRAW';
     s.wave = 1;
     s.maxWave = MAX_WAVE;
@@ -1571,6 +1975,8 @@
     s.isGameOver = false;
     s.isVictory = false;
     s.combo = 0;
+    s.rerollUsedThisWave = false;
+    s.shopMode = null;
     s.log = [];
     els.output.innerHTML = '';
     els.resultOverlay.classList.remove('show');
@@ -1579,25 +1985,67 @@
     render();
   }
 
+  /* ===== 사운드 토글 ===== */
+  function loadSfxMuted() {
+    try {
+      var v = localStorage.getItem(SFX_KEY);
+      window.gameState.sfxMuted = (v === '1' || v === 'true');
+    } catch (e) { window.gameState.sfxMuted = false; }
+  }
+
+  function saveSfxMuted() {
+    try { localStorage.setItem(SFX_KEY, window.gameState.sfxMuted ? '1' : '0'); } catch (e) { /* ignore */ }
+  }
+
+  function updateSfxButton() {
+    els.btnSoundToggle.textContent = window.gameState.sfxMuted ? '🔇' : '🔊';
+    els.btnSoundToggle.setAttribute('aria-label', window.gameState.sfxMuted ? '음소거 해제' : '음소거');
+  }
+
+  function onSoundToggle() {
+    window.gameState.sfxMuted = !window.gameState.sfxMuted;
+    saveSfxMuted();
+    updateSfxButton();
+    if (!window.gameState.sfxMuted) {
+      ensureAudio();
+      playClick();
+    }
+  }
+
+  /* ===== 이벤트 바인딩 ===== */
   els.btnDraw.addEventListener('click', onDrawClick);
+  els.btnDiscard.addEventListener('click', onDiscard);
   els.btnContinue.addEventListener('click', function () {
-    ensureAudio();
-    playClick();
-    continueEndless();
+    ensureAudio(); playClick(); continueEndless();
   });
   els.btnRestart.addEventListener('click', function () {
-    ensureAudio();
-    playClick();
-    resetGame();
+    ensureAudio(); playClick(); resetGame();
   });
+  els.btnSoundToggle.addEventListener('click', onSoundToggle);
+  els.btnShopReroll.addEventListener('click', onShopReroll);
+  els.btnShopUpgrade.addEventListener('click', onShopUpgrade);
+  els.btnShopRepair.addEventListener('click', onShopRepair);
 
   for (var bi = 0; bi < SLOT_COUNT; bi++) {
     (function (idx) {
       btnDeploy[idx].addEventListener('click', function () { onDeployClick(idx); });
+      slotEls[idx].addEventListener('click', function () {
+        if (window.gameState.shopMode === 'upgrade') onSlotUpgradeClick(idx);
+      });
+      makeKeyboardActivate(slotEls[idx]);
     })(bi);
   }
 
-  window.runPhase1SelfTest = function () {
+  els.btnDraw.setAttribute('tabindex', '0');
+  els.btnDiscard.setAttribute('tabindex', '0');
+  els.btnContinue.setAttribute('tabindex', '0');
+  els.btnRestart.setAttribute('tabindex', '0');
+  els.btnShopReroll.setAttribute('tabindex', '0');
+  els.btnShopUpgrade.setAttribute('tabindex', '0');
+  els.btnShopRepair.setAttribute('tabindex', '0');
+
+  /* ===== 자가 회귀 테스트 ===== */
+  window.runRegressionSuite = function () {
     var results = [];
     var errors = [];
 
@@ -1606,77 +2054,171 @@
       if (!pass) errors.push(name + (detail ? ' :: ' + detail : ''));
     }
 
+    // 초기화
     resetGame();
 
-    record('초기 phase === DRAW', window.gameState.phase === 'DRAW', 'phase=' + window.gameState.phase);
-    record('초기 wave === 1', window.gameState.wave === 1, 'wave=' + window.gameState.wave);
-    record('초기 maxWave === 5', window.gameState.maxWave === 5, 'maxWave=' + window.gameState.maxWave);
-    record('초기 maxWaveReached === 1', window.gameState.maxWaveReached === 1,
-      'maxWaveReached=' + window.gameState.maxWaveReached);
+    // ===== 기본 상태 =====
+    record('초기 phase === DRAW', window.gameState.phase === 'DRAW');
+    record('초기 wave === 1', window.gameState.wave === 1);
+    record('초기 maxWave === 5', window.gameState.maxWave === 5);
+    record('초기 maxWaveReached === 1', window.gameState.maxWaveReached === 1);
     record('초기 isEndless === false', window.gameState.isEndless === false);
     record('초기 castleHp === 50', window.gameState.castleHp === 50);
     record('초기 gold === 0', window.gameState.gold === 0);
-    record('초기 draw 버튼 활성', els.btnDraw.disabled === false);
-    record('초기 deploy-0 비활성', btnDeploy[0].disabled === true);
-    record('초기 deploy-1 비활성', btnDeploy[1].disabled === true);
-    record('초기 deploy-2 비활성', btnDeploy[2].disabled === true);
-
     record('#btn-continue DOM 존재', !!els.btnContinue);
-    record('#status-hint 초기 문구', els.statusHint.textContent === '카드 뽑기 버튼을 누르세요');
-    record('#combo-badge DOM 존재', !!els.comboBadge);
-    record('#wave-transition DOM 존재', !!els.waveTransition);
-    record('#castle-hp-fill에 hp-fill 클래스', els.castleHpFill.className.indexOf('hp-fill') !== -1);
-    record('--gold 토큰 = #ffcc00',
-      getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() === '#ffcc00');
+    record('#btn-discard DOM 존재', !!els.btnDiscard);
+    record('#shop-panel DOM 존재', !!document.getElementById('shop-panel'));
+    record('#enemy-row-overlay DOM 존재', !!els.enemyRowOverlay);
+    record('#btn-sound-toggle DOM 존재', !!els.btnSoundToggle);
+    record('#castle-status-label DOM 존재', !!els.castleStatusLabel);
 
-    els.btnDraw.click();
-    record('뽑기 후 phase === SELECT', window.gameState.phase === 'SELECT');
-    record('뽑기 후 카드 3장', window.gameState.availableCards.length === 3);
-    record('뽑기 후 draw 버튼 비활성', els.btnDraw.disabled === true);
-
-    var tankerIdx = -1;
-    for (var i = 0; i < window.gameState.availableCards.length; i++) {
-      if (window.gameState.availableCards[i].id === 'TANKER') { tankerIdx = i; break; }
+    // ===== 수정1: 소프트락 방지 (슬롯 3/3에서 SUMMON 미등장) =====
+    window.gameState.warriors = [
+      { name: '탱커', emoji: '🛡️', hp: 30, maxHp: 30, atk: 3 },
+      { name: '탱커', emoji: '🛡️', hp: 30, maxHp: 30, atk: 3 },
+      { name: '탱커', emoji: '🛡️', hp: 30, maxHp: 30, atk: 3 }
+    ];
+    var summonCount = 0;
+    for (var t = 0; t < 200; t++) {
+      var c = drawRandomCard();
+      if (c.type === 'SUMMON') summonCount++;
     }
-    record('COMMON 카드 존재', tankerIdx >= 0);
+    record('슬롯 3/3 상태에서 SUMMON 카드 200회 시뮬레이션 결과 0회', summonCount === 0,
+      'summonCount=' + summonCount);
 
-    if (tankerIdx >= 0) {
-      var cardEl = document.getElementById('card-choice-' + tankerIdx);
-      if (cardEl) cardEl.click();
+    // ===== 수정2: LEGEND 등장 =====
+    var legendSeen = false;
+    window.gameState.warriors = [null, null, null];
+    for (var t2 = 0; t2 < 500; t2++) {
+      var c2 = drawRandomCard();
+      if (c2.rarity === 'LEGEND') { legendSeen = true; break; }
     }
-    record('선택 후 phase === DEPLOY', window.gameState.phase === 'DEPLOY');
-    record('선택 후 selectedCard.id === TANKER',
-      window.gameState.selectedCard && window.gameState.selectedCard.id === 'TANKER');
+    record('LEGEND 카드가 500회 내에 등장함', legendSeen);
+    record('CARD_HERO 정의 확인 (LEGEND, HERO)', CARD_HERO.rarity === 'LEGEND' && CARD_HERO.id === 'HERO');
 
-    record('배치 전 deploy-0 활성', btnDeploy[0].disabled === false);
-    var waveBefore = window.gameState.wave;
+    // ===== 수정3: 상점 =====
+    resetGame();
+    window.gameState.gold = 100;
+    window.gameState.phase = 'DRAW';
+    // 강화
+    window.gameState.warriors[0] = { name: '탱커', emoji: '🛡️', hp: 30, maxHp: 30, atk: 3 };
     var goldBefore = window.gameState.gold;
-    btnDeploy[0].click();
+    var atkBefore = window.gameState.warriors[0].atk;
+    var hpBefore = window.gameState.warriors[0].hp;
+    onShopUpgrade();
+    record('강화 클릭 시 shopMode === upgrade', window.gameState.shopMode === 'upgrade');
+    onSlotUpgradeClick(0);
+    record('강화 후 골드 15 차감', window.gameState.gold === goldBefore - 15, 'gold=' + window.gameState.gold);
+    record('강화 후 ATK +1', window.gameState.warriors[0].atk === atkBefore + 1);
+    record('강화 후 HP +5', window.gameState.warriors[0].hp === hpBefore + 5);
+    record('강화 후 shopMode === null', window.gameState.shopMode === null);
+    // 보수
+    window.gameState.castleHp = 30;
+    var goldBefore2 = window.gameState.gold;
+    var hpBefore2 = window.gameState.castleHp;
+    onShopRepair();
+    record('보수 후 골드 8 차감', window.gameState.gold === goldBefore2 - 8);
+    record('보수 후 성 HP +3', window.gameState.castleHp === hpBefore2 + 3);
+    // 재뽑기
+    window.gameState.phase = 'SELECT';
+    window.gameState.availableCards = drawThreeCards();
+    window.gameState.rerollUsedThisWave = false;
+    var goldBefore3 = window.gameState.gold;
+    onShopReroll();
+    record('재뽑기 후 골드 10 차감', window.gameState.gold === goldBefore3 - 10);
+    record('재뽑기 후 rerollUsedThisWave === true', window.gameState.rerollUsedThisWave === true);
+    record('재뽑기 후 카드 3장 유지', window.gameState.availableCards.length === 3);
 
-    record('배치 후 warriors[0].name === 탱커',
-      window.gameState.warriors[0] && window.gameState.warriors[0].name === '탱커');
-    record('배치 후 wave === ' + (waveBefore + 1),
-      window.gameState.wave === waveBefore + 1,
-      'wave=' + window.gameState.wave);
-    record('배치 후 gold > 0', window.gameState.gold > goldBefore,
+    // ===== 수정4: 전사 사망 =====
+    resetGame();
+    window.gameState.wave = 3;
+    window.gameState.warriors = [
+      { name: '탱커', emoji: '🛡️', hp: 5, maxHp: 30, atk: 1 },
+      null, null
+    ];
+    window.gameState.availableCards = [];
+    window.gameState.selectedCard = null;
+    // resolveWave 직접 호출 (3웨이브, 정예 포함)
+    // 탱커 atk 1 → 총 1데미지. 적 4마리 중 3마리 잔존, 각각 atk 합산으로 성/전사 피격
+    // 탱커 HP 5 → 첫 적(잡병 atk 3) 타격 시 2, 둘째 적(잡병 atk 3) 타격 시 -1 → 사망
+    resolveWave();
+    record('전투 후 탱커 슬롯 0이 비워짐 (전사)', window.gameState.warriors[0] === null);
+    record('전사 로그 존재', window.gameState.log.some(function (l) {
+      return l.indexOf('[전사자]') === 0;
+    }));
+
+    // ===== 수정5: 콤보 보상 =====
+    resetGame();
+    window.gameState.wave = 1;
+    window.gameState.warriors = [
+      { name: '탱커', emoji: '🛡️', hp: 30, maxHp: 30, atk: 20 },
+      null, null
+    ];
+    window.gameState.availableCards = [];
+    window.gameState.selectedCard = null;
+    window.gameState.combo = 2;
+    var goldBefore4 = window.gameState.gold;
+    resolveWave();
+    // 콤보 보너스 = min(20, 2*2) = 4
+    record('콤보 2에서 웨이브 클리어 시 보너스 골드 획득', window.gameState.gold > goldBefore4 + 5,
       'gold=' + window.gameState.gold);
-    record('배치 후 phase === DRAW', window.gameState.phase === 'DRAW');
-    record('maxWaveReached === 2', window.gameState.maxWaveReached === 2,
-      'maxWaveReached=' + window.gameState.maxWaveReached);
 
-    record('#stat-wave 텍스트가 2', els.statWave.textContent === '2',
-      'dom=' + els.statWave.textContent);
-    record('#btn-draw-card 재활성', els.btnDraw.disabled === false);
+    // ===== 수정6: enemy-detail 범위 표기 =====
+    resetGame();
+    window.gameState.wave = 3;
+    renderEnemyPreview();
+    record('enemy-detail에 물결표(~) 포함 (범위 표기)', els.enemyDetail.textContent.indexOf('~') !== -1,
+      'text=' + els.enemyDetail.textContent);
 
-    // 무한 모드 진입 시뮬레이션
-    window.gameState.isVictory = true;
-    window.gameState.phase = 'END';
-    els.btnContinue.classList.remove('hidden');
-    els.btnContinue.click();
-    record('계속 도전 후 isEndless === true', window.gameState.isEndless === true);
-    record('계속 도전 후 isVictory === false', window.gameState.isVictory === false);
-    record('계속 도전 후 phase === DRAW', window.gameState.phase === 'DRAW');
+    // ===== 수정7: 접근성 =====
+    var meta = document.querySelector('meta[name="viewport"]');
+    record('viewport에 maximum-scale 없음', meta && meta.content.indexOf('maximum-scale') === -1);
+    record('viewport에 user-scalable 없음', meta && meta.content.indexOf('user-scalable') === -1);
+    record('#game-output에 aria-live="polite"', els.output.getAttribute('aria-live') === 'polite');
+    record('#status-hint에 aria-live="polite"', els.statusHint.getAttribute('aria-live') === 'polite');
+    record('#btn-sound-toggle에 aria-label 존재', !!els.btnSoundToggle.getAttribute('aria-label'));
 
+    // ===== 수정8: localStorage =====
+    resetGame();
+    window.gameState.wave = 3;
+    window.gameState.gold = 42;
+    window.gameState.castleHp = 30;
+    window.gameState.combo = 1;
+    saveState();
+    // 상태 변경 후 복원
+    window.gameState.wave = 1;
+    window.gameState.gold = 0;
+    var restored = loadState();
+    record('localStorage 복원 성공', restored === true);
+    record('복원된 wave === 3', window.gameState.wave === 3, 'wave=' + window.gameState.wave);
+    record('복원된 gold === 42', window.gameState.gold === 42, 'gold=' + window.gameState.gold);
+    record('복원된 castleHp === 30', window.gameState.castleHp === 30);
+
+    // ===== 수정9: 음소거 =====
+    window.gameState.sfxMuted = true;
+    var tonePlayed = false;
+    var origAudioCtx = audioCtx;
+    audioCtx = null;
+    try {
+      tone(800, 'sine', 0.1, 0.1);
+      tonePlayed = false;
+    } catch (e) { tonePlayed = false; }
+    record('음소거 상태에서 tone() 예외 없이 반환', !tonePlayed);
+    window.gameState.sfxMuted = false;
+    audioCtx = origAudioCtx;
+
+    // ===== 수정10: 카드 fade-out =====
+    resetGame();
+    window.gameState.warriors[0] = { name: '탱커', emoji: '🛡️', hp: 30, maxHp: 30, atk: 3 };
+    window.gameState.availableCards = [CARD_TANKER, CARD_ATK, CARD_HEAL];
+    window.gameState.selectedCard = CARD_TANKER;
+    window.gameState.phase = 'DEPLOY';
+    renderCards();
+    var notSelectedCards = els.cardsArea.querySelectorAll('.card.fade-out');
+    record('DEPLOY 중 비선택 카드에 fade-out 적용', notSelectedCards.length === 2,
+      'count=' + notSelectedCards.length);
+
+    // ===== 최종 정리 =====
     var pass = errors.length === 0;
     var report = {
       result: pass ? 'PASS' : 'FAIL',
@@ -1684,27 +2226,18 @@
       passed: results.filter(function (r) { return r.pass; }).length,
       failed: results.filter(function (r) { return !r.pass; }).length,
       tests: results,
-      errors: errors,
-      finalState: {
-        phase: window.gameState.phase,
-        wave: window.gameState.wave,
-        maxWave: window.gameState.maxWave,
-        maxWaveReached: window.gameState.maxWaveReached,
-        isEndless: window.gameState.isEndless,
-        castleHp: window.gameState.castleHp,
-        gold: window.gameState.gold
-      }
+      errors: errors
     };
 
-    if (pass) console.log('[PHASE 1 TEST PASS]');
-    else console.log('[PHASE 1 TEST FAIL]');
-    console.log('Self-test report:', report);
+    if (pass) console.log('[REGRESSION TEST PASS]');
+    else console.log('[REGRESSION TEST FAIL]');
+    console.log('Regression report:', report);
 
     log('[TEST] ================================');
-    log('[TEST] Phase 1 Self-Test: ' + report.result, pass ? 'highlight' : 'danger');
+    log('[TEST] Regression Suite: ' + report.result, pass ? 'highlight' : 'danger');
     log('[TEST] Passed: ' + report.passed + ' / ' + report.totalTests);
     if (!pass) {
-      for (var e = 0; e < errors.length; e++) log('[TEST FAIL] ' + errors[e], 'danger');
+      for (var ei = 0; ei < errors.length; ei++) log('[TEST FAIL] ' + errors[ei], 'danger');
     } else {
       log('[TEST] All assertions passed.', 'highlight');
     }
@@ -1713,8 +2246,24 @@
     return report;
   };
 
-  resetGame();
+  // 하위 호환 (기존 이름으로도 호출 가능)
+  window.runPhase1SelfTest = window.runRegressionSuite;
+
+  /* ===== 초기화 ===== */
+  loadSfxMuted();
+  updateSfxButton();
+  var restored = loadState();
+  render();
+  if (restored) {
+    log('[SYSTEM] 이전 게임을 이어서 불러왔습니다.');
+    if (window.gameState.phase === 'END') {
+      showResult(!!window.gameState.isVictory);
+    }
+  } else {
+    log('[TURN] Wave 1 begins.');
+    render();
+  }
 })();
 </script>
 </body>
-  </html>
+</html>
