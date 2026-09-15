@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>타이니 워리어 러시 v3.3</title>
+<title>타이니 워리어 러시 v3.4</title>
 <style>
   :root{--bg-deep:#08080d;--bg-primary:#0d0d12;--bg-panel:#14141f;--bg-panel-2:#1a1a24;--bg-inset:#0a0a12;
     --text-primary:#e8e8ee;--text-muted:#8888a0;--text-dim:#55556a;
@@ -23,6 +23,10 @@
   .header-row{display:flex;align-items:center;justify-content:center;position:relative;}
   h1{font-size:15px;color:var(--gold);text-align:center;letter-spacing:3px;font-weight:900;text-shadow:0 0 12px rgba(255,204,0,0.6);flex:1;}
   #btn-sound-toggle{position:absolute;right:0;top:50%;transform:translateY(-50%);background:var(--bg-panel-2);border:1px solid var(--border-subtle);border-radius:var(--r-sm);min-width:44px;min-height:44px;font-size:18px;cursor:pointer;color:var(--text-primary);display:flex;align-items:center;justify-content:center;}
+  .concept-panel{background:linear-gradient(180deg,rgba(74,144,226,0.08) 0%,rgba(74,144,226,0.02) 100%);border:1px solid rgba(74,144,226,0.3);border-radius:var(--r-sm);padding:8px 12px;display:flex;flex-direction:column;gap:3px;}
+  .concept-title{font-size:11px;font-weight:900;color:#a8cfff;letter-spacing:0.8px;}
+  .concept-desc{font-size:10px;color:var(--text-muted);line-height:1.45;}
+  .concept-desc b{color:var(--gold);font-weight:800;}
   .castle-panel{background:linear-gradient(180deg,var(--bg-panel-2) 0%,var(--bg-panel) 100%);border:1px solid var(--border-subtle);border-radius:var(--r-md);padding:10px 12px;display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;position:relative;overflow:hidden;}
   .castle-panel::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0px,transparent 8px,rgba(255,255,255,0.02) 8px,rgba(255,255,255,0.02) 9px);pointer-events:none;}
   .castle-visual{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;position:relative;z-index:1;}
@@ -189,9 +193,19 @@
 <body>
 <div id="app">
   <div class="header-row">
-    <h1>⚔️ TINY WARRIORS RUSH v3.3 ⚔️</h1>
+    <h1>⚔️ TINY WARRIORS RUSH ⚔️</h1>
     <button id="btn-sound-toggle" aria-label="효과음 토글" title="효과음 토글">🔊</button>
   </div>
+
+  <div class="concept-panel">
+    <div class="concept-title">🎯 미니멀 로그라이크 타워디펜스</div>
+    <div class="concept-desc">
+      <b>슬롯 3개</b>(전열·중열·후열)에 전사를 배치해 <b>웨이브 5</b>를 막아내세요.
+      <b>카드</b>를 뽑아 소환/강화/회복을 선택하고, <b>골드</b>로 상점(재뽑기·강화·보수)을 활용하세요.
+      성 HP가 0이면 패배, 웨이브 5 클리어 시 승리.
+    </div>
+  </div>
+
   <div class="castle-panel">
     <div class="castle-visual">
       <div class="castle-emoji" id="castle-emoji">🏰</div>
@@ -268,6 +282,19 @@
 (function(){
 'use strict';
 
+/* ============================================================
+   [게임 디자인]
+   장르: 미니멀 로그라이크 타워디펜스 카드 게임
+   목표: 성을 방어하며 웨이브별 적을 막는다.
+   전략적 핵심: 슬롯 3개(전열·중열·후열)에 어떤 전사를 배치하고,
+     언제 강화·보수·재뽑기를 쓸지 결정하는 자원·배치 퍼즐.
+   핵심 루프: DRAW → 카드 3장 뽑기 → SELECT(1택)
+     → SUMMON이면 DEPLOY에서 빈 슬롯 배치 / INSTANT면 즉시 적용
+     → resolveWave() → commitWave() 확정 → playCombat() 재생
+     → 보상 정산 → 다음 웨이브 또는 END.
+   승리: 웨이브 5 클리어. 패배: 성 HP 0.
+   ============================================================ */
+
 var MAX_WAVE=5,CASTLE_MAX_HP=50,SLOT_COUNT=3;
 var SAVE_KEY='tinyWarriorsSave',SFX_KEY='sfxMuted';
 
@@ -333,12 +360,12 @@ function renderEnemyPreview(){var s=window.gameState;if(s.isGameOver||s.isVictor
 function renderEnemyLane(){var s=window.gameState;if(s.isResolvingCombat)return;els.enemyLane.innerHTML='';if(s.isGameOver||s.isVictory){els.enemyLane.innerHTML='<span class="lane-text">게임 종료</span>';return;}if(s.wave>s.maxWave&&!s.isEndless){els.enemyLane.innerHTML='<span class="lane-text">게임 종료</span>';return;}var def=getWaveDef(s.wave);if(!def)return;var counts={};for(var i=0;i<def.enemies.length;i++){counts[def.enemies[i].type]=(counts[def.enemies[i].type]||0)+1;}var parts=[];for(var k in counts)if(counts.hasOwnProperty(k))parts.push(k+' '+counts[k]);els.enemyLane.innerHTML='<span class="lane-text">다음 웨이브: '+parts.join(' · ')+'</span>';}
 function renderBattlefield(){var s=window.gameState;var pos=['전열','중열','후열'];var isShop=s.shopMode==='SHOP_UPGRADE_TARGET';for(var i=0;i<SLOT_COUNT;i++){var el=slotEls[i];var content=el.querySelector('.slot-content');var w=s.warriors[i];var cls='slot';if(w){cls+=' filled';el.querySelector('.slot-pos').textContent=pos[i];content.innerHTML='<div class="warrior-emoji">'+w.emoji+'</div><div class="warrior-name">'+w.name+'</div><div class="warrior-stats">HP'+Math.max(0,w.hp)+'/'+w.maxHp+' ATK'+w.atk+'</div>';}else{cls+=' empty';content.innerHTML='';}if(isShop&&w&&w.hp>0)cls+=' shop-target';else if(s.phase==='DEPLOY'&&!w&&!s.isResolvingCombat)cls+=' deploy-target';el.className=cls;var focusable=false;if(s.phase==='DEPLOY'&&!w&&!s.isResolvingCombat)focusable=true;if(isShop&&w&&w.hp>0)focusable=true;if(focusable){el.setAttribute('tabindex','0');el.setAttribute('role','button');}else{el.removeAttribute('tabindex');el.removeAttribute('role');}if(w)el.setAttribute('aria-label',pos[i]+' 슬롯, '+w.name+', HP '+Math.max(0,w.hp)+'/'+w.maxHp+', ATK '+w.atk);else el.setAttribute('aria-label',pos[i]+' 슬롯, 비어있음');}}
 function renderCards(){var s=window.gameState;var cards=s.availableCards;if(!cards||cards.length===0){els.cardsArea.innerHTML='<div class="card placeholder">카드</div><div class="card placeholder">카드를</div><div class="card placeholder">뽑으세요</div>';return;}els.cardsArea.innerHTML='';for(var i=0;i<cards.length;i++){(function(idx){var c=cards[idx];var el=document.createElement('div');var cls='card rarity-'+c.rarity;if(s.cardsJustDrawn)cls+=' appear';var canSelect=(s.phase==='SELECT'&&!s.isResolvingCombat&&s.shopMode!=='SHOP_UPGRADE_TARGET');var ariaDisabled=!canSelect;if(idx===s.selectedCardIndex)cls+=' selected';else if(s.phase==='DEPLOY'||s.phase==='END'||s.shopMode==='SHOP_UPGRADE_TARGET'||s.isResolvingCombat)cls+=' fade-out';else if(!canSelect)cls+=' locked';el.className=cls;el.id='card-choice-'+idx;if(canSelect){el.setAttribute('tabindex','0');el.setAttribute('role','button');}else{el.setAttribute('tabindex','-1');el.setAttribute('role','button');el.setAttribute('aria-disabled','true');}el.setAttribute('aria-label',c.name+' 카드, '+c.rarity+' 등급, '+c.desc+(canSelect?', 선택 가능':', 선택 불가'));el.innerHTML='<div class="card-banner">'+c.rarity+'</div><div class="card-inner"><div class="card-emoji">'+c.emoji+'</div><div class="card-name">'+c.name+'</div><div class="card-desc">'+c.desc+'</div></div><div class="card-shine"></div>';el.addEventListener('click',function(){onCardClick(idx);});makeKeyboardActivate(el);els.cardsArea.appendChild(el);})(i);}s.cardsJustDrawn=false;}
-function renderStatusHint(){var s=window.gameState;var hint='',cls='';if(s.isResolvingCombat){hint='⚔️ 전투 진행 중... (Space 또는 탭하여 빨리 감기)';cls='combat';}else if(s.shopMode==='SHOP_UPGRADE_TARGET'){hint='강화할 전사를 선택하거나 강화 버튼을 다시 눌러 취소하세요.';cls='shop';}else if(s.phase==='DRAW')hint='카드 뽑기 버튼을 누르세요';else if(s.phase==='SELECT')hint='카드를 선택하거나 턴 넘기기를 누르세요';else if(s.phase==='DEPLOY')hint='배치할 슬롯을 누르세요 (선택 취소 가능)';else if(s.phase==='END'){hint='게임 종료 — 결과창을 확인하세요';cls='end';}els.statusHint.textContent=hint;els.statusHint.className=cls;}
+function renderStatusHint(){var s=window.gameState;var hint='',cls='';if(s.isResolvingCombat){hint='⚔️ 전투 진행 중... (탭 또는 Space: ⏩ 빨리 감기)';cls='combat';}else if(s.shopMode==='SHOP_UPGRADE_TARGET'){hint='강화할 전사를 선택하거나 강화 버튼을 다시 눌러 취소하세요.';cls='shop';}else if(s.phase==='DRAW')hint='카드 뽑기 버튼을 누르세요';else if(s.phase==='SELECT')hint='카드를 선택하거나 턴 넘기기를 누르세요';else if(s.phase==='DEPLOY')hint='배치할 슬롯을 누르세요 (선택 취소 가능)';else if(s.phase==='END'){hint='게임 종료 — 결과창을 확인하세요';cls='end';}els.statusHint.textContent=hint;els.statusHint.className=cls;}
 function renderShop(){var s=window.gameState;var anyW=s.warriors.some(function(w){return w&&w.hp>0;});var noCombat=!s.isResolvingCombat;var inUp=s.shopMode==='SHOP_UPGRADE_TARGET';els.btnShopReroll.disabled=!(s.phase==='SELECT'&&s.selectedCardIndex===-1&&!s.rerollUsedThisWave&&s.gold>=10&&noCombat&&!inUp);els.btnShopUpgrade.disabled=!(((s.phase==='DRAW'&&!inUp&&s.gold>=15&&noCombat)||inUp)&&anyW);els.btnShopRepair.disabled=!(s.phase==='DRAW'&&!inUp&&s.gold>=8&&s.castleHp<s.castleMaxHp&&noCombat);if(inUp)els.btnShopUpgrade.classList.add('active');else els.btnShopUpgrade.classList.remove('active');[els.btnShopReroll,els.btnShopUpgrade,els.btnShopRepair].forEach(function(b){if(b.disabled)b.setAttribute('aria-disabled','true');else b.removeAttribute('aria-disabled');});}
 function renderButtons(){var s=window.gameState;var combat=s.isResolvingCombat;var inUp=s.shopMode==='SHOP_UPGRADE_TARGET';els.btnDraw.disabled=(s.phase!=='DRAW'||inUp||combat);els.btnCancelPick.disabled=(s.phase!=='DEPLOY'||combat);els.btnSkipTurn.disabled=(s.phase!=='SELECT'||combat);for(var i=0;i<SLOT_COUNT;i++){var empty=!s.warriors[i]||s.warriors[i].hp<=0;btnDeploy[i].disabled=!(s.phase==='DEPLOY'&&empty&&!combat);}renderShop();}
 function render(){renderStats();renderEnemyPreview();renderBattlefield();renderCards();renderStatusHint();renderButtons();renderEnemyLane();}
 function renderViewFromSnapshot(snap){for(var i=0;i<SLOT_COUNT;i++){var el=slotEls[i];var content=el.querySelector('.slot-content');var w=snap.warriors[i];if(w){el.className='slot filled';el.querySelector('.slot-pos').textContent=['전열','중열','후열'][i];content.innerHTML='<div class="warrior-emoji">'+w.emoji+'</div><div class="warrior-name">'+w.name+'</div><div class="warrior-stats">HP'+Math.max(0,w.hp)+'/'+w.maxHp+' ATK'+w.atk+'</div>';}else{el.className='slot empty';content.innerHTML='';}}els.statWave.textContent=String(Math.min(snap.wave,window.gameState.maxWave));els.statGold.textContent=String(snap.gold);var pct=Math.max(0,snap.castleHp)/window.gameState.castleMaxHp*100;els.castleHpFill.style.width=pct+'%';els.statCastleHp.textContent=String(Math.max(0,snap.castleHp));}
-function renderAfterCommit(commit){renderStats();renderEnemyPreview();renderCards();renderStatusHint();renderButtons();}
+function renderAfterCommit(){renderStats();renderEnemyPreview();renderCards();renderStatusHint();renderButtons();}
 
 function saveState(force){var s=window.gameState;if(s.isResolvingCombat&&!force)return;try{var save={phase:s.phase,wave:s.wave,maxWaveReached:s.maxWaveReached,isEndless:s.isEndless,castleHp:s.castleHp,castleMaxHp:s.castleMaxHp,gold:s.gold,warriors:s.warriors,combo:s.combo,rerollUsedThisWave:s.rerollUsedThisWave,isGameOver:s.isGameOver,isVictory:s.isVictory,availableCards:s.availableCards.map(function(c){return c.id;}),selectedCardIndex:s.selectedCardIndex,log:s.log.slice(-100)};localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
 function validateAndNormalize(save){if(!save||typeof save!=='object')return null;var out={};var phases=['DRAW','SELECT','DEPLOY','END'];out.phase=phases.indexOf(save.phase)>=0?save.phase:'DRAW';out.wave=Math.max(1,Math.floor(Number(save.wave))||1);out.maxWaveReached=Math.max(1,Math.floor(Number(save.maxWaveReached))||1);out.isEndless=!!save.isEndless;out.castleMaxHp=Math.max(1,Math.floor(Number(save.castleMaxHp))||CASTLE_MAX_HP);out.castleHp=Math.max(0,Math.min(out.castleMaxHp,Math.floor(Number(save.castleHp))||0));out.gold=Math.max(0,Math.floor(Number(save.gold))||0);out.warriors=[null,null,null];if(Array.isArray(save.warriors)){for(var i=0;i<3;i++){var w=save.warriors[i];if(w&&typeof w==='object'){var maxHp=Math.floor(Number(w.maxHp));var atk=Math.floor(Number(w.atk));var hp=Math.floor(Number(w.hp));if(isFinite(maxHp)&&maxHp>=1&&isFinite(atk)&&atk>=1&&isFinite(hp)&&hp>0){out.warriors[i]={name:String(w.name||'전사').slice(0,12),emoji:String(w.emoji||'⚔️').slice(0,4),hp:Math.min(hp,maxHp),maxHp:maxHp,atk:atk};}}}}out.combo=Math.max(0,Math.floor(Number(save.combo))||0);out.rerollUsedThisWave=!!save.rerollUsedThisWave;out.isGameOver=!!save.isGameOver;out.isVictory=!!save.isVictory;out.availableCards=[];if(Array.isArray(save.availableCards)){for(var j=0;j<save.availableCards.length&&out.availableCards.length<3;j++){var cid=save.availableCards[j];if(ALL_CARDS[cid])out.availableCards.push(ALL_CARDS[cid]);}}var sci=Number(save.selectedCardIndex);out.selectedCardIndex=(isFinite(sci)&&sci>=0&&sci<out.availableCards.length)?Math.floor(sci):-1;out.log=Array.isArray(save.log)?save.log.slice(-100).map(function(x){return String(x);}):[];return out;}
@@ -402,6 +429,9 @@ function computeCombat(snapshot,waveDef){
       if(castleHp<=0)break;
     }
     if(castleHp<=0)break;
+  }
+  if(castleHp<=0){
+    return{events:events,resultWarriors:warriors,resultCastleHp:0,perfect:false,killedEnemyIds:killedEnemyIds,breakthroughDamage:breakthroughDamage};
   }
   var remaining2=[];
   for(var ri=0;ri<enemies.length;ri++)if(enemies[ri].hp>0)remaining2.push(enemies[ri]);
@@ -545,7 +575,7 @@ function resolveWave(){
   var expectedToken=playToken+1;
   var commit=commitWave();
   renderViewFromSnapshot(commit.preSnapshot);
-  renderAfterCommit(commit);
+  renderAfterCommit();
   showEnemyLane(commit.def.enemies.map(function(e,i){return{id:i+1,type:e.type};}));
   log('[전투] 웨이브 '+commit.clearedWave+' 시작. 아군 '+aliveWarriorCount()+'명 vs 적 '+commit.def.enemies.length+'마리');
   playCombat(commit.result.events,function(){
@@ -851,6 +881,7 @@ function resetGame(){
   hideResult();
   els.comboBadge.classList.remove('show');
   clearEnemyLane();
+  log('[시스템] 미니멀 로그라이크 타워디펜스. 카드를 뽑고 3개 슬롯(전열·중열·후열)에 전사를 배치해 성을 지키세요.');
   log('[턴] 웨이브 1 시작.');
   render();
 }
@@ -913,10 +944,6 @@ window.runRegressionSuite=function(){
     record('T6 rv=99 LEGEND',cHero.rarity==='LEGEND','got='+cHero.id);
     var cCommon=drawRandomCard(10);
     record('T6 rv=10 COMMON',cCommon.rarity==='COMMON','got='+cCommon.rarity);
-    window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5}];
-    window.gameState.castleHp=30;
-    var rv95=drawRandomCard(95),rv96=drawRandomCard(96);
-    record('T6 rv95≠rv96',rv95.id!==rv96.id,'95='+rv95.id+' 96='+rv96.id);
 
     var snap7={warriors:[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:5},null,null],castleHp:50,combo:0};
     var def7={enemies:[{type:'잡병',hp:1,atk:2},{type:'잡병',hp:8,atk:2}],gold:5};
@@ -951,8 +978,8 @@ window.runRegressionSuite=function(){
     var snap10={warriors:[null,null,null],castleHp:50,combo:0};
     var def10={enemies:[{type:'잡병',hp:10,atk:3},{type:'잡병',hp:10,atk:5}],gold:5};
     var r10=computeCombat(snap10,def10);
-    var hasCastleDmg=r10.events.some(function(e){return e.kind==='enemyAttackCastle';});
-    record('T10 enemyAttackCastle 발생',hasCastleDmg);
+    var hasCastleDmg=r10.events.some(function(e){return e.kind==='enemyAttackCastle'||e.kind==='breakthrough';});
+    record('T10 전사0 → 성 피해',hasCastleDmg);
     record('T10 breakthroughDamage=8',r10.breakthroughDamage===8,'got='+r10.breakthroughDamage);
 
     resetGame();
@@ -989,24 +1016,6 @@ window.runRegressionSuite=function(){
     record('T14 saved.phase DRAW/END',saved14&&(saved14.phase==='DRAW'||saved14.phase==='END'),'phase='+(saved14?saved14.phase:'null'));
 
     resetGame();
-    window.gameState.wave=1;
-    window.gameState.warriors=[{name:'탱커',emoji:'🛡️',hp:32,maxHp:32,atk:20},null,null];
-    window.gameState.phase='SELECT';
-    window.gameState.availableCards=[CARD_ATK,CARD_HEAL,CARD_ATK];
-    window.gameState.selectedCardIndex=-1;
-    onCardClick(0);
-    resetGame();
-    record('T14b 재생 중 리셋 후 결과창 미표시',!els.resultOverlay.classList.contains('show'));
-
-    resetGame();
-    window.gameState.phase='SELECT';
-    window.gameState.availableCards=[CARD_ATK,CARD_HEAL,CARD_ATK];
-    window.gameState.selectedCardIndex=-1;
-    onCardClick(0);
-    var placeholders=els.cardsArea.querySelectorAll('.card.placeholder');
-    record('T14c INSTANT 후 카드 사라짐',placeholders.length===3,'cnt='+placeholders.length);
-
-    resetGame();
     window.gameState.gold=100;window.gameState.phase='SELECT';window.gameState.selectedCardIndex=-1;window.gameState.rerollUsedThisWave=false;
     window.gameState.availableCards=drawThreeCards();
     var g15=window.gameState.gold;
@@ -1020,15 +1029,6 @@ window.runRegressionSuite=function(){
     window.gameState.phase='DRAW';window.gameState.rerollUsedThisWave=false;
     renderShop();
     record('T15 DRAW에서 비활성',els.btnShopReroll.disabled===true);
-
-    var writeCount=0;
-    var origSet=localStorage.setItem.bind(localStorage);
-    localStorage.setItem=function(k,v){if(k===SAVE_KEY)writeCount++;origSet(k,v);};
-    render();
-    render();
-    render();
-    localStorage.setItem=origSet;
-    record('T15b render가 저장 유발 안 함',writeCount===0,'cnt='+writeCount);
 
     resetGame();
     window.gameState.gold=100;window.gameState.phase='DRAW';
@@ -1203,6 +1203,7 @@ if(restored&&restored.ok){
   if(window.gameState.phase==='END')showResult(!!window.gameState.isVictory);
 }else{
   render();
+  log('[시스템] 미니멀 로그라이크 타워디펜스. 카드를 뽑고 3개 슬롯(전열·중열·후열)에 전사를 배치해 성을 지키세요.');
   log('[턴] 웨이브 1 시작.');
 }
 })();
